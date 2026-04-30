@@ -14,6 +14,12 @@ from modules.ai_engine import get_ai_response
 from modules.vision import capture_face_embedding, verify_face
 
 # =========================
+# AUTO-INIT DATABASE
+# =========================
+from modules.database import engine, Base
+import modules.models
+Base.metadata.create_all(bind=engine, checkfirst=True)
+# =========================
 # CONFIG & THEME ENGINE
 # =========================
 st.set_page_config(page_title="Nexus AI", page_icon="🧬", layout="wide")
