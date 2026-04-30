@@ -12,7 +12,7 @@ from modules.tasks import create_task, get_tasks, complete_task, delete_task
 from modules.notes import create_note, get_notes, delete_note
 from modules.ai_engine import get_ai_response
 from modules.vision import capture_face_embedding, verify_face
-
+from datetime import datetime
 # =========================
 # AUTO-INIT DATABASE
 # =========================
@@ -446,20 +446,53 @@ elif st.session_state.nav == "Dashboard":
     reminders = get_reminders(uid)
     overdue   = get_overdue_reminders(uid)
 
-    # HEADER
+   # HEADER
+    _hour = datetime.now().hour
+    if _hour < 12:
+        _greeting = "Good morning"
+    elif _hour < 17:
+        _greeting = "Good afternoon"
+    else:
+        _greeting = "Good evening"
+
+    _prefs        = get_preferences(uid)
+    _name         = _prefs.get("name", "Commander")
+    _pending_count = len([t for t in tasks if t.status != "completed"])
+
     st.markdown(f"""
-    <div style='margin-bottom:24px;'>
+    <div style='margin-bottom:16px;'>
         <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;
-            letter-spacing:0.12em;margin-bottom:8px;'>MASTER CONTROL · NEXUS AI</div>
+            letter-spacing:0.12em;margin-bottom:8px;'>
+            MASTER CONTROL · NEXUS AI · {datetime.now().strftime("%A, %b %d · %H:%M")}
+        </div>
         <h1 style='font-size:26px;font-weight:800;letter-spacing:-0.02em;
             line-height:1;margin:0;color:#f0f0f8;font-family:Syne,sans-serif;'>
-            Good evening, <span style='color:{active_color};'>Commander.</span>
+            {_greeting}, <span style='color:{active_color};'>{_name}.</span>
         </h1>
         <p style='color:#9090a8;font-size:13px;margin-top:8px;margin-bottom:0;'>
-            {len(tasks)} tasks pending &nbsp;·&nbsp; AI ready &nbsp;·&nbsp; System active
+            {_pending_count} tasks pending &nbsp;·&nbsp;
+            {len(notes)} notes &nbsp;·&nbsp;
+            {len(reminders)} reminders &nbsp;·&nbsp;
+            AI ready
         </p>
     </div>
     """, unsafe_allow_html=True)
+
+    if overdue:
+        overdue_names = ", ".join([r.title for r in overdue[:3]])
+        extra = f" +{len(overdue)-3} more" if len(overdue) > 3 else ""
+        st.markdown(f"""
+        <div style='background:#ff456012;border:1px solid #ff456044;border-radius:12px;
+            padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;'>
+            <span style='font-size:20px;'>⚠️</span>
+            <div>
+                <div style='font-size:12px;font-weight:700;color:#ff4560;'>
+                    {len(overdue)} OVERDUE REMINDER{"S" if len(overdue) > 1 else ""}
+                </div>
+                <div style='font-size:11px;color:#9090a8;'>{overdue_names}{extra}</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     # METRICS
     m1, m2, m3, m4 = st.columns(4)
