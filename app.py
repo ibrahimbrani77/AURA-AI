@@ -519,6 +519,66 @@ elif st.session_state.nav == "Dashboard":
 
     # WORKSPACE
     col_left, col_right = st.columns([1.3, 1])
+    # ── SEARCH ──
+    search_query = st.text_input("", placeholder="Search tasks, notes, reminders...",
+                                  key="global_search", label_visibility="collapsed")
+
+    if search_query:
+        q = search_query.lower()
+
+        matched_tasks     = [t for t in tasks     if q in t.title.lower() or q in (t.description or "").lower()]
+        matched_notes     = [n for n in notes     if q in (n.title or "").lower() or q in (n.content or "").lower()]
+        matched_reminders = [r for r in reminders if q in r.title.lower()]
+
+        st.markdown(f"""
+        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);
+            border-radius:12px;padding:16px;margin-bottom:16px;'>
+            <div style='font-size:10px;font-weight:600;letter-spacing:0.14em;
+                color:#6b6b80;font-family:JetBrains Mono,monospace;margin-bottom:12px;'>
+                SEARCH RESULTS FOR "{search_query.upper()}"
+            </div>
+        """, unsafe_allow_html=True)
+
+        if matched_tasks:
+            st.markdown(f"<div style='font-size:11px;color:{active_color};font-weight:700;margin-bottom:6px;'>TASKS ({len(matched_tasks)})</div>", unsafe_allow_html=True)
+            for t in matched_tasks:
+                tag_color = "#ff4560" if t.status != "completed" else "#00d68f"
+                st.markdown(f"""
+                <div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
+                    <span style='font-size:12px;font-weight:600;color:#f0f0f8;'>{t.title}</span>
+                    <span style='font-size:10px;color:{tag_color};margin-left:8px;font-family:JetBrains Mono,monospace;'>
+                        {t.status.upper()}
+                    </span>
+                    <div style='font-size:11px;color:#6b6b80;margin-top:2px;'>{t.description or ""}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        if matched_notes:
+            st.markdown(f"<div style='font-size:11px;color:#9b59ff;font-weight:700;margin-bottom:6px;margin-top:10px;'>NOTES ({len(matched_notes)})</div>", unsafe_allow_html=True)
+            for n in matched_notes:
+                st.markdown(f"""
+                <div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
+                    <div style='font-size:12px;font-weight:600;color:#f0f0f8;'>{n.title or "Untitled"}</div>
+                    <div style='font-size:11px;color:#6b6b80;margin-top:2px;'>{n.content or ""}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        if matched_reminders:
+            st.markdown(f"<div style='font-size:11px;color:#ffb020;font-weight:700;margin-bottom:6px;margin-top:10px;'>REMINDERS ({len(matched_reminders)})</div>", unsafe_allow_html=True)
+            for r in matched_reminders:
+                st.markdown(f"""
+                <div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
+                    <div style='font-size:12px;font-weight:600;color:#f0f0f8;'>{r.title}</div>
+                    <div style='font-size:11px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>
+                        {r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date"}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        if not matched_tasks and not matched_notes and not matched_reminders:
+            st.markdown("<div style='color:#6b6b80;font-size:12px;'>No results found.</div>", unsafe_allow_html=True)
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with col_left:
 
