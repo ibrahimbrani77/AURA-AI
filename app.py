@@ -284,6 +284,35 @@ label[data-testid="stWidgetLabel"] p {{
 .streamlit-expanderHeader p::before {{ content: none !important; }}
 [data-testid="stExpanderToggleIcon"] {{ display: none !important; width: 0 !important; }}
 summary > div > p {{ font-size: 13px !important; font-weight: 600 !important; color: #f0f0f8 !important; }}
+
+@media (max-width: 768px) {{
+    .block-container {{
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }}
+    .nexus-metric {{
+        padding: 14px !important;
+    }}
+    .nexus-metric-value {{
+        font-size: 22px !important;
+    }}
+    .nexus-metric-label {{
+        font-size: 9px !important;
+    }}
+    .nexus-bubble-ai, .nexus-bubble-user {{
+        max-width: 95% !important;
+        font-size: 12px !important;
+    }}
+    .nexus-task-title {{
+        font-size: 12px !important;
+    }}
+    .nexus-status-bar {{
+        padding: 0 12px !important;
+        gap: 12px !important;
+        font-size: 9px !important;
+    }}
+}}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -879,6 +908,6 @@ elif st.session_state.nav == "Dashboard":
         <span><span style='color:{active_color};'>●</span>&nbsp; AI ENGINE ONLINE</span>
         <span><span style='color:#00d68f;'>●</span>&nbsp; PBKDF2 AUTH</span>
         <span><span style='color:#9b59ff;'>●</span>&nbsp; SFACE VERIFIED</span>
-        <span style='margin-left:auto;'>NEXUS AI v2.0 &nbsp;·&nbsp; localhost:8501</span>
+        <span style='margin-left:auto;'>NEXUS AI v2.0 &nbsp;·&nbsp; nexus-ai-0.streamlit.app</span>
     </div>
     """, unsafe_allow_html=True)
