@@ -346,20 +346,43 @@ if st.session_state.nav in ["Login", "Register"]:
             reg_name  = st.text_input("Identity Name", placeholder="John Doe")
             reg_email = st.text_input("Neural Email",  placeholder="name@nexus.ai")
             reg_pass  = st.text_input("Security Key",  type="password", placeholder="••••••••")
-            st.info("Biometric scan required for account finalization.")
-            if st.button("Initialize Face Scan & Create"):
-                if reg_name and reg_email and reg_pass:
-                    with st.spinner("Analyzing facial geometry..."):
-                        face_data = capture_face_embedding()
-                        if face_data:
-                            register_user(reg_name, reg_email, reg_pass, face_data)
-                            st.success("Identity created. Redirecting...")
-                            time.sleep(1.5)
-                            redirect("Login")
-                        else:
-                            st.error("Face capture failed. Check lighting.")
-                else:
-                    st.warning("All fields are mandatory.")
+
+            import os
+            is_cloud = os.getenv("IS_CLOUD", "false").lower() == "true"
+
+            if is_cloud:
+                st.markdown(f"""
+                <div style='background:#ffb02012;border:1px solid #ffb02044;
+                    border-radius:10px;padding:12px;margin-bottom:12px;'>
+                    <div style='font-size:11px;color:#ffb020;'>
+                        Face ID unavailable on web — account will be created without biometrics.
+                        You can add face login when running locally.
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                if st.button("Create Account"):
+                    if reg_name and reg_email and reg_pass:
+                        register_user(reg_name, reg_email, reg_pass, None)
+                        st.success("Identity created. Redirecting...")
+                        time.sleep(1.5)
+                        redirect("Login")
+                    else:
+                        st.warning("All fields are mandatory.")
+            else:
+                st.info("Biometric scan required for account finalization.")
+                if st.button("Initialize Face Scan & Create"):
+                    if reg_name and reg_email and reg_pass:
+                        with st.spinner("Analyzing facial geometry..."):
+                            face_data = capture_face_embedding()
+                            if face_data:
+                                register_user(reg_name, reg_email, reg_pass, face_data)
+                                st.success("Identity created. Redirecting...")
+                                time.sleep(1.5)
+                                redirect("Login")
+                            else:
+                                st.error("Face capture failed. Check lighting.")
+                    else:
+                        st.warning("All fields are mandatory.")
         else:
             st.markdown(f"<h2 style='color:{active_color};margin-bottom:20px;font-family:Syne,sans-serif;'>System Access</h2>", unsafe_allow_html=True)
             login_tab, face_tab = st.tabs(["Password Login", "Face Login"])
