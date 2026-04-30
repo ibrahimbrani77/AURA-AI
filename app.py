@@ -16,10 +16,25 @@ from modules.vision import capture_face_embedding, verify_face
 # =========================
 from modules.database import engine, Base
 import modules.models
+from sqlalchemy import text
+
 try:
     Base.metadata.create_all(bind=engine, checkfirst=True)
 except Exception:
     pass
+
+# Add missing columns to existing tables without dropping data
+with engine.connect() as conn:
+    try:
+        conn.execute(text("ALTER TABLE tasks ADD COLUMN priority VARCHAR DEFAULT 'Medium'"))
+        conn.commit()
+    except Exception:
+        pass
+    try:
+        conn.execute(text("ALTER TABLE users ADD COLUMN preferences TEXT DEFAULT ''"))
+        conn.commit()
+    except Exception:
+        pass
 # =========================
 # CONFIG & THEME ENGINE
 # =========================
@@ -520,7 +535,7 @@ elif st.session_state.nav == "Dashboard":
     # WORKSPACE
     col_left, col_right = st.columns([1.3, 1])
     # ── SEARCH ──
-    search_query = st.text_input("", placeholder="Search tasks, notes, reminders...",
+    search_query = st.text_input("Search", placeholder="Search tasks, notes, reminders...",
                                   key="global_search", label_visibility="collapsed")
 
     if search_query:
