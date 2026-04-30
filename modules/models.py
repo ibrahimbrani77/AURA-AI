@@ -20,6 +20,7 @@ class Task(Base):
     title       = Column(String)
     description = Column(Text)
     status      = Column(String, default="pending")
+    priority    = Column(String, default="Medium")
     user_id     = Column(Integer, ForeignKey("users.id"))
     owner       = relationship("User", back_populates="tasks")
 

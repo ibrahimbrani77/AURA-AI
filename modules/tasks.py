@@ -1,46 +1,32 @@
-from modules.database import SessionLocal 
+from modules.database import SessionLocal
 from modules.models import Task
 
-def create_task(title, desc, uid):
+def create_task(title, description, user_id, priority="Medium"):
     db = SessionLocal()
-    try:
-        new = Task(title=title, description=desc, user_id=uid)
-        db.add(new); db.commit(); return True
-    except: db.rollback(); return False
-    finally: db.close()
+    task = Task(title=title, description=description, user_id=user_id, priority=priority)
+    db.add(task)
+    db.commit()
+    db.close()
+    return True
 
-
-def get_tasks(uid):
+def get_tasks(user_id):
     db = SessionLocal()
-    try: 
-        return db.query(Task).filter(Task.user_id == uid).order_by(Task.id.desc()).all()
-    finally: db.close()
+    tasks = db.query(Task).filter(Task.user_id == user_id).all()
+    db.close()
+    return tasks
 
-
-def complete_task(tid):
+def complete_task(task_id):
     db = SessionLocal()
-    try:
-        t = db.query(Task).filter(Task.id == tid).first()
-        if t: 
-            t.status = "completed"
-            db.commit()
-            return True
-    finally: db.close()
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if task:
+        task.status = "completed"
+        db.commit()
+    db.close()
 
-
-# =========================
-# NEW FUNCTION (DELETE TASK)
-# =========================
-def delete_task(tid):
+def delete_task(task_id):
     db = SessionLocal()
-    try:
-        t = db.query(Task).filter(Task.id == tid).first()
-        if t:
-            db.delete(t)
-            db.commit()
-            return True
-    except:
-        db.rollback()
-        return False
-    finally:
-        db.close()
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if task:
+        db.delete(task)
+        db.commit()
+    db.close()

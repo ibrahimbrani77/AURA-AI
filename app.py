@@ -599,11 +599,12 @@ elif st.session_state.nav == "Dashboard":
             st.session_state.show_add_task = not st.session_state.show_add_task
         if st.session_state.show_add_task:
             st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:12px;'>", unsafe_allow_html=True)
-            t_title = st.text_input("Task Identifier", placeholder="e.g. Fix vision.py threshold")
-            t_desc  = st.text_area("Objective Details", placeholder="Describe the task...")
+            t_title    = st.text_input("Task Identifier", placeholder="e.g. Fix vision.py threshold")
+            t_desc     = st.text_area("Objective Details", placeholder="Describe the task...")
+            t_priority = st.select_slider("Priority", options=["Low", "Medium", "High"], value="Medium")
             if st.button("Confirm Deployment"):
                 if t_title:
-                    create_task(t_title, t_desc, uid)
+                    create_task(t_title, t_desc, uid, t_priority)
                     st.session_state.show_add_task = False
                     st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
@@ -611,6 +612,8 @@ elif st.session_state.nav == "Dashboard":
         for t in tasks:
             tag_color = "#ff4560" if t.status != "completed" else "#00d68f"
             tag_label = "PENDING" if t.status != "completed" else "DONE"
+            priority  = getattr(t, "priority", "Medium") or "Medium"
+            p_color   = {"High": "#ff4560", "Medium": "#ffb020", "Low": "#00d68f"}.get(priority, "#ffb020")
             st.markdown(f"""
             <div class='nexus-task'>
                 <div style='display:flex;align-items:center;justify-content:space-between;'>
@@ -618,8 +621,14 @@ elif st.session_state.nav == "Dashboard":
                         <div class='nexus-task-title'>{t.title}</div>
                         <div class='nexus-task-desc'>{t.description or "No description"}</div>
                     </div>
-                    <span class='nexus-tag'
-                        style='background:{tag_color}22;color:{tag_color};'>{tag_label}</span>
+                    <div style='display:flex;gap:6px;align-items:center;'>
+                        <span class='nexus-tag' style='background:{p_color}22;color:{p_color};'>
+                            {priority.upper()}
+                        </span>
+                        <span class='nexus-tag' style='background:{tag_color}22;color:{tag_color};'>
+                            {tag_label}
+                        </span>
+                    </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
