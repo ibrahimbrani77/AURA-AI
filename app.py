@@ -1,7 +1,6 @@
 import streamlit as st
 import time
-import datetime
-from datetime import datetime as dt
+from datetime import datetime
 from modules.reminders import create_reminder, get_reminders, complete_reminder, delete_reminder, get_overdue_reminders
 from modules.personalization import save_preference, get_preferences, build_user_context
 from modules.auth import (
@@ -17,7 +16,10 @@ from modules.vision import capture_face_embedding, verify_face
 # =========================
 from modules.database import engine, Base
 import modules.models
-Base.metadata.create_all(bind=engine, checkfirst=True)
+try:
+    Base.metadata.create_all(bind=engine, checkfirst=True)
+except Exception:
+    pass
 # =========================
 # CONFIG & THEME ENGINE
 # =========================
