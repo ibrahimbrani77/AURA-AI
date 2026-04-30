@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 import datetime
-
+from datetime import datetime as dt
 from modules.reminders import create_reminder, get_reminders, complete_reminder, delete_reminder, get_overdue_reminders
 from modules.personalization import save_preference, get_preferences, build_user_context
 from modules.auth import (
@@ -12,7 +12,6 @@ from modules.tasks import create_task, get_tasks, complete_task, delete_task
 from modules.notes import create_note, get_notes, delete_note
 from modules.ai_engine import get_ai_response
 from modules.vision import capture_face_embedding, verify_face
-from datetime import datetime
 # =========================
 # AUTO-INIT DATABASE
 # =========================
@@ -658,7 +657,7 @@ elif st.session_state.nav == "Dashboard":
             rem_time  = st.time_input("Due Time")
             if st.button("Save Reminder"):
                 if rem_title:
-                    due_dt = datetime.datetime.combine(rem_date, rem_time)
+                    due_dt = datetime.combine(rem_date, rem_time)
                     create_reminder(rem_title, due_dt, uid)
                     st.session_state.show_add_reminder = False
                     st.rerun()
@@ -682,7 +681,7 @@ elif st.session_state.nav == "Dashboard":
                 "content": "System initialized. Identity confirmed. How can I assist you, Commander?"
             }]
 
-        chat_container = st.container(height=420)
+        chat_container = st.container(height=380)
         with chat_container:
             for msg in st.session_state.chat:
                 if msg["role"] == "assistant":
@@ -701,12 +700,29 @@ elif st.session_state.nav == "Dashboard":
                     </div>
                     """, unsafe_allow_html=True)
 
+        # QUICK COMMANDS
+        st.markdown("""
+        <div style='font-size:10px;font-weight:600;letter-spacing:0.14em;
+            color:#6b6b80;text-transform:uppercase;
+            font-family:JetBrains Mono,monospace;margin-bottom:8px;margin-top:8px;'>
+            Quick Commands
+        </div>
+        """, unsafe_allow_html=True)
+
+        qc1, qc2, qc3, qc4 = st.columns(4)
+        quick_prompt = None
+        if qc1.button("My Tasks",  key="qc1"): quick_prompt = "Summarize my current tasks and tell me what I should focus on first."
+        if qc2.button("Overdue?",  key="qc2"): quick_prompt = "Do I have any overdue reminders? If so, list them and suggest what to do."
+        if qc3.button("My Notes",  key="qc3"): quick_prompt = "Summarize all my notes and highlight the most important points."
+        if qc4.button("Prioritize",key="qc4"): quick_prompt = "Based on my tasks and reminders, help me prioritize what to do today."
+
         prompt = st.chat_input("Command the AI...", key="main_chat")
-        if prompt:
-            st.session_state.chat.append({"role": "user", "content": prompt})
+        final_prompt = prompt or quick_prompt
+        if final_prompt:
+            st.session_state.chat.append({"role": "user", "content": final_prompt})
             user_context = build_user_context(uid)
             response = get_ai_response(
-                prompt,
+                final_prompt,
                 chat_history=st.session_state.chat[:-1],
                 user_context=user_context,
                 tasks=tasks,
