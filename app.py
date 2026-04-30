@@ -748,6 +748,61 @@ elif st.session_state.nav == "Dashboard":
                     st.session_state.show_add_reminder = False
                     st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
+            # ── EXPORT ──
+        st.markdown("""
+        <div style='margin-top:24px;margin-bottom:10px;font-size:10px;font-weight:600;
+            letter-spacing:0.14em;color:#6b6b80;text-transform:uppercase;
+            font-family:JetBrains Mono,monospace;'>Export Data</div>
+        """, unsafe_allow_html=True)
+
+        if st.button("Export All Data", key="export_btn"):
+            lines = []
+            lines.append("=" * 50)
+            lines.append("NEXUS AI — WORKSPACE EXPORT")
+            lines.append(f"Exported: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+            lines.append("=" * 50)
+
+            lines.append("\n📌 TASKS")
+            lines.append("-" * 30)
+            if tasks:
+                for t in tasks:
+                    priority = getattr(t, "priority", "Medium") or "Medium"
+                    status   = "✔ Done" if t.status == "completed" else "○ Pending"
+                    lines.append(f"[{priority.upper()}] {t.title} — {status}")
+                    if t.description:
+                        lines.append(f"    {t.description}")
+            else:
+                lines.append("No tasks.")
+
+            lines.append("\n📝 NOTES")
+            lines.append("-" * 30)
+            if notes:
+                for n in notes:
+                    lines.append(f"• {n.title or 'Untitled'}")
+                    if n.content:
+                        lines.append(f"  {n.content}")
+            else:
+                lines.append("No notes.")
+
+            lines.append("\n⏰ REMINDERS")
+            lines.append("-" * 30)
+            if reminders:
+                for r in reminders:
+                    date_str = r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date"
+                    lines.append(f"• {r.title} — {date_str}")
+            else:
+                lines.append("No reminders.")
+
+            lines.append("\n" + "=" * 50)
+
+            export_text = "\n".join(lines)
+            st.download_button(
+                label="Download .txt",
+                data=export_text,
+                file_name=f"nexus_export_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
+                mime="text/plain",
+                key="download_export"
+            )
 
     # ── CHAT ──
     with col_right:
