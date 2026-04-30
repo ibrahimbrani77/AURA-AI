@@ -376,18 +376,32 @@ if st.session_state.nav in ["Login", "Register"]:
                         st.error("Access Denied: Invalid credentials.")
 
             with face_tab:
-                f_email = st.text_input("Email", key="f_email")
-                if st.button("Scan Face"):
-                    user = get_user_by_email(f_email)
-                    if user:
-                        with st.spinner("Matching biometric signature..."):
-                            if verify_face(user.face_embedding):
-                                st.session_state.token = login_user_biometric(f_email)
-                                redirect("Dashboard")
-                            else:
-                                st.error("Biometric mismatch.")
-                    else:
-                        st.error("Identity not found.")
+                import os
+                if os.getenv("IS_CLOUD", "false").lower() == "true":
+                    st.markdown(f"""
+                    <div style='background:#ffb02012;border:1px solid #ffb02044;
+                        border-radius:10px;padding:16px;text-align:center;'>
+                        <div style='font-size:13px;font-weight:700;color:#ffb020;
+                            margin-bottom:6px;'>Face ID — Local Only</div>
+                        <div style='font-size:11px;color:#9090a8;'>
+                            Biometric login requires running the app locally.<br>
+                            Use password login on the web version.
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    f_email = st.text_input("Email", key="f_email")
+                    if st.button("Scan Face"):
+                        user = get_user_by_email(f_email)
+                        if user:
+                            with st.spinner("Matching biometric signature..."):
+                                if verify_face(user.face_embedding):
+                                    st.session_state.token = login_user_biometric(f_email)
+                                    redirect("Dashboard")
+                                else:
+                                    st.error("Biometric mismatch.")
+                        else:
+                            st.error("Identity not found.")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
