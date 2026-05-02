@@ -4,73 +4,65 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-try:
-    import streamlit as st
-    groq_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
-except:
-    groq_key = os.getenv("GROQ_API_KEY")
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-client = Groq(api_key=groq_key)
-def get_ai_response(user_input, chat_history=None, user_context="", tasks=None, notes=None, reminders=None):
-    try:
-        # Build rich system context
-        system_parts = [
-            "You are NEXUS, a highly intelligent personal AI assistant.",
-            "You are sharp, concise, and professional.",
-            "You have direct access to the user's personal workspace data.",
-        ]
+PERSONALITIES = {
+    "Professional": "You are a highly professional, formal, and precise AI assistant. You communicate clearly and concisely, avoid casual language, and always stay on topic.",
+    "Friendly":     "You are a warm, encouraging, and conversational AI assistant. You use casual language, show genuine interest, and make the user feel comfortable.",
+    "Mentor":       "You are a wise and patient mentor. You guide the user with thoughtful advice, ask clarifying questions, and help them grow and think critically.",
+    "Sarcastic":    "You are a witty and sarcastic AI with a dry sense of humor. You still help the user but with clever remarks and playful sarcasm.",
+    "Minimalist":   "You are an ultra-concise AI. You respond in as few words as possible — bullet points, short answers, no fluff. Efficiency above all.",
+    "Hype Coach":   "You are an energetic hype coach! You are enthusiastic, motivating, and passionate. You celebrate every win and push the user to achieve more!",
+    "Custom":       ""
+}
 
-        if user_context:
-            system_parts.append(f"\nUSER PROFILE:\n{user_context}")
+def get_ai_response(prompt, chat_history=None, user_context="", tasks=None, notes=None, reminders=None, personality="Professional", custom_personality=""):
+    if chat_history is None:
+        chat_history = []
+    if tasks is None:
+        tasks = []
+    if notes is None:
+        notes = []
+    if reminders is None:
+        reminders = []
 
-        if tasks:
-            pending = [t for t in tasks if t.status != "completed"]
-            done    = [t for t in tasks if t.status == "completed"]
-            task_lines = []
-            for t in pending:
-                task_lines.append(f"  - [PENDING] {t.title}: {t.description or 'no description'}")
-            for t in done:
-                task_lines.append(f"  - [DONE] {t.title}")
-            if task_lines:
-                system_parts.append(f"\nUSER'S TASKS:\n" + "\n".join(task_lines))
+    # Resolve personality description
+    if personality == "Custom" and custom_personality:
+        personality_desc = custom_personality
+    else:
+        personality_desc = PERSONALITIES.get(personality, PERSONALITIES["Professional"])
 
-        if notes:
-            note_lines = [f"  - {n.title}: {n.content or 'no content'}" for n in notes]
-            system_parts.append(f"\nUSER'S NOTES:\n" + "\n".join(note_lines))
+    task_list     = "\n".join([f"- [{getattr(t,'priority','Medium')}] {t.title} ({t.status})" for t in tasks]) or "No tasks."
+    note_list     = "\n".join([f"- {n.title}: {n.content or ''}" for n in notes]) or "No notes."
+    reminder_list = "\n".join([f"- {r.title} (due: {r.due_date})" for r in reminders]) or "No reminders."
 
-        if reminders:
-            import datetime
-            now = datetime.datetime.now()
-            rem_lines = []
-            for r in reminders:
-                status = "OVERDUE" if r.due_date and r.due_date < now else "UPCOMING"
-                date_str = r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "no date"
-                rem_lines.append(f"  - [{status}] {r.title} — {date_str}")
-            system_parts.append(f"\nUSER'S REMINDERS:\n" + "\n".join(rem_lines))
+    system_prompt = f"""You are Aura, a sophisticated personal AI assistant.
 
-        system_parts.append(
-            "\nUse this data naturally when relevant. "
-            "If asked about tasks, notes or reminders, refer to the actual data above. "
-            "Be concise and helpful."
-        )
+PERSONALITY: {personality_desc}
 
-        system_instruction = "\n".join(system_parts)
+USER CONTEXT:
+{user_context}
 
-        messages = [{"role": "system", "content": system_instruction}]
+USER'S TASKS:
+{task_list}
 
-        if chat_history:
-            for msg in chat_history:
-                messages.append({"role": msg["role"], "content": msg["content"]})
+USER'S NOTES:
+{note_list}
 
-        messages.append({"role": "user", "content": user_input})
+USER'S REMINDERS:
+{reminder_list}
 
-        response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
-            temperature=0.7,
-            max_tokens=1024
-        )
-        return response.choices[0].message.content
+Always be helpful and stay in character based on the personality above.
+"""
 
-    except Exception as e:
-        return f"AI Engine Error: {str(e)}"
+    messages = [{"role": "system", "content": system_prompt}]
+    for msg in chat_history[-10:]:
+        messages.append({"role": msg["role"], "content": msg["content"]})
+    messages.append({"role": "user", "content": prompt})
+
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=messages,
+        max_tokens=1000
+    )
+    return response.choices[0].message.content
