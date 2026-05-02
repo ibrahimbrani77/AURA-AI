@@ -333,7 +333,10 @@ with st.sidebar:
             font-family:JetBrains Mono,monospace;margin-bottom:8px;'>AURA PERSONALITY</div>
         """, unsafe_allow_html=True)
 
-        _prefs_sidebar = get_preferences(uid)
+        try:
+            _prefs_sidebar = get_preferences(uid) if uid else {}
+        except Exception:
+            _prefs_sidebar = {}
         personality_options = ["Professional", "Friendly", "Mentor", "Sarcastic", "Minimalist", "Hype Coach", "Custom"]
         saved_personality = _prefs_sidebar.get("personality", "Professional")
         selected_personality = st.selectbox(
