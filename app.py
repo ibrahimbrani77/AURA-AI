@@ -38,16 +38,15 @@ with engine.connect() as conn:
 # =========================
 # CONFIG & THEME ENGINE
 # =========================
-st.set_page_config(page_title="Nexus AI", page_icon="🧬", layout="wide")
-
-if "theme" not in st.session_state:
-    st.session_state.theme = "Cyan"
+st.set_page_config(page_title="Aura", page_icon="✦", layout="wide")
 
 themes = {
-    "Cyan":    {"accent": "#00f2ff", "glow": "rgba(0, 242, 255, 0.15)"},
-    "Emerald": {"accent": "#10b981", "glow": "rgba(16, 185, 129, 0.15)"},
-    "Violet":  {"accent": "#8b5cf6", "glow": "rgba(139, 92, 246, 0.15)"}
+    "Violet": {"accent": "#a78bfa", "glow": "rgba(167, 139, 250, 0.15)"},
+    "Rose":   {"accent": "#f472b6", "glow": "rgba(244, 114, 182, 0.15)"},
+    "Cyan":   {"accent": "#22d3ee", "glow": "rgba(34, 211, 238, 0.15)"},
 }
+if "theme" not in st.session_state:
+    st.session_state.theme = "Violet"
 active_color = themes[st.session_state.theme]["accent"]
 glow_color   = themes[st.session_state.theme]["glow"]
 
@@ -193,7 +192,7 @@ label[data-testid="stWidgetLabel"] p {{
 ::-webkit-scrollbar {{ width: 4px; height: 4px; }}
 ::-webkit-scrollbar-track {{ background: transparent; }}
 ::-webkit-scrollbar-thumb {{ background: rgba(255,255,255,0.1); border-radius: 4px; }}
-.nexus-metric {{
+.aura-metric {{
     background: #0c0c12;
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 14px;
@@ -202,72 +201,72 @@ label[data-testid="stWidgetLabel"] p {{
     overflow: hidden;
     margin-bottom: 8px;
 }}
-.nexus-metric-bar {{ position: absolute; top: 0; left: 0; right: 0; height: 2px; }}
-.nexus-metric-label {{
+.aura-metric-bar {{ position: absolute; top: 0; left: 0; right: 0; height: 2px; }}
+.aura-metric-label {{
     font-size: 10px; font-weight: 600;
     letter-spacing: 0.14em; text-transform: uppercase;
     color: #6b6b80; margin-bottom: 10px;
     font-family: 'JetBrains Mono', monospace;
 }}
-.nexus-metric-value {{
+.aura-metric-value {{
     font-size: 30px; font-weight: 800;
     letter-spacing: -0.02em; line-height: 1;
     margin-bottom: 8px; font-family: 'Syne', sans-serif;
 }}
-.nexus-metric-sub {{ font-size: 11px; color: #6b6b80; font-family: 'JetBrains Mono', monospace; }}
-.nexus-panel-header {{
+.aura-metric-sub {{ font-size: 11px; color: #6b6b80; font-family: 'JetBrains Mono', monospace; }}
+.aura-panel-header {{
     padding: 12px 0;
     font-size: 13px; font-weight: 600;
     display: flex; align-items: center; gap: 8px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
     margin-bottom: 14px; color: #f0f0f8;
 }}
-.nexus-task {{
+.aura-task {{
     background: #0c0c12;
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 10px; padding: 12px 16px; margin-bottom: 8px;
 }}
-.nexus-task-title {{ font-size: 13px; font-weight: 600; color: #f0f0f8; }}
-.nexus-task-desc {{
+.aura-task-title {{ font-size: 13px; font-weight: 600; color: #f0f0f8; }}
+.aura-task-desc {{
     font-size: 11px; color: #6b6b80;
     font-family: 'JetBrains Mono', monospace; margin-top: 3px;
 }}
-.nexus-bubble-ai {{
+.aura-bubble-ai {{
     background: #12121a;
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 12px; border-top-left-radius: 3px;
     padding: 10px 14px; font-size: 13px; line-height: 1.6;
     color: #f0f0f8; max-width: 85%; margin-bottom: 10px; display: inline-block;
 }}
-.nexus-bubble-user {{
+.aura-bubble-user {{
     background: {glow_color};
     border: 1px solid {active_color}44;
     border-radius: 12px; border-top-right-radius: 3px;
     padding: 10px 14px; font-size: 13px; line-height: 1.6;
     color: #f0f0f8; max-width: 85%; margin-bottom: 10px; display: inline-block;
 }}
-.nexus-chat-ai {{ display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }}
-.nexus-chat-user {{ display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 10px; margin-bottom: 6px; }}
-.nexus-av {{
+.aura-chat-ai {{ display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }}
+.aura-chat-user {{ display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 10px; margin-bottom: 6px; }}
+.aura-av {{
     width: 28px; height: 28px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 10px; font-weight: 800; flex-shrink: 0;
     background: linear-gradient(135deg, {active_color}, #9b59ff);
     color: #050508; font-family: 'Syne', sans-serif;
 }}
-.nexus-note {{
+.aura-note {{
     background: #0c0c12;
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;
 }}
-.nexus-note-title {{ font-size: 12px; font-weight: 700; color: #f0f0f8; margin-bottom: 4px; }}
-.nexus-note-body {{ font-size: 11px; color: #9090a8; line-height: 1.6; }}
-.nexus-auth-card {{
+.aura-note-title {{ font-size: 12px; font-weight: 700; color: #f0f0f8; margin-bottom: 4px; }}
+.aura-note-body {{ font-size: 11px; color: #9090a8; line-height: 1.6; }}
+.aura-auth-card {{
     background: #0c0c12;
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 20px; padding: 2.5rem 2rem;
 }}
-.nexus-status-bar {{
+.aura-status-bar {{
     position: fixed; bottom: 0; left: 0; right: 0;
     height: 28px; background: #0c0c12;
     border-top: 1px solid rgba(255,255,255,0.06);
@@ -276,7 +275,7 @@ label[data-testid="stWidgetLabel"] p {{
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px; color: #6b6b80;
 }}
-.nexus-tag {{
+.aura-tag {{
     font-size: 10px; font-weight: 700;
     padding: 2px 8px; border-radius: 20px;
     font-family: 'JetBrains Mono', monospace; display: inline-block;
@@ -290,23 +289,23 @@ summary > div > p {{ font-size: 13px !important; font-weight: 600 !important; co
         padding-left: 1rem !important;
         padding-right: 1rem !important;
     }}
-    .nexus-metric {{
+    .aura-metric {{
         padding: 14px !important;
     }}
-    .nexus-metric-value {{
+    .aura-metric-value {{
         font-size: 22px !important;
     }}
-    .nexus-metric-label {{
+    .aura-metric-label {{
         font-size: 9px !important;
     }}
-    .nexus-bubble-ai, .nexus-bubble-user {{
+    .aura-bubble-ai, .aura-bubble-user {{
         max-width: 95% !important;
         font-size: 12px !important;
     }}
-    .nexus-task-title {{
+    .aura-task-title {{
         font-size: 12px !important;
     }}
-    .nexus-status-bar {{
+    .aura-status-bar {{
         padding: 0 12px !important;
         gap: 12px !important;
         font-size: 9px !important;
@@ -327,9 +326,9 @@ with st.sidebar:
                 background:linear-gradient(135deg,{active_color},#9b59ff);
                 display:flex;align-items:center;justify-content:center;
                 font-weight:900;font-size:14px;color:#050508;
-                font-family:Syne,sans-serif;flex-shrink:0;'>N</div>
+                font-family:Syne,sans-serif;flex-shrink:0;'>A</div>
             <span style='font-size:13px;font-weight:800;letter-spacing:0.1em;
-                color:{active_color};font-family:Syne,sans-serif;'>NEXUS AI</span>
+                color:{active_color};font-family:Syne,sans-serif;'>AURA</span>
         </div>
         <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
             font-family:JetBrains Mono,monospace;margin-bottom:8px;'>WORKSPACE THEME</div>
@@ -390,10 +389,10 @@ with st.sidebar:
 if st.session_state.nav in ["Login", "Register"]:
     _, col2, _ = st.columns([1, 1.5, 1])
     with col2:
-        st.markdown("<div class='nexus-auth-card'>", unsafe_allow_html=True)
+        st.markdown("<div class='aura-auth-card'>", unsafe_allow_html=True)
 
         if st.session_state.nav == "Register":
-            st.markdown(f"<h2 style='color:{active_color};margin-bottom:20px;font-family:Syne,sans-serif;'>Create Nexus ID</h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='color:{active_color};margin-bottom:20px;font-family:Syne,sans-serif;'>Create Your Aura</h2>", unsafe_allow_html=True)
             reg_name  = st.text_input("Identity Name", placeholder="John Doe")
             reg_email = st.text_input("Neural Email",  placeholder="name@nexus.ai")
             reg_pass  = st.text_input("Security Key",  type="password", placeholder="••••••••")
@@ -508,7 +507,7 @@ elif st.session_state.nav == "Dashboard":
     <div style='margin-bottom:16px;'>
         <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;
             letter-spacing:0.12em;margin-bottom:8px;'>
-            MASTER CONTROL · NEXUS AI · {datetime.now().strftime("%A, %b %d · %H:%M")}
+            AURA · PERSONAL AI · {datetime.now().strftime("%A, %b %d · %H:%M")}
         </div>
         <h1 style='font-size:26px;font-weight:800;letter-spacing:-0.02em;
             line-height:1;margin:0;color:#f0f0f8;font-family:Syne,sans-serif;'>
@@ -550,12 +549,12 @@ elif st.session_state.nav == "Dashboard":
     for col, label, value, sub, color in metric_data:
         with col:
             st.markdown(f"""
-            <div class='nexus-metric'>
-                <div class='nexus-metric-bar'
+            <div class='aura-metric'>
+                <div class='aura-metric-bar'
                     style='background:linear-gradient(90deg,{color},transparent);'></div>
-                <div class='nexus-metric-label'>{label}</div>
-                <div class='nexus-metric-value' style='color:{color};'>{value}</div>
-                <div class='nexus-metric-sub'>{sub}</div>
+                <div class='aura-metric-label'>{label}</div>
+                <div class='aura-metric-value' style='color:{color};'>{value}</div>
+                <div class='aura-metric-sub'>{sub}</div>
             </div>
             """, unsafe_allow_html=True)
 
@@ -628,7 +627,7 @@ elif st.session_state.nav == "Dashboard":
 
         # ── TASKS ──
         st.markdown(f"""
-        <div class='nexus-panel-header'>
+        <div class='aura-panel-header'>
             <div style='width:6px;height:6px;border-radius:50%;
                 background:{active_color};flex-shrink:0;'></div>
             Task Engine
@@ -659,17 +658,17 @@ elif st.session_state.nav == "Dashboard":
             priority  = getattr(t, "priority", "Medium") or "Medium"
             p_color   = {"High": "#ff4560", "Medium": "#ffb020", "Low": "#00d68f"}.get(priority, "#ffb020")
             st.markdown(f"""
-            <div class='nexus-task'>
+            <div class='aura-task'>
                 <div style='display:flex;align-items:center;justify-content:space-between;'>
                     <div>
-                        <div class='nexus-task-title'>{t.title}</div>
-                        <div class='nexus-task-desc'>{t.description or "No description"}</div>
+                        <div class='aura-task-title'>{t.title}</div>
+                        <div class='aura-task-desc'>{t.description or "No description"}</div>
                     </div>
                     <div style='display:flex;gap:6px;align-items:center;'>
-                        <span class='nexus-tag' style='background:{p_color}22;color:{p_color};'>
+                        <span class='aura-tag' style='background:{p_color}22;color:{p_color};'>
                             {priority.upper()}
                         </span>
-                        <span class='nexus-tag' style='background:{tag_color}22;color:{tag_color};'>
+                        <span class='aura-tag' style='background:{tag_color}22;color:{tag_color};'>
                             {tag_label}
                         </span>
                     </div>
@@ -695,9 +694,9 @@ elif st.session_state.nav == "Dashboard":
         if notes:
             for n in notes:
                 st.markdown(f"""
-                <div class='nexus-note'>
-                    <div class='nexus-note-title'>{n.title}</div>
-                    <div class='nexus-note-body'>{n.content or ""}</div>
+                <div class='aura-note'>
+                    <div class='aura-note-title'>{n.title}</div>
+                    <div class='aura-note-body'>{n.content or ""}</div>
                 </div>
                 """, unsafe_allow_html=True)
                 nd1, nd2, _ = st.columns([0.15, 0.15, 0.7])
@@ -787,7 +786,7 @@ elif st.session_state.nav == "Dashboard":
         if st.button("Export All Data", key="export_btn"):
             lines = []
             lines.append("=" * 50)
-            lines.append("NEXUS AI — WORKSPACE EXPORT")
+            lines.append("AURA — WORKSPACE EXPORT")
             lines.append(f"Exported: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
             lines.append("=" * 50)
 
@@ -828,7 +827,7 @@ elif st.session_state.nav == "Dashboard":
             st.download_button(
                 label="Download .txt",
                 data=export_text,
-                file_name=f"nexus_export_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
+                file_name=f"aura_export_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
                 mime="text/plain",
                 key="download_export"
             )
@@ -836,7 +835,7 @@ elif st.session_state.nav == "Dashboard":
     # ── CHAT ──
     with col_right:
         st.markdown(f"""
-        <div class='nexus-panel-header'>
+        <div class='aura-panel-header'>
             <div style='width:6px;height:6px;border-radius:50%;
                 background:#9b59ff;flex-shrink:0;'></div>
             Neural Chat
@@ -848,7 +847,7 @@ elif st.session_state.nav == "Dashboard":
         if "chat" not in st.session_state:
             st.session_state.chat = [{
                 "role": "assistant",
-                "content": "System initialized. Identity confirmed. How can I assist you, Commander?"
+                "content": "Aura online. How can I help you today?"
             }]
 
         chat_container = st.container(height=380)
@@ -856,17 +855,17 @@ elif st.session_state.nav == "Dashboard":
             for msg in st.session_state.chat:
                 if msg["role"] == "assistant":
                     st.markdown(f"""
-                    <div class='nexus-chat-ai'>
-                        <div class='nexus-av'>N</div>
-                        <div class='nexus-bubble-ai'>{msg['content']}</div>
+                    <div class='aura-chat-ai'>
+                        <div class='aura-av'>A</div>
+                        <div class='aura-bubble-ai'>{msg['content']}</div>
                     </div>
                     """, unsafe_allow_html=True)
                 else:
                     st.markdown(f"""
-                    <div class='nexus-chat-user'>
-                        <div class='nexus-av'
+                    <div class='aura-chat-user'>
+                        <div class='aura-av'
                             style='background:linear-gradient(135deg,#9b59ff,{active_color});'>U</div>
-                        <div class='nexus-bubble-user'>{msg['content']}</div>
+                        <div class='aura-bubble-user'>{msg['content']}</div>
                     </div>
                     """, unsafe_allow_html=True)
 
@@ -904,10 +903,10 @@ elif st.session_state.nav == "Dashboard":
 
     # STATUS BAR
     st.markdown(f"""
-    <div class='nexus-status-bar'>
+    <div class='aura-status-bar'>
         <span><span style='color:{active_color};'>●</span>&nbsp; AI ENGINE ONLINE</span>
         <span><span style='color:#00d68f;'>●</span>&nbsp; PBKDF2 AUTH</span>
         <span><span style='color:#9b59ff;'>●</span>&nbsp; SFACE VERIFIED</span>
-        <span style='margin-left:auto;'>NEXUS AI v2.0 &nbsp;·&nbsp; nexus-ai-0.streamlit.app</span>
+        <span style='margin-left:auto;'>AURA v1.0 &nbsp;·&nbsp; aura-ai.streamlit.app</span>
     </div>
     """, unsafe_allow_html=True)
