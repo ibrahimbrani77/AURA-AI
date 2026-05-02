@@ -370,8 +370,8 @@ with st.sidebar:
                 st.success("Profile saved!")
                 st.session_state.show_prefs = False
                 st.rerun()
-                
-             # ── PERSONALITY ──
+
+            # ── PERSONALITY ──
             st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:12px 0;'>", unsafe_allow_html=True)
             st.markdown("""
             <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
