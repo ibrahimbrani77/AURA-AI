@@ -370,27 +370,8 @@ with st.sidebar:
                 st.success("Profile saved!")
                 st.session_state.show_prefs = False
                 st.rerun()
-                if st.button("Edit Profile", key="toggle_prefs"):
-            st.session_state.show_prefs = not st.session_state.show_prefs
-
-        if st.session_state.show_prefs:
-            prefs = get_preferences(uid)
-            p_name  = st.text_input("Your Name",        value=prefs.get("name", ""),        key="p_name")
-            p_role  = st.text_input("Your Role",        value=prefs.get("role", ""),        key="p_role")
-            p_goals = st.text_input("Your Goals",       value=prefs.get("goals", ""),       key="p_goals")
-            p_prefs = st.text_input("Your Preferences", value=prefs.get("preferences", ""), key="p_prefs")
-            p_tz    = st.text_input("Your Timezone",    value=prefs.get("timezone", ""),    key="p_tz")
-            if st.button("Save Profile", key="save_prefs"):
-                if p_name:  save_preference(uid, "name",        p_name)
-                if p_role:  save_preference(uid, "role",        p_role)
-                if p_goals: save_preference(uid, "goals",       p_goals)
-                if p_prefs: save_preference(uid, "preferences", p_prefs)
-                if p_tz:    save_preference(uid, "timezone",    p_tz)
-                st.success("Profile saved!")
-                st.session_state.show_prefs = False
-                st.rerun()
-
-            # ── PERSONALITY ──
+                
+             # ── PERSONALITY ──
             st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:12px 0;'>", unsafe_allow_html=True)
             st.markdown("""
             <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
