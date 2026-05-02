@@ -111,6 +111,7 @@ details summary::-webkit-details-marker {{ display: none !important; }}
 section[data-testid="stSidebar"] {{
     background: #0c0c12 !important;
     border-right: 1px solid rgba(255,255,255,0.06) !important;
+    overflow-y: auto !important;
 }}
 section[data-testid="stSidebar"] * {{
     font-family: 'Syne', sans-serif !important;
