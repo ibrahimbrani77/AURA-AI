@@ -368,8 +368,6 @@ with st.sidebar:
                 if p_prefs: save_preference(uid, "preferences", p_prefs)
                 if p_tz:    save_preference(uid, "timezone",    p_tz)
                 st.success("Profile saved!")
-                st.session_state.show_prefs = False
-                st.rerun()
 
             # ── PERSONALITY ──
             st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:12px 0;'>", unsafe_allow_html=True)
