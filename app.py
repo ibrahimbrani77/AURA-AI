@@ -118,8 +118,7 @@ section[data-testid="stSidebar"] * {{
 }}
 .stSelectbox > div > div {{
     background: #12121a !important;
-    border: 1px solid rgba(255,255,255,0.08) !importa
-    nt;
+    border: 1px solid rgba(255,255,255,0.08) !important;
     color: #f0f0f8 !important;
     border-radius: 8px !important;
 }}
