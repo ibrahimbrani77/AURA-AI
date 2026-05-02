@@ -118,7 +118,8 @@ section[data-testid="stSidebar"] * {{
 }}
 .stSelectbox > div > div {{
     background: #12121a !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(255,255,255,0.08) !importa
+    nt;
     color: #f0f0f8 !important;
     border-radius: 8px !important;
 }}
@@ -370,47 +371,48 @@ with st.sidebar:
                 if p_tz:    save_preference(uid, "timezone",    p_tz)
                 st.success("Profile saved!")
 
-            # ── PERSONALITY ──
-            st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:12px 0;'>", unsafe_allow_html=True)
-            st.markdown("""
-            <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
-                font-family:JetBrains Mono,monospace;margin-bottom:8px;'>AURA PERSONALITY</div>
-            """, unsafe_allow_html=True)
+        # ── PERSONALITY (always visible) ──
+        st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:12px 0;'>", unsafe_allow_html=True)
+        st.markdown("""
+        <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
+            font-family:JetBrains Mono,monospace;margin-bottom:8px;'>AURA PERSONALITY</div>
+        """, unsafe_allow_html=True)
 
-            personality_options = ["Professional", "Friendly", "Mentor", "Sarcastic", "Minimalist", "Hype Coach", "Custom"]
-            saved_personality = prefs.get("personality", "Professional")
-            selected_personality = st.selectbox(
-                "Personality",
-                personality_options,
-                index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
-                key="personality_select",
-                label_visibility="collapsed"
-            )
+        _prefs_sidebar = get_preferences(uid)
+        personality_options = ["Professional", "Friendly", "Mentor", "Sarcastic", "Minimalist", "Hype Coach", "Custom"]
+        saved_personality = _prefs_sidebar.get("personality", "Professional")
+        selected_personality = st.selectbox(
+            "Personality",
+            personality_options,
+            index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
+            key="personality_select",
+            label_visibility="collapsed"
+        )
 
-            personality_defaults = {
-                "Professional": "Formal, precise, and concise. No casual language.",
-                "Friendly":     "Warm, encouraging, and conversational.",
-                "Mentor":       "Wise, patient, and guiding with thoughtful advice.",
-                "Sarcastic":    "Witty and sarcastic with dry humor, but still helpful.",
-                "Minimalist":   "Ultra-concise. Short answers, bullet points, no fluff.",
-                "Hype Coach":   "Energetic, motivating, and enthusiastic about everything!",
-                "Custom":       ""
-            }
+        personality_defaults = {
+            "Professional": "Formal, precise, and concise. No casual language.",
+            "Friendly":     "Warm, encouraging, and conversational.",
+            "Mentor":       "Wise, patient, and guiding with thoughtful advice.",
+            "Sarcastic":    "Witty and sarcastic with dry humor, but still helpful.",
+            "Minimalist":   "Ultra-concise. Short answers, bullet points, no fluff.",
+            "Hype Coach":   "Energetic, motivating, and enthusiastic about everything!",
+            "Custom":       ""
+        }
 
-            custom_desc = st.text_area(
-                "Personality Description",
-                value=prefs.get("custom_personality", personality_defaults.get(selected_personality, "")),
-                placeholder="Describe how Aura should behave...",
-                height=80,
-                key="custom_personality_input",
-                label_visibility="collapsed"
-            )
+        custom_desc = st.text_area(
+            "Personality Description",
+            value=_prefs_sidebar.get("custom_personality", personality_defaults.get(selected_personality, "")),
+            placeholder="Describe how Aura should behave...",
+            height=80,
+            key="custom_personality_input",
+            label_visibility="collapsed"
+        )
 
-            if st.button("Save Personality", key="save_personality"):
-                save_preference(uid, "personality", selected_personality)
-                save_preference(uid, "custom_personality", custom_desc)
-                st.success("Personality saved!")
-                st.rerun()
+        if st.button("Save Personality", key="save_personality"):
+            save_preference(uid, "personality", selected_personality)
+            save_preference(uid, "custom_personality", custom_desc)
+            st.success("Personality saved!")
+            st.rerun()
 
         st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:16px 0;'>", unsafe_allow_html=True)
 
