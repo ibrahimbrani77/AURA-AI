@@ -970,6 +970,7 @@ elif st.session_state.nav == "Dashboard":
             recognition.lang = 'en-US';
             recognition.interimResults = true;
             recognition.continuous = false;
+            recognition.speechRecognitionList = null;
 
             const btn = document.getElementById('voice-btn');
             const label = document.getElementById('voice-label');
@@ -1015,6 +1016,10 @@ elif st.session_state.nav == "Dashboard":
             }};
 
             recognition.start();
+            // Restart on no-speech to give more time
+            recognition.onnomatch = function() {{
+                status.innerHTML = '<span style="color:#ffb020;">⚠ Speak louder or closer to mic</span>';
+            }};
         }}
 
         function stopListening() {{
