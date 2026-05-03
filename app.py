@@ -886,25 +886,42 @@ elif st.session_state.nav == "Dashboard":
         if qc3.button("My Notes",   key="qc3"): quick_prompt = "Summarize all my notes and highlight the most important points."
         if qc4.button("Prioritize", key="qc4"): quick_prompt = "Based on my tasks and reminders, help me prioritize what to do today."
 
-# Voice input via browser
         # Voice input
-        from streamlit_mic_recorder import mic_recorder
-        audio = mic_recorder(
-            start_prompt="🎤 Speak to Aura",
-            stop_prompt="⏹ Stop & Send",
-            just_once=True,
-            use_container_width=True,
-            key="voice_input"
-        )
-        if audio and audio.get("bytes"):
-            from modules.voice import speech_to_text
-            with st.spinner("🎤 Transcribing..."):
-                voice_text = speech_to_text(audio["bytes"])
-            st.write(f"Debug: {voice_text}")
-            if voice_text and voice_text.strip():
-                st.session_state.chat.append({"role": "user", "content": voice_text})
-            elif audio.get("bytes"):
-                st.warning("Could not transcribe — please try again.")
+        audio = None
+        if st.session_state.get("voice_enabled", False):
+            from streamlit_mic_recorder import mic_recorder
+            audio = mic_recorder(
+                start_prompt="🎤 Speak to Aura",
+                stop_prompt="⏹ Stop & Send",
+                just_once=True,
+                use_container_width=True,
+                key="voice_input"
+            )
+            if audio and audio.get("bytes"):
+                from modules.voice import speech_to_text
+                with st.spinner("🎤 Transcribing..."):
+                    voice_text = speech_to_text(audio["bytes"])
+                st.write(f"Debug: {voice_text}")
+                if voice_text and voice_text.strip() and not voice_text.startswith("ERROR"):
+                    st.session_state.chat.append({"role": "user", "content": voice_text})
+                    user_context = build_user_context(uid)
+                    _personality_prefs = get_preferences(uid)
+                    response = get_ai_response(
+                        voice_text,
+                        chat_history=st.session_state.chat[:-1],
+                        user_context=user_context,
+                        tasks=tasks, notes=notes, reminders=reminders,
+                        personality=_personality_prefs.get("personality", "🎩 Professional"),
+                        custom_personality=_personality_prefs.get("custom_personality", "")
+                    )
+                    st.session_state.chat.append({"role": "assistant", "content": response})
+                    if st.session_state.get("voice_enabled", False):
+                        audio_b64 = text_to_speech(response)
+                        if audio_b64:
+                            st.session_state["last_audio"] = audio_b64
+                    st.rerun()
+                else:
+                    st.warning(f"Transcription failed: {voice_text}")
                 user_context = build_user_context(uid)
                 _personality_prefs = get_preferences(uid)
                 response = get_ai_response(
