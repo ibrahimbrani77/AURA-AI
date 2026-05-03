@@ -901,7 +901,7 @@ elif st.session_state.nav == "Dashboard":
                 from modules.voice import speech_to_text
                 with st.spinner("🎤 Transcribing..."):
                     voice_text = speech_to_text(audio["bytes"])
-                st.write(f"Debug: {voice_text}")
+                st.write(f"Debug: audio={len(audio['bytes'])} bytes, text='{voice_text}'")
                 if voice_text and voice_text.strip() and not voice_text.startswith("ERROR"):
                     st.session_state.chat.append({"role": "user", "content": voice_text})
                     user_context = build_user_context(uid)
