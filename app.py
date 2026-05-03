@@ -861,7 +861,7 @@ elif st.session_state.nav == "Dashboard":
                         <div class='aura-av' style='background:linear-gradient(135deg,#9b59ff,{active_color});'>U</div>
                         <div class='aura-bubble-user'>{msg['content']}</div>
                     </div>""", unsafe_allow_html=True)
-# Voice controls
+# ── VOICE OUTPUT (works) ──
         vc1, vc2 = st.columns([1, 3])
         with vc1:
             voice_on = st.toggle("🔊 Voice", value=st.session_state.get("voice_enabled", False), key="voice_toggle")
@@ -870,10 +870,35 @@ elif st.session_state.nav == "Dashboard":
         if "last_audio" in st.session_state and st.session_state["voice_enabled"]:
             audio_b64 = st.session_state["last_audio"]
             st.markdown(f"""
-            <audio autoplay style='width:100%;margin-bottom:8px;'>
+            <audio autoplay style='width:100%;margin-bottom:4px;'>
                 <source src='data:audio/mp3;base64,{audio_b64}' type='audio/mp3'>
             </audio>
             """, unsafe_allow_html=True)
+
+        # ── VOICE INPUT (coming soon) ──
+        st.markdown(f"""
+        <div style='display:flex;align-items:center;gap:10px;margin-bottom:8px;'>
+            <button disabled style='
+                flex:1;padding:10px;border-radius:10px;
+                background:#12121a;border:2px solid #3a3a4a;
+                color:#6b6b80;font-weight:700;font-size:12px;
+                cursor:not-allowed;letter-spacing:0.08em;'>
+                🎤 SPEAK TO AURA
+            </button>
+            <span style='
+                font-size:9px;font-weight:700;letter-spacing:0.1em;
+                background:#ffb02022;border:1px solid #ffb02066;
+                color:#ffb020;border-radius:6px;padding:4px 8px;
+                font-family:JetBrains Mono,monospace;white-space:nowrap;'>
+                CLOUD SOON
+            </span>
+        </div>
+        <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+            margin-bottom:8px;'>
+            Voice input available on desktop · 🔊 Voice output active
+        </div>
+        """, unsafe_allow_html=True)
+
         st.markdown("""<div style='font-size:10px;font-weight:600;letter-spacing:0.14em;
             color:#6b6b80;text-transform:uppercase;
             font-family:JetBrains Mono,monospace;margin-bottom:8px;margin-top:8px;'>
@@ -888,7 +913,8 @@ elif st.session_state.nav == "Dashboard":
 
         if st.session_state.get("voice_enabled", False):
             audio_input = st.audio_input("🎤 Click to record, click again to stop", key="voice_recorder")
-            if audio_input is not None:
+            if audio_input is not None and audio_input != st.session_state.get("last_audio_input"):
+                st.session_state["last_audio_input"] = audio_input
                 from modules.voice import speech_to_text
                 with st.spinner("Transcribing..."):
                     voice_text = speech_to_text(audio_input.read())
