@@ -888,38 +888,142 @@ elif st.session_state.nav == "Dashboard":
 
 # Voice input via browser
         st.markdown(f"""
-        <div style='margin-bottom:8px;'>
-        <button onclick="startVoiceInput()" style='
-            background:{glow_color};border:1px solid {active_color}44;
-            color:{active_color};border-radius:8px;padding:6px 14px;
-            font-size:11px;font-weight:600;cursor:pointer;
-            font-family:Syne,sans-serif;letter-spacing:0.08em;'>
-            🎤 SPEAK TO AURA
-        </button>
+        <style>
+        @keyframes pulse-ring {{
+            0% {{ box-shadow: 0 0 0 0 {active_color}66; }}
+            70% {{ box-shadow: 0 0 0 12px {active_color}00; }}
+            100% {{ box-shadow: 0 0 0 0 {active_color}00; }}
+        }}
+        @keyframes pulse-ring-red {{
+            0% {{ box-shadow: 0 0 0 0 #ff456066; }}
+            70% {{ box-shadow: 0 0 0 12px #ff456000; }}
+            100% {{ box-shadow: 0 0 0 0 #ff456000; }}
+        }}
+        #voice-btn {{
+            background: {glow_color};
+            border: 1px solid {active_color}44;
+            color: {active_color};
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: Syne, sans-serif;
+            letter-spacing: 0.08em;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }}
+        #voice-btn.listening {{
+            background: #ff456022;
+            border-color: #ff456088;
+            color: #ff4560;
+            animation: pulse-ring-red 1s infinite;
+        }}
+        #voice-status {{
+            font-size: 10px;
+            font-family: JetBrains Mono, monospace;
+            letter-spacing: 0.1em;
+            margin-left: 8px;
+            vertical-align: middle;
+        }}
+        </style>
+
+        <div style='margin-bottom:8px;display:flex;align-items:center;'>
+            <button id="voice-btn" onclick="toggleVoiceInput()">
+                <span id="mic-icon">🎤</span>
+                <span id="voice-label">SPEAK TO AURA</span>
+            </button>
+            <span id="voice-status" style='color:#6b6b80;'></span>
         </div>
+
         <script>
-        function startVoiceInput() {{
+        let recognition = null;
+        let isListening = false;
+
+        function toggleVoiceInput() {{
+            if (isListening) {{
+                stopListening();
+            }} else {{
+                startListening();
+            }}
+        }}
+
+        function startListening() {{
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {{
-                alert('Voice input not supported in this browser. Try Chrome.');
+                alert('Voice input not supported. Please use Chrome.');
                 return;
             }}
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             recognition.lang = 'en-US';
-            recognition.interimResults = false;
+            recognition.interimResults = true;
             recognition.maxAlternatives = 1;
-            recognition.start();
+
+            const btn = document.getElementById('voice-btn');
+            const label = document.getElementById('voice-label');
+            const icon = document.getElementById('mic-icon');
+            const status = document.getElementById('voice-status');
+
+            btn.classList.add('listening');
+            icon.textContent = '⏹';
+            label.textContent = 'STOP';
+            status.style.color = '#ff4560';
+            status.textContent = '● LISTENING...';
+            isListening = true;
+
             recognition.onresult = function(event) {{
-                const transcript = event.results[0][0].transcript;
-                const chatInput = document.querySelector('textarea[data-testid="stChatInputTextArea"]');
-                if (chatInput) {{
-                    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
-                    nativeInputValueSetter.call(chatInput, transcript);
-                    chatInput.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                let interim = '';
+                let final = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {{
+                    if (event.results[i].isFinal) {{
+                        final += event.results[i][0].transcript;
+                    }} else {{
+                        interim += event.results[i][0].transcript;
+                    }}
+                }}
+                if (interim) {{
+                    status.textContent = '● ' + interim;
+                }}
+                if (final) {{
+                    const chatInput = document.querySelector('textarea[data-testid="stChatInputTextArea"]');
+                    if (chatInput) {{
+                        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                        nativeInputValueSetter.call(chatInput, final);
+                        chatInput.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                    }}
+                    stopListening();
+                    status.style.color = '{active_color}';
+                    status.textContent = '✔ GOT IT';
+                    setTimeout(() => {{ status.textContent = ''; status.style.color = '#6b6b80'; }}, 2000);
                 }}
             }};
+
             recognition.onerror = function(event) {{
-                console.log('Voice error:', event.error);
+                stopListening();
+                status.style.color = '#ff4560';
+                status.textContent = '✕ ERROR: ' + event.error;
+                setTimeout(() => {{ status.textContent = ''; }}, 3000);
             }};
+
+            recognition.onend = function() {{
+                if (isListening) stopListening();
+            }};
+
+            recognition.start();
+        }}
+
+        function stopListening() {{
+            if (recognition) recognition.stop();
+            isListening = false;
+            const btn = document.getElementById('voice-btn');
+            const label = document.getElementById('voice-label');
+            const icon = document.getElementById('mic-icon');
+            btn.classList.remove('listening');
+            icon.textContent = '🎤';
+            label.textContent = 'SPEAK TO AURA';
         }}
         </script>
         """, unsafe_allow_html=True)
