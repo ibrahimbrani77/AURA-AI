@@ -887,151 +887,34 @@ elif st.session_state.nav == "Dashboard":
         if qc4.button("Prioritize", key="qc4"): quick_prompt = "Based on my tasks and reminders, help me prioritize what to do today."
 
 # Voice input via browser
-        import streamlit.components.v1 as components
-        st.components.v1.html(f"""
-        <style>
-        @keyframes pulse-ring-red {{
-            0% {{ box-shadow: 0 0 0 0 #ff456066; }}
-            70% {{ box-shadow: 0 0 0 14px #ff456000; }}
-            100% {{ box-shadow: 0 0 0 0 #ff456000; }}
-        }}
-        body {{ margin:0; background:transparent; }}
-        #voice-btn {{
-            background: {glow_color};
-            border: 2px solid {active_color};
-            color: {active_color};
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: Syne, sans-serif;
-            letter-spacing: 0.08em;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            justify-content: center;
-        }}
-        #voice-btn:hover {{ background: {active_color}33; transform: scale(1.02); }}
-        #voice-btn.listening {{
-            background: #ff456033;
-            border: 2px solid #ff4560;
-            color: #ff4560;
-            animation: pulse-ring-red 1s infinite;
-        }}
-        #voice-status {{
-            font-size: 11px;
-            font-family: monospace;
-            letter-spacing: 0.1em;
-            margin-top: 6px;
-            text-align: center;
-            min-height: 18px;
-            color: #6b6b80;
-        }}
-        #transcript-preview {{
-            font-size: 12px;
-            font-family: monospace;
-            color: {active_color};
-            margin-top: 4px;
-            text-align: center;
-            min-height: 18px;
-            font-style: italic;
-        }}
-        </style>
-
-        <button id="voice-btn" onclick="toggleVoice()">
-            <span id="mic-icon">🎤</span>
-            <span id="voice-label">SPEAK TO AURA</span>
-        </button>
-        <div id="voice-status"></div>
-        <div id="transcript-preview"></div>
-
-        <script>
-        let recognition = null;
-        let isListening = false;
-
-        function toggleVoice() {{
-            if (isListening) {{
-                stopListening();
-            }} else {{
-                startListening();
-            }}
-        }}
-
-        function startListening() {{
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {{
-                document.getElementById('voice-status').innerHTML = '<span style="color:#ff4560;">✕ Use Chrome for voice input</span>';
-                return;
-            }}
-
-            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'en-US';
-            recognition.interimResults = true;
-            recognition.continuous = false;
-            recognition.speechRecognitionList = null;
-
-            const btn = document.getElementById('voice-btn');
-            const label = document.getElementById('voice-label');
-            const icon = document.getElementById('mic-icon');
-            const status = document.getElementById('voice-status');
-            const preview = document.getElementById('transcript-preview');
-
-            btn.classList.add('listening');
-            icon.textContent = '⏹';
-            label.textContent = 'TAP TO STOP';
-            status.innerHTML = '<span style="color:#ff4560;">● LISTENING — speak now...</span>';
-            isListening = true;
-
-            recognition.onresult = function(event) {{
-                let interim = '';
-                let final = '';
-                for (let i = event.resultIndex; i < event.results.length; i++) {{
-                    if (event.results[i].isFinal) {{
-                        final += event.results[i][0].transcript;
-                    }} else {{
-                        interim += event.results[i][0].transcript;
-                    }}
-                }}
-                if (interim) preview.textContent = '"' + interim + '"';
-                if (final) {{
-                    preview.textContent = '"' + final + '"';
-                    // Send to parent Streamlit window
-                    window.parent.postMessage({{type: 'voice_transcript', text: final}}, '*');
-                    stopListening();
-                    status.innerHTML = '<span style="color:{active_color};">✔ Captured — sending to Aura...</span>';
-                    setTimeout(() => {{ status.textContent = ''; preview.textContent = ''; }}, 3000);
-                }}
-            }};
-
-            recognition.onerror = function(event) {{
-                stopListening();
-                status.innerHTML = '<span style="color:#ff4560;">✕ ' + event.error + ' — check mic permissions</span>';
-                setTimeout(() => {{ status.textContent = ''; }}, 4000);
-            }};
-
-            recognition.onend = function() {{
-                if (isListening) stopListening();
-            }};
-
-            recognition.start();
-            // Restart on no-speech to give more time
-            recognition.onnomatch = function() {{
-                status.innerHTML = '<span style="color:#ffb020;">⚠ Speak louder or closer to mic</span>';
-            }};
-        }}
-
-        function stopListening() {{
-            if (recognition) recognition.stop();
-            isListening = false;
-            const btn = document.getElementById('voice-btn');
-            btn.classList.remove('listening');
-            document.getElementById('mic-icon').textContent = '🎤';
-            document.getElementById('voice-label').textContent = 'SPEAK TO AURA';
-        }}
-        </script>
-        """, height=100)
+        # Voice input
+        from streamlit_mic_recorder import mic_recorder
+        audio = mic_recorder(
+            start_prompt="🎤 Speak to Aura",
+            stop_prompt="⏹ Stop & Send",
+            just_once=True,
+            use_container_width=True,
+            key="voice_input"
+        )
+        if audio and audio.get("text"):
+            voice_text = audio["text"]
+            st.session_state.chat.append({"role": "user", "content": voice_text})
+            user_context = build_user_context(uid)
+            _personality_prefs = get_preferences(uid)
+            response = get_ai_response(
+                voice_text,
+                chat_history=st.session_state.chat[:-1],
+                user_context=user_context,
+                tasks=tasks, notes=notes, reminders=reminders,
+                personality=_personality_prefs.get("personality", "🎩 Professional"),
+                custom_personality=_personality_prefs.get("custom_personality", "")
+            )
+            st.session_state.chat.append({"role": "assistant", "content": response})
+            if st.session_state.get("voice_enabled", False):
+                audio_b64 = text_to_speech(response)
+                if audio_b64:
+                    st.session_state["last_audio"] = audio_b64
+            st.rerun()
       
         prompt = st.chat_input("Message Aura...", key="main_chat")
         final_prompt = prompt or quick_prompt
