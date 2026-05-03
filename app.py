@@ -266,7 +266,7 @@ if st.session_state.nav == "Dashboard" and uid:
             _prefs_sidebar = {}
 
         personality_options = ["🎩 Professional", "😊 Friendly", "🧙 Mentor", "😏 Sarcastic", "⚡ Minimalist", "🔥 Hype Coach", "✨ Custom"]
-        saved_personality = _prefs_sidebar.get("personality", "Professional")
+        saved_personality = _prefs_sidebar.get("personality", "🎩 Professional")
         selected_personality = st.selectbox(
             "Personality", personality_options,
             index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
@@ -303,7 +303,6 @@ if st.session_state.nav == "Dashboard" and uid:
 # =========================
 if st.session_state.nav == "Home":
 
-    # Navbar
     n1, n2, n3 = st.columns([1, 4, 1])
     with n1:
         st.markdown(f"""
@@ -323,9 +322,8 @@ if st.session_state.nav == "Home":
         if nb2.button("Sign Up", key="nav_register"):
             redirect("Register")
 
-    st.markdown(f"<hr style='border-color:rgba(255,255,255,0.06);margin:0 0 0;'>", unsafe_allow_html=True)
+    st.markdown(f"<hr style='border-color:rgba(255,255,255,0.06);margin:0;'>", unsafe_allow_html=True)
 
-    # Hero
     st.markdown(f"""
     <div style='text-align:center;padding:80px 20px 50px;position:relative;overflow:hidden;'>
         <div style='position:absolute;top:0;left:50%;transform:translateX(-50%);
@@ -367,7 +365,6 @@ if st.session_state.nav == "Home":
 
     st.markdown("<div style='height:60px;'></div>", unsafe_allow_html=True)
 
-    # Features
     st.markdown(f"""
     <div style='text-align:center;margin-bottom:40px;'>
         <div style='font-size:10px;font-weight:600;letter-spacing:0.2em;color:#6b6b80;
@@ -414,7 +411,25 @@ if st.session_state.nav == "Home":
             </div>
             """, unsafe_allow_html=True)
 
-    # Bottom CTA
+    f7, f8, f9 = st.columns(3)
+    for col, icon, title, color, desc, badge in [
+        (f7, "🔊", "Voice Output", "#a78bfa", "Toggle voice mode and Aura will read her responses back to you out loud using natural text-to-speech.", None),
+        (f8, "🎤", "Voice Input", "#ffb020", "Speak to Aura instead of typing. Full speech-to-text pipeline built and ready — coming to cloud soon.", "COMING SOON"),
+        (f9, "📊", "Smart Export", "#00d68f", "Export all your tasks, notes, and reminders as a clean .txt file with one click.", None),
+    ]:
+        with col:
+            st.markdown(f"""
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+                <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                    background:linear-gradient(90deg,{color},transparent);'></div>
+                {'<div style="position:absolute;top:16px;right:16px;font-size:9px;font-weight:700;letter-spacing:0.1em;background:#ffb02022;border:1px solid #ffb02066;color:#ffb020;border-radius:6px;padding:3px 8px;font-family:JetBrains Mono,monospace;">' + badge + '</div>' if badge else ''}
+                <div style='font-size:36px;margin-bottom:16px;'>{icon}</div>
+                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>{title}</h3>
+                <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>{desc}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
     st.markdown(f"""
     <div style='text-align:center;padding:60px 20px;
         border-top:1px solid rgba(255,255,255,0.06);margin-top:20px;'>
@@ -690,9 +705,9 @@ elif st.session_state.nav == "Dashboard":
             st.session_state.show_add_task = not st.session_state.show_add_task
         if st.session_state.show_add_task:
             st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:12px;'>", unsafe_allow_html=True)
-            t_title    = st.text_input("Task Title",   placeholder="e.g. Fix login bug")
-            t_desc     = st.text_area("Description",   placeholder="Describe the task...")
-            t_priority = st.select_slider("Priority",  options=["Low", "Medium", "High"], value="Medium")
+            t_title    = st.text_input("Task Title",  placeholder="e.g. Fix login bug")
+            t_desc     = st.text_area("Description",  placeholder="Describe the task...")
+            t_priority = st.select_slider("Priority", options=["Low", "Medium", "High"], value="Medium")
             if st.button("Confirm Deployment"):
                 if t_title:
                     create_task(t_title, t_desc, uid, t_priority)
@@ -861,7 +876,8 @@ elif st.session_state.nav == "Dashboard":
                         <div class='aura-av' style='background:linear-gradient(135deg,#9b59ff,{active_color});'>U</div>
                         <div class='aura-bubble-user'>{msg['content']}</div>
                     </div>""", unsafe_allow_html=True)
-# ── VOICE OUTPUT (works) ──
+
+        # ── VOICE OUTPUT ──
         vc1, vc2 = st.columns([1, 3])
         with vc1:
             voice_on = st.toggle("🔊 Voice", value=st.session_state.get("voice_enabled", False), key="voice_toggle")
@@ -911,8 +927,6 @@ elif st.session_state.nav == "Dashboard":
         if qc3.button("My Notes",   key="qc3"): quick_prompt = "Summarize all my notes and highlight the most important points."
         if qc4.button("Prioritize", key="qc4"): quick_prompt = "Based on my tasks and reminders, help me prioritize what to do today."
 
-       
-      
         prompt = st.chat_input("Message Aura...", key="main_chat")
         final_prompt = prompt or quick_prompt
         if final_prompt:
