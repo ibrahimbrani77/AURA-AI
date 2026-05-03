@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+from modules.voice import text_to_speech
 from datetime import datetime
 from modules.reminders import create_reminder, get_reminders, complete_reminder, delete_reminder, get_overdue_reminders
 from modules.personalization import save_preference, get_preferences, build_user_context
@@ -860,7 +861,19 @@ elif st.session_state.nav == "Dashboard":
                         <div class='aura-av' style='background:linear-gradient(135deg,#9b59ff,{active_color});'>U</div>
                         <div class='aura-bubble-user'>{msg['content']}</div>
                     </div>""", unsafe_allow_html=True)
+# Voice controls
+        vc1, vc2 = st.columns([1, 3])
+        with vc1:
+            voice_on = st.toggle("🔊 Voice", value=st.session_state.get("voice_enabled", False), key="voice_toggle")
+            st.session_state["voice_enabled"] = voice_on
 
+        if "last_audio" in st.session_state and st.session_state["voice_enabled"]:
+            audio_b64 = st.session_state["last_audio"]
+            st.markdown(f"""
+            <audio autoplay style='width:100%;margin-bottom:8px;'>
+                <source src='data:audio/mp3;base64,{audio_b64}' type='audio/mp3'>
+            </audio>
+            """, unsafe_allow_html=True)
         st.markdown("""<div style='font-size:10px;font-weight:600;letter-spacing:0.14em;
             color:#6b6b80;text-transform:uppercase;
             font-family:JetBrains Mono,monospace;margin-bottom:8px;margin-top:8px;'>
@@ -873,6 +886,43 @@ elif st.session_state.nav == "Dashboard":
         if qc3.button("My Notes",   key="qc3"): quick_prompt = "Summarize all my notes and highlight the most important points."
         if qc4.button("Prioritize", key="qc4"): quick_prompt = "Based on my tasks and reminders, help me prioritize what to do today."
 
+# Voice input via browser
+        st.markdown(f"""
+        <div style='margin-bottom:8px;'>
+        <button onclick="startVoiceInput()" style='
+            background:{glow_color};border:1px solid {active_color}44;
+            color:{active_color};border-radius:8px;padding:6px 14px;
+            font-size:11px;font-weight:600;cursor:pointer;
+            font-family:Syne,sans-serif;letter-spacing:0.08em;'>
+            🎤 SPEAK TO AURA
+        </button>
+        </div>
+        <script>
+        function startVoiceInput() {{
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {{
+                alert('Voice input not supported in this browser. Try Chrome.');
+                return;
+            }}
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            recognition.start();
+            recognition.onresult = function(event) {{
+                const transcript = event.results[0][0].transcript;
+                const chatInput = document.querySelector('textarea[data-testid="stChatInputTextArea"]');
+                if (chatInput) {{
+                    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                    nativeInputValueSetter.call(chatInput, transcript);
+                    chatInput.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                }}
+            }};
+            recognition.onerror = function(event) {{
+                console.log('Voice error:', event.error);
+            }};
+        }}
+        </script>
+        """, unsafe_allow_html=True)
         prompt = st.chat_input("Message Aura...", key="main_chat")
         final_prompt = prompt or quick_prompt
         if final_prompt:
@@ -888,6 +938,10 @@ elif st.session_state.nav == "Dashboard":
                 custom_personality=_personality_prefs.get("custom_personality", "")
             )
             st.session_state.chat.append({"role": "assistant", "content": response})
+            if st.session_state.get("voice_enabled", False):
+                audio_b64 = text_to_speech(response)
+                if audio_b64:
+                    st.session_state["last_audio"] = audio_b64
             st.rerun()
 
     st.markdown(f"""
