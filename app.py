@@ -898,10 +898,12 @@ elif st.session_state.nav == "Dashboard":
         )
         if audio and audio.get("bytes"):
             from modules.voice import speech_to_text
-            with st.spinner("🎤 Transcribing..."):
+            with st.spinner("🎤 Transcribing your voice..."):
                 voice_text = speech_to_text(audio["bytes"])
-            if voice_text:
+            if voice_text and voice_text.strip():
                 st.session_state.chat.append({"role": "user", "content": voice_text})
+            elif audio.get("bytes"):
+                st.warning("Could not transcribe — please try again.")
                 user_context = build_user_context(uid)
                 _personality_prefs = get_preferences(uid)
                 response = get_ai_response(

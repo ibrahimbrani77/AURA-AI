@@ -33,7 +33,7 @@ def get_ai_response(prompt, chat_history=None, user_context="", tasks=None, note
     if personality == "Custom" and custom_personality:
         personality_desc = custom_personality
     else:
-        personality_desc = PERSONALITIES.get(personality, PERSONALITIES["Professional"])
+        personality_desc = PERSONALITIES.get(personality, list(PERSONALITIES.values())[0])
 
     task_list     = "\n".join([f"- [{getattr(t,'priority','Medium')}] {t.title} ({t.status})" for t in tasks]) or "No tasks."
     note_list     = "\n".join([f"- {n.title}: {n.content or ''}" for n in notes]) or "No notes."
