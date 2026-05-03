@@ -412,35 +412,28 @@ if st.session_state.nav == "Home":
             """, unsafe_allow_html=True)
 
     f7, f8, f9 = st.columns(3)
-    for col, icon, title, color, desc, badge in [
-        (f7, "🔊", "Voice Output", "#a78bfa", "Toggle voice mode and Aura will read her responses back to you out loud using natural text-to-speech.", None),
-        (f8, "🎤", "Voice Input", "#ffb020", "Speak to Aura instead of typing. Full speech-to-text pipeline built and ready — coming to cloud soon.", "COMING SOON"),
-        (f9, "📊", "Smart Export", "#00d68f", "Export all your tasks, notes, and reminders as a clean .txt file with one click.", None),
-    ]:
+    features3 = [
+        (f7, "🔊", "Voice Output", "#a78bfa", "Toggle voice mode and Aura will read her responses back to you out loud using natural text-to-speech.", ""),
+        (f8, "🎤", "Voice Input",  "#ffb020", "Speak to Aura instead of typing. Full speech-to-text pipeline built and ready — coming to cloud soon.", "COMING SOON"),
+        (f9, "📊", "Smart Export", "#00d68f", "Export all your tasks, notes, and reminders as a clean .txt file with one click.", ""),
+    ]
+    for col, icon, title, color, desc, badge in features3:
         with col:
+            badge_html = f"""<div style='position:absolute;top:16px;right:16px;font-size:9px;
+                font-weight:700;letter-spacing:0.1em;background:#ffb02022;
+                border:1px solid #ffb02066;color:#ffb020;border-radius:6px;
+                padding:3px 8px;font-family:JetBrains Mono,monospace;'>{badge}</div>""" if badge else ""
             st.markdown(f"""
             <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
                 border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
                 <div style='position:absolute;top:0;left:0;right:0;height:2px;
                     background:linear-gradient(90deg,{color},transparent);'></div>
-                {'<div style="position:absolute;top:16px;right:16px;font-size:9px;font-weight:700;letter-spacing:0.1em;background:#ffb02022;border:1px solid #ffb02066;color:#ffb020;border-radius:6px;padding:3px 8px;font-family:JetBrains Mono,monospace;">' + badge + '</div>' if badge else ''}
+                {badge_html}
                 <div style='font-size:36px;margin-bottom:16px;'>{icon}</div>
                 <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>{title}</h3>
                 <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>{desc}</p>
             </div>
             """, unsafe_allow_html=True)
-
-    st.markdown(f"""
-    <div style='text-align:center;padding:60px 20px;
-        border-top:1px solid rgba(255,255,255,0.06);margin-top:20px;'>
-        <h2 style='font-size:40px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0 0 16px;'>
-            Ready to meet your Aura?
-        </h2>
-        <p style='font-size:16px;color:#9090a8;margin:0 0 40px;'>
-            Free to use. Takes 30 seconds to set up.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
 
     c1, c2, c3 = st.columns([2, 1, 2])
     with c2:
