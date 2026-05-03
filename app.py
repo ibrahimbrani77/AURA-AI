@@ -887,18 +887,15 @@ elif st.session_state.nav == "Dashboard":
         if qc4.button("Prioritize", key="qc4"): quick_prompt = "Based on my tasks and reminders, help me prioritize what to do today."
 
 # Voice input via browser
-        st.markdown(f"""
+        import streamlit.components.v1 as components
+        components.html(f"""
         <style>
-        @keyframes pulse-ring {{
-            0% {{ box-shadow: 0 0 0 0 {active_color}66; }}
-            70% {{ box-shadow: 0 0 0 12px {active_color}00; }}
-            100% {{ box-shadow: 0 0 0 0 {active_color}00; }}
-        }}
         @keyframes pulse-ring-red {{
             0% {{ box-shadow: 0 0 0 0 #ff456066; }}
-            70% {{ box-shadow: 0 0 0 12px #ff456000; }}
+            70% {{ box-shadow: 0 0 0 14px #ff456000; }}
             100% {{ box-shadow: 0 0 0 0 #ff456000; }}
         }}
+        body {{ margin:0; background:transparent; }}
         #voice-btn {{
             background: {glow_color};
             border: 2px solid {active_color};
@@ -914,35 +911,48 @@ elif st.session_state.nav == "Dashboard":
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
             width: 100%;
             justify-content: center;
         }}
-        #voice-btn:hover {{
-            background: {active_color}33;
-            transform: scale(1.02);
-        }}
+        #voice-btn:hover {{ background: {active_color}33; transform: scale(1.02); }}
         #voice-btn.listening {{
             background: #ff456033;
             border: 2px solid #ff4560;
             color: #ff4560;
             animation: pulse-ring-red 1s infinite;
         }}
+        #voice-status {{
+            font-size: 11px;
+            font-family: monospace;
+            letter-spacing: 0.1em;
+            margin-top: 6px;
+            text-align: center;
+            min-height: 18px;
+            color: #6b6b80;
+        }}
+        #transcript-preview {{
+            font-size: 12px;
+            font-family: monospace;
+            color: {active_color};
+            margin-top: 4px;
+            text-align: center;
+            min-height: 18px;
+            font-style: italic;
+        }}
         </style>
 
-        <div style='margin-bottom:8px;display:flex;align-items:center;'>
-            <button id="voice-btn" onclick="toggleVoiceInput()">
-                <span id="mic-icon">🎤</span>
-                <span id="voice-label">SPEAK TO AURA</span>
-            </button>
-            <span id="voice-status" style='color:#6b6b80;'></span>
-        </div>
+        <button id="voice-btn" onclick="toggleVoice()">
+            <span id="mic-icon">🎤</span>
+            <span id="voice-label">SPEAK TO AURA</span>
+        </button>
+        <div id="voice-status"></div>
+        <div id="transcript-preview"></div>
 
         <script>
         let recognition = null;
         let isListening = false;
 
-        function toggleVoiceInput() {{
+        function toggleVoice() {{
             if (isListening) {{
                 stopListening();
             }} else {{
@@ -952,25 +962,25 @@ elif st.session_state.nav == "Dashboard":
 
         function startListening() {{
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {{
-                alert('Voice input not supported. Please use Chrome.');
+                document.getElementById('voice-status').innerHTML = '<span style="color:#ff4560;">✕ Use Chrome for voice input</span>';
                 return;
             }}
 
             recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             recognition.lang = 'en-US';
             recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
+            recognition.continuous = false;
 
             const btn = document.getElementById('voice-btn');
             const label = document.getElementById('voice-label');
             const icon = document.getElementById('mic-icon');
             const status = document.getElementById('voice-status');
+            const preview = document.getElementById('transcript-preview');
 
             btn.classList.add('listening');
             icon.textContent = '⏹';
-            label.textContent = 'STOP';
-            status.style.color = '#ff4560';
-            status.textContent = '● LISTENING...';
+            label.textContent = 'TAP TO STOP';
+            status.innerHTML = '<span style="color:#ff4560;">● LISTENING — speak now...</span>';
             isListening = true;
 
             recognition.onresult = function(event) {{
@@ -983,28 +993,21 @@ elif st.session_state.nav == "Dashboard":
                         interim += event.results[i][0].transcript;
                     }}
                 }}
-                if (interim) {{
-                    status.textContent = '● ' + interim;
-                }}
+                if (interim) preview.textContent = '"' + interim + '"';
                 if (final) {{
-                    const chatInput = document.querySelector('textarea[data-testid="stChatInputTextArea"]');
-                    if (chatInput) {{
-                        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
-                        nativeInputValueSetter.call(chatInput, final);
-                        chatInput.dispatchEvent(new Event('input', {{ bubbles: true }}));
-                    }}
+                    preview.textContent = '"' + final + '"';
+                    // Send to parent Streamlit window
+                    window.parent.postMessage({{type: 'voice_transcript', text: final}}, '*');
                     stopListening();
-                    status.style.color = '{active_color}';
-                    status.textContent = '✔ GOT IT';
-                    setTimeout(() => {{ status.textContent = ''; status.style.color = '#6b6b80'; }}, 2000);
+                    status.innerHTML = '<span style="color:{active_color};">✔ Captured — sending to Aura...</span>';
+                    setTimeout(() => {{ status.textContent = ''; preview.textContent = ''; }}, 3000);
                 }}
             }};
 
             recognition.onerror = function(event) {{
                 stopListening();
-                status.style.color = '#ff4560';
-                status.textContent = '✕ ERROR: ' + event.error;
-                setTimeout(() => {{ status.textContent = ''; }}, 3000);
+                status.innerHTML = '<span style="color:#ff4560;">✕ ' + event.error + ' — check mic permissions</span>';
+                setTimeout(() => {{ status.textContent = ''; }}, 4000);
             }};
 
             recognition.onend = function() {{
@@ -1018,14 +1021,13 @@ elif st.session_state.nav == "Dashboard":
             if (recognition) recognition.stop();
             isListening = false;
             const btn = document.getElementById('voice-btn');
-            const label = document.getElementById('voice-label');
-            const icon = document.getElementById('mic-icon');
             btn.classList.remove('listening');
-            icon.textContent = '🎤';
-            label.textContent = 'SPEAK TO AURA';
+            document.getElementById('mic-icon').textContent = '🎤';
+            document.getElementById('voice-label').textContent = 'SPEAK TO AURA';
         }}
         </script>
-        """, unsafe_allow_html=True)
+        """, height=100)
+      
         prompt = st.chat_input("Message Aura...", key="main_chat")
         final_prompt = prompt or quick_prompt
         if final_prompt:
