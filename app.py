@@ -887,57 +887,64 @@ elif st.session_state.nav == "Dashboard":
         if qc4.button("Prioritize", key="qc4"): quick_prompt = "Based on my tasks and reminders, help me prioritize what to do today."
 
         # Voice input
-        audio = None
+        # Voice input via JS in main page
+        st.markdown(f"""
+        <script>
+        window.addEventListener('message', function(e) {{
+            if (e.data && e.data.type === 'voice_result') {{
+                const input = window.parent.document.querySelector('textarea[data-testid="stChatInputTextArea"]');
+                if (input) {{
+                    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                    setter.call(input, e.data.text);
+                    input.dispatchEvent(new Event('input', {{bubbles: true}}));
+                }}
+            }}
+        }});
+        </script>
+        """, unsafe_allow_html=True)
+
         if st.session_state.get("voice_enabled", False):
-            from streamlit_mic_recorder import mic_recorder
-            audio = mic_recorder(
-                start_prompt="🎤 Speak to Aura",
-                stop_prompt="⏹ Stop & Send",
-                just_once=True,
-                use_container_width=True,
-                key="voice_input"
-            )
-            if audio and audio.get("bytes"):
-                from modules.voice import speech_to_text
-                with st.spinner("🎤 Transcribing..."):
-                    voice_text = speech_to_text(audio["bytes"])
-                st.write(f"Debug: audio={len(audio['bytes'])} bytes, text='{voice_text}'")
-                if voice_text and voice_text.strip() and not voice_text.startswith("ERROR"):
-                    st.session_state.chat.append({"role": "user", "content": voice_text})
-                    user_context = build_user_context(uid)
-                    _personality_prefs = get_preferences(uid)
-                    response = get_ai_response(
-                        voice_text,
-                        chat_history=st.session_state.chat[:-1],
-                        user_context=user_context,
-                        tasks=tasks, notes=notes, reminders=reminders,
-                        personality=_personality_prefs.get("personality", "🎩 Professional"),
-                        custom_personality=_personality_prefs.get("custom_personality", "")
-                    )
-                    st.session_state.chat.append({"role": "assistant", "content": response})
-                    if st.session_state.get("voice_enabled", False):
-                        audio_b64 = text_to_speech(response)
-                        if audio_b64:
-                            st.session_state["last_audio"] = audio_b64
-                    st.rerun()
-                else:
-                    st.warning(f"Transcription failed: {voice_text}")
-                user_context = build_user_context(uid)
-                _personality_prefs = get_preferences(uid)
-                response = get_ai_response(
-                    voice_text,
-                    chat_history=st.session_state.chat[:-1],
-                    user_context=user_context,
-                    tasks=tasks, notes=notes, reminders=reminders,
-                    personality=_personality_prefs.get("personality", "🎩 Professional"),
-                    custom_personality=_personality_prefs.get("custom_personality", "")
-                )
-                st.session_state.chat.append({"role": "assistant", "content": response})
-                if st.session_state.get("voice_enabled", False):
-                    audio_b64 = text_to_speech(response)
-                    if audio_b64:
-                        st.session_state["last_audio"] = audio_b64
-                st.rerun()
+            st.markdown(f"""
+            <button onclick="startVoice()" id="vbtn" style="
+                width:100%;padding:10px;border-radius:10px;
+                background:{glow_color};border:2px solid {active_color};
+                color:{active_color};font-weight:700;font-size:12px;
+                cursor:pointer;letter-spacing:0.08em;margin-bottom:8px;">
+                🎤 SPEAK TO AURA
+            </button>
+            <div id="vstatus" style="font-size:11px;color:#6b6b80;text-align:center;min-height:16px;"></div>
+            <script>
+            function startVoice() {{
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SR) {{ document.getElementById('vstatus').textContent='Use Chrome'; return; }}
+                const r = new SR();
+                r.lang='en-US'; r.continuous=false; r.interimResults=false;
+                document.getElementById('vbtn').style.background='#ff456033';
+                document.getElementById('vbtn').style.borderColor='#ff4560';
+                document.getElementById('vbtn').style.color='#ff4560';
+                document.getElementById('vbtn').textContent='🔴 Listening...';
+                document.getElementById('vstatus').textContent='Speak now...';
+                r.start();
+                r.onresult = e => {{
+                    const t = e.results[0][0].transcript;
+                    document.getElementById('vstatus').textContent='Got: ' + t;
+                    const inp = document.querySelector('textarea[data-testid="stChatInputTextArea"]');
+                    if (inp) {{
+                        Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype,'value').set.call(inp,t);
+                        inp.dispatchEvent(new Event('input',{{bubbles:true}}));
+                    }}
+                    document.getElementById('vbtn').textContent='🎤 SPEAK TO AURA';
+                    document.getElementById('vbtn').style.background='{glow_color}';
+                    document.getElementById('vbtn').style.borderColor='{active_color}';
+                    document.getElementById('vbtn').style.color='{active_color}';
+                }};
+                r.onerror = e => {{
+                    document.getElementById('vstatus').textContent='Error: '+e.error;
+                    document.getElementById('vbtn').textContent='🎤 SPEAK TO AURA';
+                }};
+            }}
+            </script>
+            """, unsafe_allow_html=True)
       
         prompt = st.chat_input("Message Aura...", key="main_chat")
         final_prompt = prompt or quick_prompt
