@@ -896,8 +896,11 @@ elif st.session_state.nav == "Dashboard":
             use_container_width=True,
             key="voice_input"
         )
-        if audio and audio.get("text"):
-            voice_text = audio["text"]
+        if audio and audio.get("bytes"):
+            from modules.voice import speech_to_text
+            with st.spinner("🎤 Transcribing..."):
+                voice_text = speech_to_text(audio["bytes"])
+            if voice_text:
             st.session_state.chat.append({"role": "user", "content": voice_text})
             user_context = build_user_context(uid)
             _personality_prefs = get_preferences(uid)
