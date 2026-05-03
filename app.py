@@ -55,7 +55,7 @@ glow_color   = themes[st.session_state.theme]["glow"]
 # NAVIGATION & REDIRECTS
 # =========================
 if "nav" not in st.session_state:
-    st.session_state.nav = "Login"
+    st.session_state.nav = "Home"
 
 def redirect(page):
     st.session_state.nav = page
@@ -385,6 +385,79 @@ with st.sidebar:
 # =========================
 # AUTH
 # =========================
+if st.session_state.nav == "Home":
+    st.markdown(f"""
+    <div style='min-height:90vh;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;text-align:center;padding:60px 20px;'>
+        <div style='width:72px;height:72px;border-radius:18px;
+            background:linear-gradient(135deg,{active_color},#9b59ff);
+            display:flex;align-items:center;justify-content:center;
+            font-weight:900;font-size:32px;color:#050508;
+            margin-bottom:32px;box-shadow:0 0 40px {glow_color};'>A</div>
+        <div style='display:inline-flex;align-items:center;gap:8px;
+            background:{glow_color};border:1px solid {active_color}44;
+            border-radius:20px;padding:6px 16px;margin-bottom:24px;'>
+            <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
+            <span style='font-size:11px;font-weight:600;color:{active_color};
+                letter-spacing:0.12em;font-family:JetBrains Mono,monospace;'>
+                AI-POWERED PERSONAL ASSISTANT
+            </span>
+        </div>
+        <h1 style='font-size:clamp(40px,7vw,88px);font-weight:800;letter-spacing:-0.03em;
+            line-height:1;margin:0 0 24px;color:#f0f0f8;max-width:900px;'>
+            Your AI,<br>
+            <span style='color:{active_color};'>perfectly tuned</span><br>
+            to you.
+        </h1>
+        <p style='font-size:18px;color:#9090a8;max-width:560px;line-height:1.6;
+            margin:0 0 48px;'>
+            Aura manages your tasks, notes, and reminders — and adapts
+            its personality to match how you think and work.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([2, 1, 2])
+    with col2:
+        if st.button("Get Started →", key="home_cta"):
+            redirect("Login")
+
+    st.markdown(f"""
+    <div style='padding:60px 40px;max-width:1100px;margin:0 auto;'>
+        <div style='display:grid;grid-template-columns:repeat(3,1fr);gap:24px;'>
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
+                <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                    background:linear-gradient(90deg,{active_color},transparent);'></div>
+                <div style='font-size:32px;margin-bottom:16px;'>📌</div>
+                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Task Engine</h3>
+                <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
+                    Deploy tasks with priority levels. Track what needs your attention first.
+                </p>
+            </div>
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
+                <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                    background:linear-gradient(90deg,#9b59ff,transparent);'></div>
+                <div style='font-size:32px;margin-bottom:16px;'>🧠</div>
+                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Neural Chat</h3>
+                <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
+                    An AI that knows your tasks and goals. Six personalities to choose from.
+                </p>
+            </div>
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
+                <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                    background:linear-gradient(90deg,#f472b6,transparent);'></div>
+                <div style='font-size:32px;margin-bottom:16px;'>🎭</div>
+                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>AI Personalities</h3>
+                <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
+                    Professional, Friendly, Mentor, Sarcastic, Minimalist, Hype Coach — or custom.
+                </p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 if st.session_state.nav in ["Login", "Register"]:
     _, col2, _ = st.columns([1, 1.5, 1])
     with col2:
