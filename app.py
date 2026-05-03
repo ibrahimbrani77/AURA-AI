@@ -376,11 +376,18 @@ with st.sidebar:
             redirect("Login")
 
     else:
-        nav_choice = st.radio("Navigation", ["Login", "Register"],
-                              index=0 if st.session_state.nav == "Login" else 1,
-                              label_visibility="collapsed")
-        if nav_choice != st.session_state.nav:
-            redirect(nav_choice)
+        if st.session_state.nav == "Home":
+            col1, col2 = st.columns(2)
+            if col1.button("Login", key="side_login"):
+                redirect("Login")
+            if col2.button("Register", key="side_register"):
+                redirect("Register")
+        else:
+            nav_choice = st.radio("Navigation", ["Login", "Register"],
+                                  index=0 if st.session_state.nav == "Login" else 1,
+                                  label_visibility="collapsed")
+            if nav_choice != st.session_state.nav:
+                redirect(nav_choice)
 
 # =========================
 # AUTH
