@@ -898,8 +898,9 @@ elif st.session_state.nav == "Dashboard":
         )
         if audio and audio.get("bytes"):
             from modules.voice import speech_to_text
-            with st.spinner("🎤 Transcribing your voice..."):
+            with st.spinner("🎤 Transcribing..."):
                 voice_text = speech_to_text(audio["bytes"])
+            st.write(f"Debug: {voice_text}")
             if voice_text and voice_text.strip():
                 st.session_state.chat.append({"role": "user", "content": voice_text})
             elif audio.get("bytes"):

@@ -28,4 +28,4 @@ def speech_to_text(audio_bytes):
         )
         return transcription.text
     except Exception as e:
-        return None
+        return f"ERROR: {str(e)}"
