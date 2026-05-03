@@ -265,7 +265,7 @@ if st.session_state.nav == "Dashboard" and uid:
         except Exception:
             _prefs_sidebar = {}
 
-        personality_options = ["Professional", "Friendly", "Mentor", "Sarcastic", "Minimalist", "Hype Coach", "Custom"]
+        personality_options = ["🎩 Professional", "😊 Friendly", "🧙 Mentor", "😏 Sarcastic", "⚡ Minimalist", "🔥 Hype Coach", "✨ Custom"]
         saved_personality = _prefs_sidebar.get("personality", "Professional")
         selected_personality = st.selectbox(
             "Personality", personality_options,
@@ -273,13 +273,13 @@ if st.session_state.nav == "Dashboard" and uid:
             key="personality_select", label_visibility="collapsed"
         )
         personality_defaults = {
-            "Professional": "Formal, precise, and concise. No casual language.",
-            "Friendly":     "Warm, encouraging, and conversational.",
-            "Mentor":       "Wise, patient, and guiding with thoughtful advice.",
-            "Sarcastic":    "Witty and sarcastic with dry humor, but still helpful.",
-            "Minimalist":   "Ultra-concise. Short answers, bullet points, no fluff.",
-            "Hype Coach":   "Energetic, motivating, and enthusiastic about everything!",
-            "Custom":       ""
+            "🎩 Professional": "Formal, precise, and concise. No casual language.",
+            "😊 Friendly":     "Warm, encouraging, and conversational.",
+            "🧙 Mentor":       "Wise, patient, and guiding with thoughtful advice.",
+            "😏 Sarcastic":    "Witty and sarcastic with dry humor, but still helpful.",
+            "⚡ Minimalist":   "Ultra-concise. Short answers, bullet points, no fluff.",
+            "🔥 Hype Coach":   "Energetic, motivating, and enthusiastic about everything!",
+            "✨ Custom":       ""
         }
         custom_desc = st.text_area(
             "Personality Description",
@@ -901,33 +901,32 @@ elif st.session_state.nav == "Dashboard":
         }}
         #voice-btn {{
             background: {glow_color};
-            border: 1px solid {active_color}44;
+            border: 2px solid {active_color};
             color: {active_color};
-            border-radius: 8px;
-            padding: 8px 16px;
-            font-size: 11px;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
             font-family: Syne, sans-serif;
             letter-spacing: 0.08em;
-            transition: all 0.2s;
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 8px;
             margin-bottom: 8px;
+            width: 100%;
+            justify-content: center;
+        }}
+        #voice-btn:hover {{
+            background: {active_color}33;
+            transform: scale(1.02);
         }}
         #voice-btn.listening {{
-            background: #ff456022;
-            border-color: #ff456088;
+            background: #ff456033;
+            border: 2px solid #ff4560;
             color: #ff4560;
             animation: pulse-ring-red 1s infinite;
-        }}
-        #voice-status {{
-            font-size: 10px;
-            font-family: JetBrains Mono, monospace;
-            letter-spacing: 0.1em;
-            margin-left: 8px;
-            vertical-align: middle;
         }}
         </style>
 
@@ -1038,7 +1037,7 @@ elif st.session_state.nav == "Dashboard":
                 chat_history=st.session_state.chat[:-1],
                 user_context=user_context,
                 tasks=tasks, notes=notes, reminders=reminders,
-                personality=_personality_prefs.get("personality", "Professional"),
+                personality=_personality_prefs.get("personality", "🎩 Professional"),
                 custom_personality=_personality_prefs.get("custom_personality", "")
             )
             st.session_state.chat.append({"role": "assistant", "content": response})
