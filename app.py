@@ -901,23 +901,23 @@ elif st.session_state.nav == "Dashboard":
             with st.spinner("🎤 Transcribing..."):
                 voice_text = speech_to_text(audio["bytes"])
             if voice_text:
-            st.session_state.chat.append({"role": "user", "content": voice_text})
-            user_context = build_user_context(uid)
-            _personality_prefs = get_preferences(uid)
-            response = get_ai_response(
-                voice_text,
-                chat_history=st.session_state.chat[:-1],
-                user_context=user_context,
-                tasks=tasks, notes=notes, reminders=reminders,
-                personality=_personality_prefs.get("personality", "🎩 Professional"),
-                custom_personality=_personality_prefs.get("custom_personality", "")
-            )
-            st.session_state.chat.append({"role": "assistant", "content": response})
-            if st.session_state.get("voice_enabled", False):
-                audio_b64 = text_to_speech(response)
-                if audio_b64:
-                    st.session_state["last_audio"] = audio_b64
-            st.rerun()
+                st.session_state.chat.append({"role": "user", "content": voice_text})
+                user_context = build_user_context(uid)
+                _personality_prefs = get_preferences(uid)
+                response = get_ai_response(
+                    voice_text,
+                    chat_history=st.session_state.chat[:-1],
+                    user_context=user_context,
+                    tasks=tasks, notes=notes, reminders=reminders,
+                    personality=_personality_prefs.get("personality", "🎩 Professional"),
+                    custom_personality=_personality_prefs.get("custom_personality", "")
+                )
+                st.session_state.chat.append({"role": "assistant", "content": response})
+                if st.session_state.get("voice_enabled", False):
+                    audio_b64 = text_to_speech(response)
+                    if audio_b64:
+                        st.session_state["last_audio"] = audio_b64
+                st.rerun()
       
         prompt = st.chat_input("Message Aura...", key="main_chat")
         final_prompt = prompt or quick_prompt
