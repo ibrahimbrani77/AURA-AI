@@ -12,9 +12,6 @@ from modules.notes import create_note, get_notes, delete_note
 from modules.ai_engine import get_ai_response
 from modules.vision import capture_face_embedding, verify_face
 
-# =========================
-# AUTO-INIT DATABASE
-# =========================
 from modules.database import engine, Base
 import modules.models
 from sqlalchemy import text
@@ -36,10 +33,7 @@ with engine.connect() as conn:
     except Exception:
         pass
 
-# =========================
-# CONFIG & THEME ENGINE
-# =========================
-st.set_page_config(page_title="Aura", page_icon="✦", layout="wide")
+st.set_page_config(page_title="Aura — Your Personal AI", page_icon="✦", layout="wide")
 
 themes = {
     "Violet": {"accent": "#a78bfa", "glow": "rgba(167, 139, 250, 0.15)"},
@@ -51,9 +45,6 @@ if "theme" not in st.session_state:
 active_color = themes[st.session_state.theme]["accent"]
 glow_color   = themes[st.session_state.theme]["glow"]
 
-# =========================
-# NAVIGATION & REDIRECTS
-# =========================
 if "nav" not in st.session_state:
     st.session_state.nav = "Home"
 
@@ -69,40 +60,26 @@ if "token" in st.session_state:
     except:
         pass
 
-# =========================
-# CSS
-# =========================
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
-
 html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, label {{
     font-family: 'Syne', sans-serif !important;
 }}
-.stApp {{
-    background: #050508 !important;
-    color: #f0f0f8 !important;
-}}
+.stApp {{ background: #050508 !important; color: #f0f0f8 !important; }}
 #MainMenu, footer, header {{ visibility: hidden; }}
 .block-container {{ padding-top: 1.5rem !important; padding-bottom: 4rem !important; }}
 section[data-testid="stSidebar"] {{
     background: #0c0c12 !important;
     border-right: 1px solid rgba(255,255,255,0.06) !important;
 }}
-section[data-testid="stSidebar"] * {{
-    font-family: 'Syne', sans-serif !important;
-}}
+section[data-testid="stSidebar"] * {{ font-family: 'Syne', sans-serif !important; }}
 .stSelectbox > div > div {{
     background: #12121a !important;
     border: 1px solid rgba(255,255,255,0.08) !important;
     color: #f0f0f8 !important;
     border-radius: 8px !important;
 }}
-.stRadio label {{
-    color: #9090a8 !important;
-    font-size: 13px !important;
-}}
-.stRadio label:hover {{ color: #f0f0f8 !important; }}
 input, textarea, input[type="text"], input[type="password"] {{
     background: #12121a !important;
     border: 1px solid rgba(255,255,255,0.08) !important;
@@ -116,10 +93,8 @@ input:focus, textarea:focus {{
     box-shadow: 0 0 0 2px {glow_color} !important;
 }}
 label[data-testid="stWidgetLabel"] p {{
-    color: #9090a8 !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.04em !important;
+    color: #9090a8 !important; font-size: 12px !important;
+    font-weight: 600 !important; letter-spacing: 0.04em !important;
 }}
 .stButton > button {{
     width: 100% !important;
@@ -135,89 +110,59 @@ label[data-testid="stWidgetLabel"] p {{
     text-transform: uppercase !important;
     transition: opacity 0.2s !important;
 }}
-.stButton > button:hover {{
-    opacity: 0.85 !important;
-    color: #050508 !important;
-}}
+.stButton > button:hover {{ opacity: 0.85 !important; color: #050508 !important; }}
 .stTabs [data-baseweb="tab-list"] {{
-    background: #0c0c12 !important;
-    border-radius: 10px !important;
-    padding: 4px !important;
-    gap: 4px !important;
+    background: #0c0c12 !important; border-radius: 10px !important;
+    padding: 4px !important; gap: 4px !important;
     border: 1px solid rgba(255,255,255,0.06) !important;
 }}
 .stTabs [data-baseweb="tab"] {{
-    background: transparent !important;
-    color: #6b6b80 !important;
-    border-radius: 8px !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    font-family: 'Syne', sans-serif !important;
+    background: transparent !important; color: #6b6b80 !important;
+    border-radius: 8px !important; font-size: 12px !important;
+    font-weight: 600 !important; font-family: 'Syne', sans-serif !important;
     padding: 6px 16px !important;
 }}
-.stTabs [aria-selected="true"] {{
-    background: {active_color}22 !important;
-    color: {active_color} !important;
-}}
+.stTabs [aria-selected="true"] {{ background: {active_color}22 !important; color: {active_color} !important; }}
 .stChatInput textarea {{
-    background: #0c0c12 !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    border-radius: 10px !important;
-    color: #f0f0f8 !important;
-    font-family: 'Syne', sans-serif !important;
+    background: #0c0c12 !important; border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 10px !important; color: #f0f0f8 !important; font-family: 'Syne', sans-serif !important;
 }}
 ::-webkit-scrollbar {{ width: 4px; height: 4px; }}
 ::-webkit-scrollbar-track {{ background: transparent; }}
 ::-webkit-scrollbar-thumb {{ background: rgba(255,255,255,0.1); border-radius: 4px; }}
 .aura-metric {{
-    background: #0c0c12;
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 8px;
+    background: #0c0c12; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 20px; position: relative; overflow: hidden; margin-bottom: 8px;
 }}
 .aura-metric-bar {{ position: absolute; top: 0; left: 0; right: 0; height: 2px; }}
 .aura-metric-label {{
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: #6b6b80; margin-bottom: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #6b6b80; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace;
 }}
 .aura-metric-value {{
-    font-size: 30px; font-weight: 800;
-    letter-spacing: -0.02em; line-height: 1;
+    font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
     margin-bottom: 8px; font-family: 'Syne', sans-serif;
 }}
 .aura-metric-sub {{ font-size: 11px; color: #6b6b80; font-family: 'JetBrains Mono', monospace; }}
 .aura-panel-header {{
-    padding: 12px 0;
-    font-size: 13px; font-weight: 600;
+    padding: 12px 0; font-size: 13px; font-weight: 600;
     display: flex; align-items: center; gap: 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    margin-bottom: 14px; color: #f0f0f8;
+    border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 14px; color: #f0f0f8;
 }}
 .aura-task {{
-    background: #0c0c12;
-    border: 1px solid rgba(255,255,255,0.06);
+    background: #0c0c12; border: 1px solid rgba(255,255,255,0.06);
     border-radius: 10px; padding: 12px 16px; margin-bottom: 8px;
 }}
 .aura-task-title {{ font-size: 13px; font-weight: 600; color: #f0f0f8; }}
-.aura-task-desc {{
-    font-size: 11px; color: #6b6b80;
-    font-family: 'JetBrains Mono', monospace; margin-top: 3px;
-}}
+.aura-task-desc {{ font-size: 11px; color: #6b6b80; font-family: 'JetBrains Mono', monospace; margin-top: 3px; }}
 .aura-bubble-ai {{
-    background: #12121a;
-    border: 1px solid rgba(255,255,255,0.06);
+    background: #12121a; border: 1px solid rgba(255,255,255,0.06);
     border-radius: 12px; border-top-left-radius: 3px;
     padding: 10px 14px; font-size: 13px; line-height: 1.6;
     color: #f0f0f8; max-width: 85%; margin-bottom: 10px; display: inline-block;
 }}
 .aura-bubble-user {{
-    background: {glow_color};
-    border: 1px solid {active_color}44;
+    background: {glow_color}; border: 1px solid {active_color}44;
     border-radius: 12px; border-top-right-radius: 3px;
     padding: 10px 14px; font-size: 13px; line-height: 1.6;
     color: #f0f0f8; max-width: 85%; margin-bottom: 10px; display: inline-block;
@@ -232,15 +177,13 @@ label[data-testid="stWidgetLabel"] p {{
     color: #050508; font-family: 'Syne', sans-serif;
 }}
 .aura-note {{
-    background: #0c0c12;
-    border: 1px solid rgba(255,255,255,0.06);
+    background: #0c0c12; border: 1px solid rgba(255,255,255,0.06);
     border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;
 }}
 .aura-note-title {{ font-size: 12px; font-weight: 700; color: #f0f0f8; margin-bottom: 4px; }}
 .aura-note-body {{ font-size: 11px; color: #9090a8; line-height: 1.6; }}
 .aura-auth-card {{
-    background: #0c0c12;
-    border: 1px solid rgba(255,255,255,0.08);
+    background: #0c0c12; border: 1px solid rgba(255,255,255,0.08);
     border-radius: 20px; padding: 2.5rem 2rem;
 }}
 .aura-status-bar {{
@@ -249,56 +192,42 @@ label[data-testid="stWidgetLabel"] p {{
     border-top: 1px solid rgba(255,255,255,0.06);
     display: flex; align-items: center;
     padding: 0 28px; gap: 24px; z-index: 9999;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px; color: #6b6b80;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6b80;
 }}
 .aura-tag {{
-    font-size: 10px; font-weight: 700;
-    padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
     font-family: 'JetBrains Mono', monospace; display: inline-block;
-}}
-@media (max-width: 768px) {{
-    .block-container {{ padding-left: 1rem !important; padding-right: 1rem !important; }}
-    .aura-metric {{ padding: 14px !important; }}
-    .aura-metric-value {{ font-size: 22px !important; }}
-    .aura-metric-label {{ font-size: 9px !important; }}
-    .aura-bubble-ai, .aura-bubble-user {{ max-width: 95% !important; font-size: 12px !important; }}
-    .aura-task-title {{ font-size: 12px !important; }}
-    .aura-status-bar {{ padding: 0 12px !important; gap: 12px !important; font-size: 9px !important; }}
 }}
 </style>
 """, unsafe_allow_html=True)
 
 # =========================
-# SIDEBAR
+# SIDEBAR — only on dashboard
 # =========================
-with st.sidebar:
-    st.markdown(f"""
-    <div style='padding:12px 0 20px;'>
-        <div style='display:flex;align-items:center;gap:10px;margin-bottom:20px;'>
-            <div style='width:32px;height:32px;border-radius:8px;
-                background:linear-gradient(135deg,{active_color},#9b59ff);
-                display:flex;align-items:center;justify-content:center;
-                font-weight:900;font-size:14px;color:#050508;
-                font-family:Syne,sans-serif;flex-shrink:0;'>A</div>
-            <span style='font-size:13px;font-weight:800;letter-spacing:0.1em;
-                color:{active_color};font-family:Syne,sans-serif;'>AURA</span>
+if st.session_state.nav == "Dashboard" and uid:
+    with st.sidebar:
+        st.markdown(f"""
+        <div style='padding:12px 0 20px;'>
+            <div style='display:flex;align-items:center;gap:10px;margin-bottom:20px;'>
+                <div style='width:32px;height:32px;border-radius:8px;
+                    background:linear-gradient(135deg,{active_color},#9b59ff);
+                    display:flex;align-items:center;justify-content:center;
+                    font-weight:900;font-size:14px;color:#050508;flex-shrink:0;'>A</div>
+                <span style='font-size:13px;font-weight:800;letter-spacing:0.1em;
+                    color:{active_color};'>AURA</span>
+            </div>
+            <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
+                font-family:JetBrains Mono,monospace;margin-bottom:8px;'>WORKSPACE THEME</div>
         </div>
-        <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
-            font-family:JetBrains Mono,monospace;margin-bottom:8px;'>WORKSPACE THEME</div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
-    theme_choice = st.selectbox("Theme", list(themes.keys()), label_visibility="collapsed")
-    if theme_choice != st.session_state.theme:
-        st.session_state.theme = theme_choice
-        st.rerun()
+        theme_choice = st.selectbox("Theme", list(themes.keys()), label_visibility="collapsed")
+        if theme_choice != st.session_state.theme:
+            st.session_state.theme = theme_choice
+            st.rerun()
 
-    st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:16px 0;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:16px 0;'>", unsafe_allow_html=True)
 
-    if "token" in st.session_state and uid:
-
-        # ── PROFILE ──
         st.markdown("""
         <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
             font-family:JetBrains Mono,monospace;margin-bottom:8px;'>MY PROFILE</div>
@@ -306,10 +235,8 @@ with st.sidebar:
 
         if "show_prefs" not in st.session_state:
             st.session_state.show_prefs = False
-
         if st.button("Edit Profile", key="toggle_prefs"):
             st.session_state.show_prefs = not st.session_state.show_prefs
-
         if st.session_state.show_prefs:
             prefs = get_preferences(uid)
             p_name  = st.text_input("Your Name",        value=prefs.get("name", ""),        key="p_name")
@@ -327,23 +254,23 @@ with st.sidebar:
 
         st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:12px 0;'>", unsafe_allow_html=True)
 
-        # ── PERSONALITY ──
         st.markdown("""
         <div style='font-size:9px;color:#6b6b80;letter-spacing:0.14em;
             font-family:JetBrains Mono,monospace;margin-bottom:8px;'>AURA PERSONALITY</div>
         """, unsafe_allow_html=True)
 
-        _prefs_sidebar = get_preferences(uid)
+        try:
+            _prefs_sidebar = get_preferences(uid) if uid else {}
+        except Exception:
+            _prefs_sidebar = {}
+
         personality_options = ["Professional", "Friendly", "Mentor", "Sarcastic", "Minimalist", "Hype Coach", "Custom"]
         saved_personality = _prefs_sidebar.get("personality", "Professional")
         selected_personality = st.selectbox(
-            "Personality",
-            personality_options,
+            "Personality", personality_options,
             index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
-            key="personality_select",
-            label_visibility="collapsed"
+            key="personality_select", label_visibility="collapsed"
         )
-
         personality_defaults = {
             "Professional": "Formal, precise, and concise. No casual language.",
             "Friendly":     "Warm, encouraging, and conversational.",
@@ -353,16 +280,12 @@ with st.sidebar:
             "Hype Coach":   "Energetic, motivating, and enthusiastic about everything!",
             "Custom":       ""
         }
-
         custom_desc = st.text_area(
             "Personality Description",
             value=_prefs_sidebar.get("custom_personality", personality_defaults.get(selected_personality, "")),
             placeholder="Describe how Aura should behave...",
-            height=80,
-            key="custom_personality_input",
-            label_visibility="collapsed"
+            height=80, key="custom_personality_input", label_visibility="collapsed"
         )
-
         if st.button("Save Personality", key="save_personality"):
             save_preference(uid, "personality", selected_personality)
             save_preference(uid, "custom_personality", custom_desc)
@@ -370,116 +293,188 @@ with st.sidebar:
             st.rerun()
 
         st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:16px 0;'>", unsafe_allow_html=True)
-
         if st.button("Secure Logout"):
             st.session_state.clear()
-            redirect("Login")
-
-    else:
-        if st.session_state.nav == "Home":
-            col1, col2 = st.columns(2)
-            if col1.button("Login", key="side_login"):
-                redirect("Login")
-            if col2.button("Register", key="side_register"):
-                redirect("Register")
-        else:
-            nav_choice = st.radio("Navigation", ["Login", "Register"],
-                                  index=0 if st.session_state.nav == "Login" else 1,
-                                  label_visibility="collapsed")
-            if nav_choice != st.session_state.nav:
-                redirect(nav_choice)
+            redirect("Home")
 
 # =========================
-# AUTH
+# HOME PAGE
 # =========================
 if st.session_state.nav == "Home":
+
+    # Navbar
+    n1, n2, n3 = st.columns([1, 4, 1])
+    with n1:
+        st.markdown(f"""
+        <div style='display:flex;align-items:center;gap:10px;padding:16px 0;'>
+            <div style='width:32px;height:32px;border-radius:8px;
+                background:linear-gradient(135deg,{active_color},#9b59ff);
+                display:flex;align-items:center;justify-content:center;
+                font-weight:900;font-size:14px;color:#050508;'>A</div>
+            <span style='font-size:15px;font-weight:800;letter-spacing:0.1em;color:{active_color};'>AURA</span>
+        </div>
+        """, unsafe_allow_html=True)
+    with n3:
+        st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+        nb1, nb2 = st.columns(2)
+        if nb1.button("Login", key="nav_login"):
+            redirect("Login")
+        if nb2.button("Sign Up", key="nav_register"):
+            redirect("Register")
+
+    st.markdown(f"<hr style='border-color:rgba(255,255,255,0.06);margin:0 0 0;'>", unsafe_allow_html=True)
+
+    # Hero
     st.markdown(f"""
-    <div style='min-height:90vh;display:flex;flex-direction:column;
-        align-items:center;justify-content:center;text-align:center;padding:60px 20px;'>
-        <div style='width:72px;height:72px;border-radius:18px;
-            background:linear-gradient(135deg,{active_color},#9b59ff);
-            display:flex;align-items:center;justify-content:center;
-            font-weight:900;font-size:32px;color:#050508;
-            margin-bottom:32px;box-shadow:0 0 40px {glow_color};'>A</div>
+    <div style='text-align:center;padding:80px 20px 50px;position:relative;overflow:hidden;'>
+        <div style='position:absolute;top:0;left:50%;transform:translateX(-50%);
+            width:800px;height:500px;border-radius:50%;
+            background:radial-gradient(circle, {glow_color} 0%, transparent 70%);
+            pointer-events:none;'></div>
         <div style='display:inline-flex;align-items:center;gap:8px;
             background:{glow_color};border:1px solid {active_color}44;
             border-radius:20px;padding:6px 16px;margin-bottom:24px;'>
             <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
             <span style='font-size:11px;font-weight:600;color:{active_color};
                 letter-spacing:0.12em;font-family:JetBrains Mono,monospace;'>
-                AI-POWERED PERSONAL ASSISTANT
+                AI-POWERED · PERSONAL · ADAPTIVE
             </span>
         </div>
-        <h1 style='font-size:clamp(40px,7vw,88px);font-weight:800;letter-spacing:-0.03em;
-            line-height:1;margin:0 0 24px;color:#f0f0f8;max-width:900px;'>
-            Your AI,<br>
-            <span style='color:{active_color};'>perfectly tuned</span><br>
-            to you.
+        <h1 style='font-size:clamp(36px,6vw,76px);font-weight:800;letter-spacing:-0.03em;
+            line-height:1.05;margin:0 0 24px;color:#f0f0f8;'>
+            Hi, I'm <span style='color:{active_color};'>Aura.</span><br>
+            Your personal AI,<br>built around <span style='color:{active_color};'>you.</span>
         </h1>
-        <p style='font-size:18px;color:#9090a8;max-width:560px;line-height:1.6;
-            margin:0 0 48px;'>
-            Aura manages your tasks, notes, and reminders — and adapts
-            its personality to match how you think and work.
+        <p style='font-size:18px;color:#9090a8;max-width:600px;line-height:1.7;margin:0 auto 16px;'>
+            I manage your tasks, take notes, set reminders, and chat with you —
+            all while adapting my personality to match how <em>you</em> like to work.
+        </p>
+        <p style='font-size:15px;color:#6b6b80;max-width:500px;line-height:1.6;margin:0 auto 48px;'>
+            Whether you want me professional, friendly, sarcastic, or your own custom vibe —
+            I'm always here, always learning, always yours.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns([2, 1, 2])
-    with col2:
-        if st.button("Get Started →", key="home_cta"):
+    c1, c2, c3, c4, c5 = st.columns([2, 1, 0.3, 1, 2])
+    with c2:
+        if st.button("✦ Get Started Free", key="hero_cta"):
+            redirect("Register")
+    with c4:
+        if st.button("Sign In →", key="hero_login"):
             redirect("Login")
 
+    st.markdown("<div style='height:60px;'></div>", unsafe_allow_html=True)
+
+    # Features
     st.markdown(f"""
-    <div style='padding:60px 40px;max-width:1100px;margin:0 auto;'>
-        <div style='display:grid;grid-template-columns:repeat(3,1fr);gap:24px;'>
-            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-                border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-                <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                    background:linear-gradient(90deg,{active_color},transparent);'></div>
-                <div style='font-size:32px;margin-bottom:16px;'>📌</div>
-                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Task Engine</h3>
-                <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                    Deploy tasks with priority levels. Track what needs your attention first.
-                </p>
-            </div>
-            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-                border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-                <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                    background:linear-gradient(90deg,#9b59ff,transparent);'></div>
-                <div style='font-size:32px;margin-bottom:16px;'>🧠</div>
-                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Neural Chat</h3>
-                <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                    An AI that knows your tasks and goals. Six personalities to choose from.
-                </p>
-            </div>
-            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-                border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-                <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                    background:linear-gradient(90deg,#f472b6,transparent);'></div>
-                <div style='font-size:32px;margin-bottom:16px;'>🎭</div>
-                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>AI Personalities</h3>
-                <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                    Professional, Friendly, Mentor, Sarcastic, Minimalist, Hype Coach — or custom.
-                </p>
-            </div>
-        </div>
+    <div style='text-align:center;margin-bottom:40px;'>
+        <div style='font-size:10px;font-weight:600;letter-spacing:0.2em;color:#6b6b80;
+            font-family:JetBrains Mono,monospace;margin-bottom:12px;'>WHAT I CAN DO FOR YOU</div>
+        <h2 style='font-size:36px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0;'>
+            Everything in one place.
+        </h2>
     </div>
     """, unsafe_allow_html=True)
-if st.session_state.nav in ["Login", "Register"]:
+
+    f1, f2, f3 = st.columns(3)
+    for col, icon, title, color, desc in [
+        (f1, "📌", "Task Engine", active_color, "Deploy tasks with High, Medium, or Low priority. I'll help you figure out what to tackle first."),
+        (f2, "🧠", "Neural Chat", "#9b59ff", "Talk to me about anything. I know your tasks, notes, and goals — so my answers are actually useful."),
+        (f3, "🎭", "6 Personalities", "#f472b6", "Pick Professional, Friendly, Mentor, Sarcastic, Minimalist, or Hype Coach. Or write your own."),
+    ]:
+        with col:
+            st.markdown(f"""
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+                <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                    background:linear-gradient(90deg,{color},transparent);'></div>
+                <div style='font-size:36px;margin-bottom:16px;'>{icon}</div>
+                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>{title}</h3>
+                <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>{desc}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+    f4, f5, f6 = st.columns(3)
+    for col, icon, title, color, desc in [
+        (f4, "⏰", "Smart Reminders", "#ffb020", "Set reminders with dates and times. I'll flag what's overdue the moment you open the app."),
+        (f5, "📝", "Quick Notes", "#00d68f", "Capture ideas instantly. Your notes are always searchable and available to me."),
+        (f6, "🔒", "Secure & Private", "#22d3ee", "PBKDF2 password hashing and JWT tokens. Your data stays yours."),
+    ]:
+        with col:
+            st.markdown(f"""
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+                <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                    background:linear-gradient(90deg,{color},transparent);'></div>
+                <div style='font-size:36px;margin-bottom:16px;'>{icon}</div>
+                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>{title}</h3>
+                <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>{desc}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # Bottom CTA
+    st.markdown(f"""
+    <div style='text-align:center;padding:60px 20px;
+        border-top:1px solid rgba(255,255,255,0.06);margin-top:20px;'>
+        <h2 style='font-size:40px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0 0 16px;'>
+            Ready to meet your Aura?
+        </h2>
+        <p style='font-size:16px;color:#9090a8;margin:0 0 40px;'>
+            Free to use. Takes 30 seconds to set up.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    c1, c2, c3 = st.columns([2, 1, 2])
+    with c2:
+        if st.button("Create My Aura →", key="bottom_cta"):
+            redirect("Register")
+
+    st.markdown(f"""
+    <div style='text-align:center;padding:32px;'>
+        <p style='font-size:11px;color:#6b6b80;margin:0;font-family:JetBrains Mono,monospace;'>
+            AURA v1.0 · Personal AI Assistant · OSTİM Technical University
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# =========================
+# AUTH
+# =========================
+elif st.session_state.nav in ["Login", "Register"]:
+
+    n1, n2, n3 = st.columns([1, 4, 1])
+    with n1:
+        st.markdown(f"""
+        <div style='display:flex;align-items:center;gap:10px;padding:16px 0;'>
+            <div style='width:28px;height:28px;border-radius:7px;
+                background:linear-gradient(135deg,{active_color},#9b59ff);
+                display:flex;align-items:center;justify-content:center;
+                font-weight:900;font-size:12px;color:#050508;'>A</div>
+            <span style='font-size:13px;font-weight:800;letter-spacing:0.1em;color:{active_color};'>AURA</span>
+        </div>
+        """, unsafe_allow_html=True)
+    with n3:
+        st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+        if st.button("← Home", key="auth_back"):
+            redirect("Home")
+
+    st.markdown(f"<hr style='border-color:rgba(255,255,255,0.06);margin:0 0 40px;'>", unsafe_allow_html=True)
+
     _, col2, _ = st.columns([1, 1.5, 1])
     with col2:
         st.markdown("<div class='aura-auth-card'>", unsafe_allow_html=True)
 
         if st.session_state.nav == "Register":
-            st.markdown(f"<h2 style='color:{active_color};margin-bottom:20px;font-family:Syne,sans-serif;'>Create Your Aura</h2>", unsafe_allow_html=True)
-            reg_name  = st.text_input("Name", placeholder="John Doe")
-            reg_email = st.text_input("Email", placeholder="name@email.com")
-            reg_pass  = st.text_input("Password", type="password", placeholder="••••••••")
+            st.markdown(f"<h2 style='color:{active_color};margin-bottom:8px;font-family:Syne,sans-serif;'>Create Your Aura</h2>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#9090a8;font-size:13px;margin-bottom:24px;'>Set up your account in seconds.</p>", unsafe_allow_html=True)
+            reg_name  = st.text_input("Your Name", placeholder="John Doe")
+            reg_email = st.text_input("Email",     placeholder="name@email.com")
+            reg_pass  = st.text_input("Password",  type="password", placeholder="••••••••")
 
             import os
-            is_cloud = os.getenv("IS_CLOUD", "false").lower() == "true"
-
-            if is_cloud:
+            if os.getenv("IS_CLOUD", "false").lower() == "true":
                 st.markdown(f"""
                 <div style='background:#ffb02012;border:1px solid #ffb02044;
                     border-radius:10px;padding:12px;margin-bottom:12px;'>
@@ -503,19 +498,25 @@ if st.session_state.nav in ["Login", "Register"]:
                             face_data = capture_face_embedding()
                             if face_data:
                                 register_user(reg_name, reg_email, reg_pass, face_data)
-                                st.success("Account created! Redirecting...")
+                                st.success("Account created!")
                                 time.sleep(1.5)
                                 redirect("Login")
                             else:
                                 st.error("Face capture failed.")
                     else:
                         st.warning("All fields are required.")
-        else:
-            st.markdown(f"<h2 style='color:{active_color};margin-bottom:20px;font-family:Syne,sans-serif;'>Welcome Back</h2>", unsafe_allow_html=True)
-            login_tab, face_tab = st.tabs(["Password Login", "Face Login"])
 
+            st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
+            if st.button("Already have an account? Sign in", key="go_login"):
+                redirect("Login")
+
+        else:
+            st.markdown(f"<h2 style='color:{active_color};margin-bottom:8px;font-family:Syne,sans-serif;'>Welcome back.</h2>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#9090a8;font-size:13px;margin-bottom:24px;'>Sign in to your Aura workspace.</p>", unsafe_allow_html=True)
+
+            login_tab, face_tab = st.tabs(["Password Login", "Face Login"])
             with login_tab:
-                l_email = st.text_input("Email", key="l_email")
+                l_email = st.text_input("Email",    key="l_email")
                 l_pass  = st.text_input("Password", type="password", key="l_pass")
                 if st.button("Sign In"):
                     token = login_user(l_email, l_pass)
@@ -533,9 +534,7 @@ if st.session_state.nav in ["Login", "Register"]:
                         border-radius:10px;padding:16px;text-align:center;'>
                         <div style='font-size:13px;font-weight:700;color:#ffb020;margin-bottom:6px;'>
                             Face ID — Local Only</div>
-                        <div style='font-size:11px;color:#9090a8;'>
-                            Use password login on the web version.
-                        </div>
+                        <div style='font-size:11px;color:#9090a8;'>Use password login on the web.</div>
                     </div>
                     """, unsafe_allow_html=True)
                 else:
@@ -552,6 +551,10 @@ if st.session_state.nav in ["Login", "Register"]:
                         else:
                             st.error("User not found.")
 
+            st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
+            if st.button("Don't have an account? Sign up", key="go_register"):
+                redirect("Register")
+
         st.markdown("</div>", unsafe_allow_html=True)
 
 # =========================
@@ -559,7 +562,7 @@ if st.session_state.nav in ["Login", "Register"]:
 # =========================
 elif st.session_state.nav == "Dashboard":
     if "token" not in st.session_state:
-        redirect("Login")
+        redirect("Home")
 
     tasks     = get_tasks(uid)
     notes     = get_notes(uid)
@@ -567,13 +570,7 @@ elif st.session_state.nav == "Dashboard":
     overdue   = get_overdue_reminders(uid)
 
     _hour = datetime.now().hour
-    if _hour < 12:
-        _greeting = "Good morning"
-    elif _hour < 17:
-        _greeting = "Good afternoon"
-    else:
-        _greeting = "Good evening"
-
+    _greeting = "Good morning" if _hour < 12 else "Good afternoon" if _hour < 17 else "Good evening"
     _prefs        = get_preferences(uid)
     _name         = _prefs.get("name", "Commander")
     _pending_count = len([t for t in tasks if t.status != "completed"])
@@ -613,20 +610,17 @@ elif st.session_state.nav == "Dashboard":
         </div>
         """, unsafe_allow_html=True)
 
-    # METRICS
     m1, m2, m3, m4 = st.columns(4)
-    metric_data = [
+    for col, label, value, sub, color in [
         (m1, "ACTIVE TASKS", str(len(tasks)),     "tasks deployed",     active_color),
         (m2, "NOTES SAVED",  str(len(notes)),     "in memory bank",     "#9b59ff"),
         (m3, "AI STATUS",    "ONLINE",            "neural engine ready", "#00d68f"),
         (m4, "REMINDERS",    str(len(reminders)), "upcoming alerts",    "#ffb020"),
-    ]
-    for col, label, value, sub, color in metric_data:
+    ]:
         with col:
             st.markdown(f"""
             <div class='aura-metric'>
-                <div class='aura-metric-bar'
-                    style='background:linear-gradient(90deg,{color},transparent);'></div>
+                <div class='aura-metric-bar' style='background:linear-gradient(90deg,{color},transparent);'></div>
                 <div class='aura-metric-label'>{label}</div>
                 <div class='aura-metric-value' style='color:{color};'>{value}</div>
                 <div class='aura-metric-sub'>{sub}</div>
@@ -635,16 +629,13 @@ elif st.session_state.nav == "Dashboard":
 
     st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
 
-    # SEARCH
     search_query = st.text_input("Search", placeholder="Search tasks, notes, reminders...",
                                   key="global_search", label_visibility="collapsed")
-
     if search_query:
         q = search_query.lower()
         matched_tasks     = [t for t in tasks     if q in t.title.lower() or q in (t.description or "").lower()]
         matched_notes     = [n for n in notes     if q in (n.title or "").lower() or q in (n.content or "").lower()]
         matched_reminders = [r for r in reminders if q in r.title.lower()]
-
         st.markdown(f"""
         <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);
             border-radius:12px;padding:16px;margin-bottom:16px;'>
@@ -653,57 +644,42 @@ elif st.session_state.nav == "Dashboard":
                 SEARCH RESULTS FOR "{search_query.upper()}"
             </div>
         """, unsafe_allow_html=True)
-
         if matched_tasks:
             st.markdown(f"<div style='font-size:11px;color:{active_color};font-weight:700;margin-bottom:6px;'>TASKS ({len(matched_tasks)})</div>", unsafe_allow_html=True)
             for t in matched_tasks:
                 tag_color = "#ff4560" if t.status != "completed" else "#00d68f"
-                st.markdown(f"""
-                <div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
+                st.markdown(f"""<div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
                     <span style='font-size:12px;font-weight:600;color:#f0f0f8;'>{t.title}</span>
-                    <span style='font-size:10px;color:{tag_color};margin-left:8px;font-family:JetBrains Mono,monospace;'>{t.status.upper()}</span>
+                    <span style='font-size:10px;color:{tag_color};margin-left:8px;'>{t.status.upper()}</span>
                     <div style='font-size:11px;color:#6b6b80;margin-top:2px;'>{t.description or ""}</div>
-                </div>
-                """, unsafe_allow_html=True)
-
+                </div>""", unsafe_allow_html=True)
         if matched_notes:
             st.markdown(f"<div style='font-size:11px;color:#9b59ff;font-weight:700;margin-bottom:6px;margin-top:10px;'>NOTES ({len(matched_notes)})</div>", unsafe_allow_html=True)
             for n in matched_notes:
-                st.markdown(f"""
-                <div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
+                st.markdown(f"""<div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
                     <div style='font-size:12px;font-weight:600;color:#f0f0f8;'>{n.title or "Untitled"}</div>
                     <div style='font-size:11px;color:#6b6b80;margin-top:2px;'>{n.content or ""}</div>
-                </div>
-                """, unsafe_allow_html=True)
-
+                </div>""", unsafe_allow_html=True)
         if matched_reminders:
             st.markdown(f"<div style='font-size:11px;color:#ffb020;font-weight:700;margin-bottom:6px;margin-top:10px;'>REMINDERS ({len(matched_reminders)})</div>", unsafe_allow_html=True)
             for r in matched_reminders:
-                st.markdown(f"""
-                <div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
+                st.markdown(f"""<div style='background:#12121a;border-radius:8px;padding:10px 14px;margin-bottom:6px;'>
                     <div style='font-size:12px;font-weight:600;color:#f0f0f8;'>{r.title}</div>
                     <div style='font-size:11px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>
-                        {r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date"}
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-
+                        {r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date"}</div>
+                </div>""", unsafe_allow_html=True)
         if not matched_tasks and not matched_notes and not matched_reminders:
             st.markdown("<div style='color:#6b6b80;font-size:12px;'>No results found.</div>", unsafe_allow_html=True)
-
         st.markdown("</div>", unsafe_allow_html=True)
 
     col_left, col_right = st.columns([1.3, 1])
 
     with col_left:
-
-        # ── TASKS ──
         st.markdown(f"""
         <div class='aura-panel-header'>
             <div style='width:6px;height:6px;border-radius:50%;background:{active_color};flex-shrink:0;'></div>
             Task Engine
-            <span style='margin-left:auto;font-size:10px;color:#6b6b80;
-                font-family:JetBrains Mono,monospace;'>{len(tasks)} PENDING</span>
+            <span style='margin-left:auto;font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>{len(tasks)} PENDING</span>
         </div>
         """, unsafe_allow_html=True)
 
@@ -713,9 +689,9 @@ elif st.session_state.nav == "Dashboard":
             st.session_state.show_add_task = not st.session_state.show_add_task
         if st.session_state.show_add_task:
             st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:12px;'>", unsafe_allow_html=True)
-            t_title    = st.text_input("Task Title", placeholder="e.g. Fix login bug")
-            t_desc     = st.text_area("Description", placeholder="Describe the task...")
-            t_priority = st.select_slider("Priority", options=["Low", "Medium", "High"], value="Medium")
+            t_title    = st.text_input("Task Title",   placeholder="e.g. Fix login bug")
+            t_desc     = st.text_area("Description",   placeholder="Describe the task...")
+            t_priority = st.select_slider("Priority",  options=["Low", "Medium", "High"], value="Medium")
             if st.button("Confirm Deployment"):
                 if t_title:
                     create_task(t_title, t_desc, uid, t_priority)
@@ -745,31 +721,23 @@ elif st.session_state.nav == "Dashboard":
             c1, c2, _ = st.columns([0.15, 0.15, 0.7])
             if t.status != "completed":
                 if c1.button("✔", key=f"done_{t.id}"):
-                    complete_task(t.id)
-                    st.rerun()
+                    complete_task(t.id); st.rerun()
             if c2.button("✕", key=f"del_{t.id}"):
-                delete_task(t.id)
-                st.rerun()
+                delete_task(t.id); st.rerun()
 
-        # ── NOTES ──
-        st.markdown("""
-        <div style='margin-top:24px;margin-bottom:10px;font-size:10px;font-weight:600;
+        st.markdown("""<div style='margin-top:24px;margin-bottom:10px;font-size:10px;font-weight:600;
             letter-spacing:0.14em;color:#6b6b80;text-transform:uppercase;
-            font-family:JetBrains Mono,monospace;'>Quick Notes</div>
-        """, unsafe_allow_html=True)
+            font-family:JetBrains Mono,monospace;'>Quick Notes</div>""", unsafe_allow_html=True)
 
         if notes:
             for n in notes:
-                st.markdown(f"""
-                <div class='aura-note'>
+                st.markdown(f"""<div class='aura-note'>
                     <div class='aura-note-title'>{n.title}</div>
                     <div class='aura-note-body'>{n.content or ""}</div>
-                </div>
-                """, unsafe_allow_html=True)
+                </div>""", unsafe_allow_html=True)
                 nd1, nd2, _ = st.columns([0.15, 0.15, 0.7])
                 if nd2.button("✕", key=f"del_note_{n.id}"):
-                    delete_note(n.id)
-                    st.rerun()
+                    delete_note(n.id); st.rerun()
         else:
             st.markdown("<div style='color:#6b6b80;font-size:12px;margin-bottom:10px;'>No notes yet.</div>", unsafe_allow_html=True)
 
@@ -780,49 +748,39 @@ elif st.session_state.nav == "Dashboard":
         if st.session_state.show_add_note:
             st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:12px;'>", unsafe_allow_html=True)
             n_title = st.text_input("Note Title", placeholder="e.g. Ideas")
-            n_body  = st.text_area("Content", placeholder="Write anything...")
+            n_body  = st.text_area("Content",     placeholder="Write anything...")
             if st.button("Save Note"):
                 if n_title:
                     create_note(n_title, n_body, uid)
-                    st.session_state.show_add_note = False
-                    st.rerun()
+                    st.session_state.show_add_note = False; st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # ── REMINDERS ──
-        st.markdown("""
-        <div style='margin-top:24px;margin-bottom:10px;font-size:10px;font-weight:600;
+        st.markdown("""<div style='margin-top:24px;margin-bottom:10px;font-size:10px;font-weight:600;
             letter-spacing:0.14em;color:#6b6b80;text-transform:uppercase;
-            font-family:JetBrains Mono,monospace;'>Reminders</div>
-        """, unsafe_allow_html=True)
+            font-family:JetBrains Mono,monospace;'>Reminders</div>""", unsafe_allow_html=True)
 
         if overdue:
             for r in overdue:
-                st.markdown(f"""
-                <div style='background:#ff456012;border:1px solid #ff456044;
+                st.markdown(f"""<div style='background:#ff456012;border:1px solid #ff456044;
                     border-radius:10px;padding:10px 14px;margin-bottom:6px;'>
                     <div style='font-size:12px;font-weight:700;color:#ff4560;'>OVERDUE — {r.title}</div>
                     <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>
                         {r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date"}</div>
-                </div>
-                """, unsafe_allow_html=True)
+                </div>""", unsafe_allow_html=True)
 
         if reminders:
             for r in reminders:
-                st.markdown(f"""
-                <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                st.markdown(f"""<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
                     border-radius:10px;padding:10px 14px;margin-bottom:6px;'>
                     <div style='font-size:13px;font-weight:600;color:#f0f0f8;'>{r.title}</div>
                     <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>
                         {r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date set"}</div>
-                </div>
-                """, unsafe_allow_html=True)
+                </div>""", unsafe_allow_html=True)
                 r1, r2, _ = st.columns([0.15, 0.15, 0.7])
                 if r1.button("✔", key=f"rem_done_{r.id}"):
-                    complete_reminder(r.id)
-                    st.rerun()
+                    complete_reminder(r.id); st.rerun()
                 if r2.button("✕", key=f"rem_del_{r.id}"):
-                    delete_reminder(r.id)
-                    st.rerun()
+                    delete_reminder(r.id); st.rerun()
         else:
             st.markdown("<div style='color:#6b6b80;font-size:12px;margin-bottom:10px;'>No reminders set.</div>", unsafe_allow_html=True)
 
@@ -839,55 +797,43 @@ elif st.session_state.nav == "Dashboard":
                 if rem_title:
                     due_dt = datetime.combine(rem_date, rem_time)
                     create_reminder(rem_title, due_dt, uid)
-                    st.session_state.show_add_reminder = False
-                    st.rerun()
+                    st.session_state.show_add_reminder = False; st.rerun()
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # ── EXPORT ──
-        st.markdown("""
-        <div style='margin-top:24px;margin-bottom:10px;font-size:10px;font-weight:600;
+        st.markdown("""<div style='margin-top:24px;margin-bottom:10px;font-size:10px;font-weight:600;
             letter-spacing:0.14em;color:#6b6b80;text-transform:uppercase;
-            font-family:JetBrains Mono,monospace;'>Export Data</div>
-        """, unsafe_allow_html=True)
+            font-family:JetBrains Mono,monospace;'>Export Data</div>""", unsafe_allow_html=True)
 
         if st.button("Export All Data", key="export_btn"):
-            lines = ["=" * 50, "AURA — WORKSPACE EXPORT",
-                     f"Exported: {datetime.now().strftime('%Y-%m-%d %H:%M')}", "=" * 50,
-                     "\n📌 TASKS", "-" * 30]
+            lines = ["="*50, "AURA — WORKSPACE EXPORT",
+                     f"Exported: {datetime.now().strftime('%Y-%m-%d %H:%M')}", "="*50, "\n📌 TASKS", "-"*30]
             if tasks:
                 for t in tasks:
                     priority = getattr(t, "priority", "Medium") or "Medium"
-                    status   = "✔ Done" if t.status == "completed" else "○ Pending"
+                    status = "✔ Done" if t.status == "completed" else "○ Pending"
                     lines.append(f"[{priority.upper()}] {t.title} — {status}")
-                    if t.description:
-                        lines.append(f"    {t.description}")
+                    if t.description: lines.append(f"    {t.description}")
             else:
                 lines.append("No tasks.")
-            lines += ["\n📝 NOTES", "-" * 30]
+            lines += ["\n📝 NOTES", "-"*30]
             if notes:
                 for n in notes:
                     lines.append(f"• {n.title or 'Untitled'}")
-                    if n.content:
-                        lines.append(f"  {n.content}")
+                    if n.content: lines.append(f"  {n.content}")
             else:
                 lines.append("No notes.")
-            lines += ["\n⏰ REMINDERS", "-" * 30]
+            lines += ["\n⏰ REMINDERS", "-"*30]
             if reminders:
                 for r in reminders:
                     date_str = r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date"
                     lines.append(f"• {r.title} — {date_str}")
             else:
                 lines.append("No reminders.")
-            lines.append("\n" + "=" * 50)
-            st.download_button(
-                label="Download .txt",
-                data="\n".join(lines),
+            lines.append("\n" + "="*50)
+            st.download_button(label="Download .txt", data="\n".join(lines),
                 file_name=f"aura_export_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
-                mime="text/plain",
-                key="download_export"
-            )
+                mime="text/plain", key="download_export")
 
-    # ── CHAT ──
     with col_right:
         st.markdown(f"""
         <div class='aura-panel-header'>
@@ -899,36 +845,26 @@ elif st.session_state.nav == "Dashboard":
         """, unsafe_allow_html=True)
 
         if "chat" not in st.session_state:
-            st.session_state.chat = [{
-                "role": "assistant",
-                "content": "Aura online. How can I help you today?"
-            }]
+            st.session_state.chat = [{"role": "assistant", "content": "Aura online. How can I help you today?"}]
 
         chat_container = st.container(height=380)
         with chat_container:
             for msg in st.session_state.chat:
                 if msg["role"] == "assistant":
-                    st.markdown(f"""
-                    <div class='aura-chat-ai'>
+                    st.markdown(f"""<div class='aura-chat-ai'>
                         <div class='aura-av'>A</div>
                         <div class='aura-bubble-ai'>{msg['content']}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    </div>""", unsafe_allow_html=True)
                 else:
-                    st.markdown(f"""
-                    <div class='aura-chat-user'>
+                    st.markdown(f"""<div class='aura-chat-user'>
                         <div class='aura-av' style='background:linear-gradient(135deg,#9b59ff,{active_color});'>U</div>
                         <div class='aura-bubble-user'>{msg['content']}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    </div>""", unsafe_allow_html=True)
 
-        st.markdown("""
-        <div style='font-size:10px;font-weight:600;letter-spacing:0.14em;
+        st.markdown("""<div style='font-size:10px;font-weight:600;letter-spacing:0.14em;
             color:#6b6b80;text-transform:uppercase;
             font-family:JetBrains Mono,monospace;margin-bottom:8px;margin-top:8px;'>
-            Quick Commands
-        </div>
-        """, unsafe_allow_html=True)
+            Quick Commands</div>""", unsafe_allow_html=True)
 
         qc1, qc2, qc3, qc4 = st.columns(4)
         quick_prompt = None
@@ -947,16 +883,13 @@ elif st.session_state.nav == "Dashboard":
                 final_prompt,
                 chat_history=st.session_state.chat[:-1],
                 user_context=user_context,
-                tasks=tasks,
-                notes=notes,
-                reminders=reminders,
+                tasks=tasks, notes=notes, reminders=reminders,
                 personality=_personality_prefs.get("personality", "Professional"),
                 custom_personality=_personality_prefs.get("custom_personality", "")
             )
             st.session_state.chat.append({"role": "assistant", "content": response})
             st.rerun()
 
-    # STATUS BAR
     st.markdown(f"""
     <div class='aura-status-bar'>
         <span><span style='color:{active_color};'>●</span>&nbsp; AI ONLINE</span>
