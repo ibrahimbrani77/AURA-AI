@@ -888,7 +888,7 @@ elif st.session_state.nav == "Dashboard":
 
 # Voice input via browser
         import streamlit.components.v1 as components
-        components.html(f"""
+        st.components.v1.html(f"""
         <style>
         @keyframes pulse-ring-red {{
             0% {{ box-shadow: 0 0 0 0 #ff456066; }}

@@ -3,8 +3,9 @@ from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
+api_key = os.getenv("GROQ_API_KEY")
+client = Groq(api_key=api_key) if api_key else None
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 PERSONALITIES = {
     "🎩 Professional": "You are a highly professional, formal, and precise AI assistant.",
@@ -17,6 +18,8 @@ PERSONALITIES = {
 }
 
 def get_ai_response(prompt, chat_history=None, user_context="", tasks=None, notes=None, reminders=None, personality="Professional", custom_personality=""):
+    if client is None:
+        return "AI unavailable — GROQ_API_KEY not set."
     if chat_history is None:
         chat_history = []
     if tasks is None:
