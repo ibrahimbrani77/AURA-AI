@@ -1,231 +1,254 @@
 import streamlit as st
 
-st.set_page_config(page_title="Aura — Your Personal AI", page_icon="✦", layout="wide")
+st.set_page_config(page_title="Aura — Your Personal AI", page_icon="✦", layout="wide", initial_sidebar_state="collapsed")
 
-# Read active color from session if available
-if "theme" not in st.session_state:
-    st.session_state.theme = "Violet"
+# Theme Setup
+theme = {"accent": "#a78bfa", "glow": "rgba(167, 139, 250, 0.15)", "bg": "#050508", "card_bg": "#0c0c12"}
+active_color = theme["accent"]
+glow_color = theme["glow"]
 
-themes = {
-    "Violet": {"accent": "#a78bfa", "glow": "rgba(167, 139, 250, 0.15)"},
-    "Rose":   {"accent": "#f472b6", "glow": "rgba(244, 114, 182, 0.15)"},
-    "Cyan":   {"accent": "#22d3ee", "glow": "rgba(34, 211, 238, 0.15)"},
-}
-active_color = themes[st.session_state.theme]["accent"]
-glow_color   = themes[st.session_state.theme]["glow"]
-
+# --- GLOBAL CSS ---
 st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 
-html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, label {{
+html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, h4, h5, h6, label {{
     font-family: 'Syne', sans-serif !important;
 }}
+
 .stApp {{
-    background: #050508 !important;
+    background-color: {theme['bg']} !important;
     color: #f0f0f8 !important;
 }}
-#MainMenu, footer, header {{ visibility: hidden; }}
+
+/* Hide default Streamlit headers and footers */
+header, footer {{ visibility: hidden; }}
 .block-container {{
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    max-width: 100% !important;
+    padding-top: 1rem !important;
+    padding-bottom: 2rem !important;
+    max-width: 1300px !important;
 }}
+
+/* Custom Button Styling */
 .stButton > button {{
     background: {active_color} !important;
     color: #050508 !important;
     border: none !important;
-    padding: 14px 32px !important;
+    padding: 12px 28px !important;
     font-weight: 700 !important;
-    font-size: 13px !important;
-    letter-spacing: 0.08em !important;
+    font-size: 14px !important;
     border-radius: 12px !important;
-    font-family: 'Syne', sans-serif !important;
-    text-transform: uppercase !important;
-    transition: opacity 0.2s !important;
-    width: auto !important;
+    transition: all 0.3s ease !important;
 }}
 .stButton > button:hover {{
-    opacity: 0.85 !important;
-    color: #050508 !important;
+    opacity: 0.9 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px {glow_color} !important;
+}}
+
+/* Secondary Button */
+.btn-secondary > button {{
+    background: transparent !important;
+    color: #f0f0f8 !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}}
+.btn-secondary > button:hover {{
+    background: rgba(255,255,255,0.05) !important;
+    border-color: rgba(255,255,255,0.2) !important;
+}}
+
+/* Glassmorphism Dashboard Preview */
+.glass-panel {{
+    background: linear-gradient(145deg, rgba(12,12,18,0.9), rgba(12,12,18,0.4));
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+}}
+
+.glass-panel::before {{
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle at center, {glow_color} 0%, transparent 50%);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+}}
+
+/* Bento Box Grid */
+.bento-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+}}
+
+.bento-card {{
+    background: {theme['card_bg']};
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 32px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}}
+
+.bento-card:hover {{
+    transform: translateY(-4px);
+    border-color: rgba(167, 139, 250, 0.3);
+}}
+
+.icon-wrapper {{
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+}}
+
+/* Utility text classes */
+.tag {{
+    display: inline-flex; align-items: center; gap: 8px;
+    background: {glow_color}; border: 1px solid {active_color}44;
+    border-radius: 20px; padding: 6px 16px; margin-bottom: 24px;
+    font-size: 11px; font-weight: 700; color: {active_color};
+    letter-spacing: 0.12em; font-family: 'JetBrains Mono', monospace;
 }}
 </style>
 """, unsafe_allow_html=True)
 
-# ── HERO ──
-st.markdown(f"""
-<div style='min-height:100vh;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;text-align:center;padding:60px 20px;position:relative;overflow:hidden;'>
-
-    <!-- Background glow -->
-    <div style='position:absolute;top:20%;left:50%;transform:translateX(-50%);
-        width:600px;height:600px;border-radius:50%;
-        background:radial-gradient(circle, {glow_color} 0%, transparent 70%);
-        pointer-events:none;'></div>
-
-    <!-- Logo -->
-    <div style='width:72px;height:72px;border-radius:18px;
-        background:linear-gradient(135deg,{active_color},#9b59ff);
-        display:flex;align-items:center;justify-content:center;
-        font-weight:900;font-size:32px;color:#050508;
-        margin-bottom:32px;box-shadow:0 0 40px {glow_color};'>A</div>
-
-    <!-- Badge -->
-    <div style='display:inline-flex;align-items:center;gap:8px;
-        background:{glow_color};border:1px solid {active_color}44;
-        border-radius:20px;padding:6px 16px;margin-bottom:24px;'>
-        <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
-        <span style='font-size:11px;font-weight:600;color:{active_color};
-            letter-spacing:0.12em;font-family:JetBrains Mono,monospace;'>
-            AI-POWERED PERSONAL ASSISTANT
-        </span>
-    </div>
-
-    <!-- Headline -->
-    <h1 style='font-size:clamp(40px,7vw,88px);font-weight:800;letter-spacing:-0.03em;
-        line-height:1;margin:0 0 24px;color:#f0f0f8;max-width:900px;'>
-        Your AI,<br>
-        <span style='color:{active_color};'>perfectly tuned</span><br>
-        to you.
-    </h1>
-
-    <!-- Subheadline -->
-    <p style='font-size:18px;color:#9090a8;max-width:560px;line-height:1.6;
-        margin:0 0 48px;font-weight:400;'>
-        Aura manages your tasks, notes, and reminders — and adapts its personality
-        to match how you think and work.
-    </p>
-</div>
-""", unsafe_allow_html=True)
-
-# CTA buttons
-c1, c2, c3 = st.columns([2, 1, 2])
-with c2:
-    if st.button("Get Started →", key="cta_main"):
-        st.switch_page("app.py")
-
-st.markdown("<div style='height:40px;'></div>", unsafe_allow_html=True)
-
-# ── FEATURES ──
-st.markdown(f"""
-<div style='padding:80px 40px;max-width:1100px;margin:0 auto;'>
-    <div style='text-align:center;margin-bottom:60px;'>
-        <div style='font-size:10px;font-weight:600;letter-spacing:0.2em;color:#6b6b80;
-            font-family:JetBrains Mono,monospace;margin-bottom:12px;'>WHAT AURA DOES</div>
-        <h2 style='font-size:40px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0;'>
-            Everything you need,<br>nothing you don't.
-        </h2>
-    </div>
-
-    <div style='display:grid;grid-template-columns:repeat(3,1fr);gap:24px;'>
-
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-            <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,{active_color},transparent);'></div>
-            <div style='font-size:32px;margin-bottom:16px;'>📌</div>
-            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Task Engine</h3>
-            <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                Deploy tasks with priority levels. Track what's pending, what's done,
-                and what needs your attention first.
-            </p>
-        </div>
-
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-            <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,#9b59ff,transparent);'></div>
-            <div style='font-size:32px;margin-bottom:16px;'>🧠</div>
-            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Neural Chat</h3>
-            <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                Talk to an AI that knows your tasks, notes, and goals.
-                Switch personalities — from professional to hype coach.
-            </p>
-        </div>
-
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-            <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,#00d68f,transparent);'></div>
-            <div style='font-size:32px;margin-bottom:16px;'>⏰</div>
-            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Smart Reminders</h3>
-            <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                Set reminders and get alerted when they're overdue.
-                Never miss what matters.
-            </p>
-        </div>
-
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-            <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,#ffb020,transparent);'></div>
-            <div style='font-size:32px;margin-bottom:16px;'>📝</div>
-            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Quick Notes</h3>
-            <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                Capture ideas instantly. Your notes are always searchable
-                and available to your AI.
-            </p>
-        </div>
-
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-            <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,#f472b6,transparent);'></div>
-            <div style='font-size:32px;margin-bottom:16px;'>🎭</div>
-            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>AI Personalities</h3>
-            <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                Choose from Professional, Friendly, Mentor, Sarcastic,
-                Minimalist, Hype Coach — or define your own.
-            </p>
-        </div>
-
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;'>
-            <div style='position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,#22d3ee,transparent);'></div>
-            <div style='font-size:32px;margin-bottom:16px;'>🔒</div>
-            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Secure by Default</h3>
-            <p style='font-size:13px;color:#9090a8;line-height:1.6;margin:0;'>
-                PBKDF2 password hashing and JWT tokens keep your
-                data private and secure.
-            </p>
-        </div>
-
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ── CTA BOTTOM ──
-st.markdown(f"""
-<div style='padding:80px 40px;text-align:center;'>
-    <h2 style='font-size:40px;font-weight:800;letter-spacing:-0.02em;
-        color:#f0f0f8;margin:0 0 16px;'>
-        Ready to meet your Aura?
-    </h2>
-    <p style='font-size:16px;color:#9090a8;margin:0 0 40px;'>
-        Free to use. No credit card required.
-    </p>
-</div>
-""", unsafe_allow_html=True)
-
-c1, c2, c3 = st.columns([2, 1, 2])
-with c2:
-    if st.button("Launch Aura →", key="cta_bottom"):
-        st.switch_page("app.py")
-
-# ── FOOTER ──
-st.markdown(f"""
-<div style='padding:40px;text-align:center;border-top:1px solid rgba(255,255,255,0.06);
-    margin-top:40px;'>
-    <div style='display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;'>
-        <div style='width:24px;height:24px;border-radius:6px;
+# --- TOP NAVIGATION ---
+nav_col1, nav_col2, nav_col3 = st.columns([1, 4, 1])
+with nav_col1:
+    st.markdown(f"""
+    <div style='display:flex;align-items:center;gap:12px;padding:8px 0;'>
+        <div style='width:36px;height:36px;border-radius:10px;
             background:linear-gradient(135deg,{active_color},#9b59ff);
             display:flex;align-items:center;justify-content:center;
-            font-weight:900;font-size:11px;color:#050508;'>A</div>
-        <span style='font-size:13px;font-weight:800;letter-spacing:0.1em;color:{active_color};'>AURA</span>
+            font-weight:800;font-size:18px;color:#050508;'>A</div>
+        <span style='font-size:18px;font-weight:800;letter-spacing:0.05em;'>AURA</span>
     </div>
-    <p style='font-size:11px;color:#6b6b80;margin:0;font-family:JetBrains Mono,monospace;'>
-        AURA v1.0 · Personal AI Assistant · Built with ❤️
-    </p>
+    """, unsafe_allow_html=True)
+
+with nav_col3:
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown('<div class="btn-secondary">', unsafe_allow_html=True)
+        st.button("Log In", use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    with c2:
+        st.button("Get Started", use_container_width=True)
+
+st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+
+# --- HERO SECTION ---
+hero_left, hero_right = st.columns([1.1, 1], gap="large")
+
+with hero_left:
+    st.markdown(f"""
+    <div style="padding-top: 40px;">
+        <div class="tag">
+            <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
+            AI-POWERED PERSONAL ASSISTANT
+        </div>
+        <h1 style='font-size:clamp(48px, 6vw, 72px); font-weight:800; letter-spacing:-0.03em; line-height:1.1; margin:0 0 24px;'>
+            Your AI, <br>
+            <span style='color:{active_color};'>perfectly tuned</span><br>
+            to you.
+        </h1>
+        <p style='font-size:18px; color:#9090a8; max-width:500px; line-height:1.6; margin:0 0 40px; font-weight:400;'>
+            Plan tasks, set reminders, take notes, and let Aura prioritize what matters most — adapting its personality to match how you work.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    btn_col1, btn_col2, _ = st.columns([1.5, 1.5, 2])
+    with btn_col1:
+        st.button("Get Started for Free", use_container_width=True)
+    with btn_col2:
+        st.markdown('<div class="btn-secondary">', unsafe_allow_html=True)
+        st.button("▶ Watch Demo", use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+with hero_right:
+    # App Dashboard Mockup built with HTML/CSS
+    st.markdown(f"""
+    <div class="glass-panel">
+        <div style="position:relative; z-index:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
+                <div>
+                    <div style="font-size:12px; color:#9090a8; font-family:'JetBrains Mono', monospace;">TODAY's OVERVIEW</div>
+                    <div style="font-size:24px; font-weight:700;">Good morning, <span style="color:{active_color}">Commander</span></div>
+                </div>
+                <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, {active_color}, #9b59ff); display:flex; align-items:center; justify-content:center; color:#050508; font-weight:bold;">C</div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:20px;">
+                    <div style="font-size:11px; color:#9090a8; margin-bottom:8px; font-family:'JetBrains Mono', monospace;">TASKS ORGANIZED</div>
+                    <div style="font-size:32px; font-weight:800; color:{active_color}">35</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:20px;">
+                    <div style="font-size:11px; color:#9090a8; margin-bottom:8px; font-family:'JetBrains Mono', monospace;">AI STATUS</div>
+                    <div style="font-size:24px; font-weight:800; color:#00d68f; margin-top:6px;">ONLINE</div>
+                </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.2); border-radius:16px; padding:16px; border:1px solid rgba(255,255,255,0.03);">
+                <div style="font-size:12px; font-weight:600; margin-bottom:12px; display:flex; justify-content:space-between;">
+                    <span>Priority Tasks</span>
+                    <span style="color:{active_color}">View All</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <div style="width:16px; height:16px; border-radius:4px; border:2px solid {active_color};"></div>
+                    <span style="font-size:14px;">Review project proposal</span>
+                    <span style="margin-left:auto; font-size:11px; background:rgba(255,69,96,0.15); color:#ff4560; padding:2px 8px; border-radius:10px;">HIGH</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px; padding:10px 0;">
+                    <div style="width:16px; height:16px; border-radius:4px; border:2px solid #6b6b80;"></div>
+                    <span style="font-size:14px; color:#9090a8;">Team stand-up meeting</span>
+                    <span style="margin-left:auto; font-size:11px; background:rgba(255,176,32,0.15); color:#ffb020; padding:2px 8px; border-radius:10px;">MED</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<div style='height: 100px;'></div>", unsafe_allow_html=True)
+
+# --- BENTO BOX FEATURES ---
+st.markdown(f"""
+<div style='text-align:center; margin-bottom: 40px;'>
+    <h2 style='font-size:36px; font-weight:800; letter-spacing:-0.02em;'>Everything you need to stay on top of your day.</h2>
+</div>
+
+<div class="bento-grid">
+    <div class="bento-card">
+        <div class="icon-wrapper" style="color: {active_color};">📌</div>
+        <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Task Engine</h3>
+        <p style="font-size:14px; color:#9090a8; line-height:1.6; margin:0;">Deploy tasks with priority levels. Track what's pending, done, and what needs attention first.</p>
+    </div>
+    <div class="bento-card">
+        <div class="icon-wrapper" style="color: #9b59ff;">🧠</div>
+        <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Neural Chat</h3>
+        <p style="font-size:14px; color:#9090a8; line-height:1.6; margin:0;">Talk to an AI that knows your tasks, notes, and goals. Switch personalities on the fly.</p>
+    </div>
+    <div class="bento-card">
+        <div class="icon-wrapper" style="color: #00d68f;">📝</div>
+        <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Quick Notes</h3>
+        <p style="font-size:14px; color:#9090a8; line-height:1.6; margin:0;">Capture ideas instantly. Your notes are always searchable and available to your AI.</p>
+    </div>
+    <div class="bento-card">
+        <div class="icon-wrapper" style="color: #ffb020;">⏰</div>
+        <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Smart Reminders</h3>
+        <p style="font-size:14px; color:#9090a8; line-height:1.6; margin:0;">Set reminders and get alerted when they're overdue. Never miss what matters.</p>
+    </div>
 </div>
 """, unsafe_allow_html=True)
