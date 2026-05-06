@@ -297,253 +297,178 @@ if st.session_state.nav == "Dashboard" and uid:
         if st.button("Secure Logout"):
             st.session_state.clear()
             redirect("Home")
+
 # =========================
 # HOME PAGE
 # =========================
 if st.session_state.nav == "Home":
-    
-    # Inject Home-specific CSS
-    st.markdown(f"""
-    <style>
-    /* Secondary Button */
-    .btn-secondary > button {{
-        background: transparent !important;
-        color: #f0f0f8 !important;
-        border: 1px solid rgba(255,255,255,0.1) !important;
-    }}
-    .btn-secondary > button:hover {{
-        background: rgba(255,255,255,0.05) !important;
-        border-color: rgba(255,255,255,0.2) !important;
-    }}
 
-    /* Glassmorphism Dashboard Preview */
-    .glass-panel {{
-        background: linear-gradient(145deg, rgba(12,12,18,0.9), rgba(12,12,18,0.4));
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 24px;
-        padding: 32px;
-        box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-        position: relative;
-        overflow: hidden;
-    }}
-    .glass-panel::before {{
-        content: '';
-        position: absolute;
-        top: -50%; left: -50%; width: 200%; height: 200%;
-        background: radial-gradient(circle at center, {glow_color} 0%, transparent 50%);
-        opacity: 0.5;
-        pointer-events: none;
-        z-index: 0;
-    }}
-
-    /* Bento Box Grid */
-    .bento-grid {{
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 24px;
-        margin-top: 20px;
-    }}
-    .bento-card {{
-        background: #0c0c12;
-        border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 20px;
-        padding: 32px;
-        transition: transform 0.3s ease, border-color 0.3s ease;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-    }}
-    .bento-card:hover {{
-        transform: translateY(-4px);
-        border-color: {active_color}44;
-    }}
-    .icon-wrapper {{
-        width: 48px; height: 48px;
-        border-radius: 14px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 24px;
-        margin-bottom: 20px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.05);
-    }}
-    .hero-tag {{
-        display: inline-flex; align-items: center; gap: 8px;
-        background: {glow_color}; border: 1px solid {active_color}44;
-        border-radius: 20px; padding: 6px 16px; margin-bottom: 24px;
-        font-size: 11px; font-weight: 700; color: {active_color};
-        letter-spacing: 0.12em; font-family: 'JetBrains Mono', monospace;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
-
-    # --- TOP NAVIGATION ---
     n1, n2, n3 = st.columns([1, 4, 1])
     with n1:
         st.markdown(f"""
-        <div style='display:flex;align-items:center;gap:12px;padding:8px 0;'>
-            <div style='width:36px;height:36px;border-radius:10px;
+        <div style='display:flex;align-items:center;gap:10px;padding:16px 0;'>
+            <div style='width:32px;height:32px;border-radius:8px;
                 background:linear-gradient(135deg,{active_color},#9b59ff);
                 display:flex;align-items:center;justify-content:center;
-                font-weight:800;font-size:18px;color:#050508;'>A</div>
-            <span style='font-size:18px;font-weight:800;letter-spacing:0.05em;'>AURA</span>
+                font-weight:900;font-size:14px;color:#050508;'>A</div>
+            <span style='font-size:15px;font-weight:800;letter-spacing:0.1em;color:{active_color};'>AURA</span>
         </div>
         """, unsafe_allow_html=True)
     with n3:
         st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
         nb1, nb2 = st.columns(2)
-        with nb1:
-            st.markdown('<div class="btn-secondary">', unsafe_allow_html=True)
-            if st.button("Log In", key="nav_login", use_container_width=True):
-                redirect("Login")
-            st.markdown('</div>', unsafe_allow_html=True)
-        with nb2:
-            if st.button("Sign Up", key="nav_register", use_container_width=True):
-                redirect("Register")
+        if nb1.button("Login", key="nav_login"):
+            redirect("Login")
+        if nb2.button("Sign Up", key="nav_register"):
+            redirect("Register")
 
-    st.markdown("<div style='height:60px;'></div>", unsafe_allow_html=True)
+    st.markdown(f"<hr style='border-color:rgba(255,255,255,0.06);margin:0;'>", unsafe_allow_html=True)
 
-    # --- HERO SECTION ---
-    hero_left, hero_right = st.columns([1.1, 1], gap="large")
-
-    with hero_left:
-        st.markdown(f"""
-        <div style="padding-top: 40px;">
-            <div class="hero-tag">
-                <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
-                AI-POWERED PERSONAL ASSISTANT
-            </div>
-            <h1 style='font-size:clamp(48px, 6vw, 72px); font-weight:800; letter-spacing:-0.03em; line-height:1.1; margin:0 0 24px;'>
-                Your AI, <br>
-                <span style='color:{active_color};'>perfectly tuned</span><br>
-                to you.
-            </h1>
-            <p style='font-size:18px; color:#9090a8; max-width:500px; line-height:1.6; margin:0 0 40px; font-weight:400;'>
-                Plan tasks, set reminders, take notes, and let Aura prioritize what matters most — adapting its personality to match how you work.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        btn_col1, btn_col2, _ = st.columns([1.5, 1.5, 2])
-        with btn_col1:
-            if st.button("Get Started Free", key="hero_cta", use_container_width=True):
-                redirect("Register")
-        with btn_col2:
-            st.markdown('<div class="btn-secondary">', unsafe_allow_html=True)
-            if st.button("Sign In →", key="hero_login", use_container_width=True):
-                redirect("Login")
-            st.markdown('</div>', unsafe_allow_html=True)
-
-    with hero_right:
-        st.markdown(f"""
-        <div class="glass-panel">
-            <div style="position:relative; z-index:1;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 30px;">
-                    <div>
-                        <div style="font-size:12px; color:#9090a8; font-family:'JetBrains Mono', monospace;">TODAY'S OVERVIEW</div>
-                        <div style="font-size:24px; font-weight:700;">Good morning, <span style="color:{active_color}">Commander</span></div>
-                    </div>
-                    <div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, {active_color}, #9b59ff); display:flex; align-items:center; justify-content:center; color:#050508; font-weight:bold;">C</div>
-                </div>
-                
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:20px;">
-                        <div style="font-size:11px; color:#9090a8; margin-bottom:8px; font-family:'JetBrains Mono', monospace;">TASKS ORGANIZED</div>
-                        <div style="font-size:32px; font-weight:800; color:{active_color}">35</div>
-                    </div>
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:20px;">
-                        <div style="font-size:11px; color:#9090a8; margin-bottom:8px; font-family:'JetBrains Mono', monospace;">AI STATUS</div>
-                        <div style="font-size:24px; font-weight:800; color:#00d68f; margin-top:6px;">ONLINE</div>
-                    </div>
-                </div>
-
-                <div style="background:rgba(0,0,0,0.2); border-radius:16px; padding:16px; border:1px solid rgba(255,255,255,0.03);">
-                    <div style="font-size:12px; font-weight:600; margin-bottom:12px; display:flex; justify-content:space-between;">
-                        <span>Priority Tasks</span>
-                        <span style="color:{active_color}">View All</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
-                        <div style="width:16px; height:16px; border-radius:4px; border:2px solid {active_color};"></div>
-                        <span style="font-size:14px;">Review project proposal</span>
-                        <span style="margin-left:auto; font-size:11px; background:rgba(255,69,96,0.15); color:#ff4560; padding:2px 8px; border-radius:10px;">HIGH</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:12px; padding:10px 0;">
-                        <div style="width:16px; height:16px; border-radius:4px; border:2px solid #6b6b80;"></div>
-                        <span style="font-size:14px; color:#9090a8;">Team stand-up meeting</span>
-                        <span style="margin-left:auto; font-size:11px; background:rgba(255,176,32,0.15); color:#ffb020; padding:2px 8px; border-radius:10px;">MED</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("<div style='height:80px;'></div>", unsafe_allow_html=True)
-
-    # --- BENTO BOX FEATURES ---
     st.markdown(f"""
-    <div style='text-align:center; margin-bottom: 40px;'>
-        <div style='font-size:10px;font-weight:600;letter-spacing:0.2em;color:#6b6b80;
-            font-family:JetBrains Mono,monospace;margin-bottom:12px;'>WHAT I CAN DO FOR YOU</div>
-        <h2 style='font-size:36px; font-weight:800; letter-spacing:-0.02em;'>Everything in one place.</h2>
-    </div>
-
-    <div class="bento-grid">
-        <div class="bento-card">
-            <div class="icon-wrapper" style="color: {active_color};">📌</div>
-            <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Task Engine</h3>
-            <p style="font-size:13px; color:#9090a8; line-height:1.6; margin:0;">Deploy tasks with High, Medium, or Low priority. I'll help you figure out what to tackle first.</p>
+    <div style='text-align:center;padding:80px 20px 50px;position:relative;overflow:hidden;'>
+        <div style='position:absolute;top:0;left:50%;transform:translateX(-50%);
+            width:800px;height:500px;border-radius:50%;
+            background:radial-gradient(circle, {glow_color} 0%, transparent 70%);
+            pointer-events:none;'></div>
+        <div style='display:inline-flex;align-items:center;gap:8px;
+            background:{glow_color};border:1px solid {active_color}44;
+            border-radius:20px;padding:6px 16px;margin-bottom:24px;'>
+            <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
+            <span style='font-size:11px;font-weight:600;color:{active_color};
+                letter-spacing:0.12em;font-family:JetBrains Mono,monospace;'>
+                AI-POWERED · PERSONAL · ADAPTIVE
+            </span>
         </div>
-        <div class="bento-card">
-            <div class="icon-wrapper" style="color: #9b59ff;">🧠</div>
-            <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Neural Chat</h3>
-            <p style="font-size:13px; color:#9090a8; line-height:1.6; margin:0;">Talk to me about anything. I know your tasks, notes, and goals — so my answers are actually useful.</p>
-        </div>
-        <div class="bento-card">
-            <div class="icon-wrapper" style="color: #f472b6;">🎭</div>
-            <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">6 Personalities</h3>
-            <p style="font-size:13px; color:#9090a8; line-height:1.6; margin:0;">Pick Professional, Friendly, Mentor, Sarcastic, Minimalist, or Hype Coach. Or write your own.</p>
-        </div>
-        <div class="bento-card">
-            <div class="icon-wrapper" style="color: #ffb020;">⏰</div>
-            <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Smart Reminders</h3>
-            <p style="font-size:13px; color:#9090a8; line-height:1.6; margin:0;">Set reminders with dates and times. I'll flag what's overdue the moment you open the app.</p>
-        </div>
-        <div class="bento-card">
-            <div class="icon-wrapper" style="color: #00d68f;">📝</div>
-            <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Quick Notes</h3>
-            <p style="font-size:13px; color:#9090a8; line-height:1.6; margin:0;">Capture ideas instantly. Your notes are always searchable and available to me.</p>
-        </div>
-        <div class="bento-card">
-            <div class="icon-wrapper" style="color: #22d3ee;">🔒</div>
-            <h3 style="font-size:18px; font-weight:700; margin:0 0 12px;">Secure & Private</h3>
-            <p style="font-size:13px; color:#9090a8; line-height:1.6; margin:0;">PBKDF2 password hashing and JWT tokens. Your data stays yours.</p>
-        </div>
+        <h1 style='font-size:clamp(36px,6vw,76px);font-weight:800;letter-spacing:-0.03em;
+            line-height:1.05;margin:0 0 24px;color:#f0f0f8;'>
+            Hi, I'm <span style='color:{active_color};'>Aura.</span><br>
+            Your personal AI,<br>built around <span style='color:{active_color};'>you.</span>
+        </h1>
+        <p style='font-size:18px;color:#9090a8;max-width:600px;line-height:1.7;margin:0 auto 16px;'>
+            I manage your tasks, take notes, set reminders, and chat with you —
+            all while adapting my personality to match how <em>you</em> like to work.
+        </p>
+        <p style='font-size:15px;color:#6b6b80;max-width:500px;line-height:1.6;margin:0 auto 48px;'>
+            Whether you want me professional, friendly, sarcastic, or your own custom vibe —
+            I'm always here, always learning, always yours.
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
+    c1, c2, c3, c4, c5 = st.columns([2, 1, 0.3, 1, 2])
+    with c2:
+        if st.button("✦ Get Started Free", key="hero_cta"):
+            redirect("Register")
+    with c4:
+        if st.button("Sign In →", key="hero_login"):
+            redirect("Login")
+
     st.markdown("<div style='height:60px;'></div>", unsafe_allow_html=True)
 
-    # --- BOTTOM CTA ---
     st.markdown(f"""
-    <div style='text-align:center;padding:40px;'>
-        <h2 style='font-size:32px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0 0 16px;'>
-            Ready to meet your Aura?
+    <div style='text-align:center;margin-bottom:40px;'>
+        <div style='font-size:10px;font-weight:600;letter-spacing:0.2em;color:#6b6b80;
+            font-family:JetBrains Mono,monospace;margin-bottom:12px;'>WHAT I CAN DO FOR YOU</div>
+        <h2 style='font-size:36px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0;'>
+            Everything in one place.
         </h2>
     </div>
     """, unsafe_allow_html=True)
-    
+
+    f1, f2, f3 = st.columns(3)
+    for col, icon, title, color, desc in [
+        (f1, "📌", "Task Engine", active_color, "Deploy tasks with High, Medium, or Low priority. I'll help you figure out what to tackle first."),
+        (f2, "🧠", "Neural Chat", "#9b59ff", "Talk to me about anything. I know your tasks, notes, and goals — so my answers are actually useful."),
+        (f3, "🎭", "6 Personalities", "#f472b6", "Pick Professional, Friendly, Mentor, Sarcastic, Minimalist, or Hype Coach. Or write your own."),
+    ]:
+        with col:
+            st.markdown(f"""
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+                <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                    background:linear-gradient(90deg,{color},transparent);'></div>
+                <div style='font-size:36px;margin-bottom:16px;'>{icon}</div>
+                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>{title}</h3>
+                <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>{desc}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+    f4, f5, f6 = st.columns(3)
+    for col, icon, title, color, desc in [
+        (f4, "⏰", "Smart Reminders", "#ffb020", "Set reminders with dates and times. I'll flag what's overdue the moment you open the app."),
+        (f5, "📝", "Quick Notes", "#00d68f", "Capture ideas instantly. Your notes are always searchable and available to me."),
+        (f6, "🔒", "Secure & Private", "#22d3ee", "PBKDF2 password hashing and JWT tokens. Your data stays yours."),
+    ]:
+        with col:
+            st.markdown(f"""
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+                <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                    background:linear-gradient(90deg,{color},transparent);'></div>
+                <div style='font-size:36px;margin-bottom:16px;'>{icon}</div>
+                <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>{title}</h3>
+                <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>{desc}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+    f7, f8, f9 = st.columns(3)
+    with f7:
+        st.markdown(f"""
+        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+            border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+            <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                background:linear-gradient(90deg,#a78bfa,transparent);'></div>
+            <div style='font-size:36px;margin-bottom:16px;'>🔊</div>
+            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Voice Output</h3>
+            <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>
+                Toggle voice mode and Aura will read her responses back to you out loud using natural text-to-speech.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    with f8:
+        st.markdown(f"""
+        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+            border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+            <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                background:linear-gradient(90deg,#ffb020,transparent);'></div>
+            <div style='position:absolute;top:16px;right:16px;font-size:9px;font-weight:700;
+                letter-spacing:0.1em;background:#ffb02022;border:1px solid #ffb02066;
+                color:#ffb020;border-radius:6px;padding:3px 8px;
+                font-family:JetBrains Mono,monospace;'>COMING SOON</div>
+            <div style='font-size:36px;margin-bottom:16px;'>🎤</div>
+            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Voice Input</h3>
+            <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>
+                Speak to Aura instead of typing. Full speech-to-text pipeline built and ready — coming to cloud soon.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+    with f9:
+        st.markdown(f"""
+        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+            border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+            <div style='position:absolute;top:0;left:0;right:0;height:2px;
+                background:linear-gradient(90deg,#00d68f,transparent);'></div>
+            <div style='font-size:36px;margin-bottom:16px;'>📊</div>
+            <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Smart Export</h3>
+            <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>
+                Export all your tasks, notes, and reminders as a clean .txt file with one click.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
     c1, c2, c3 = st.columns([2, 1, 2])
     with c2:
-        if st.button("Create My Aura →", key="bottom_cta", use_container_width=True):
+        if st.button("Create My Aura →", key="bottom_cta"):
             redirect("Register")
 
     st.markdown(f"""
-    <div style='text-align:center;padding:32px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.05);'>
+    <div style='text-align:center;padding:32px;'>
         <p style='font-size:11px;color:#6b6b80;margin:0;font-family:JetBrains Mono,monospace;'>
             AURA v1.0 · Personal AI Assistant · OSTİM Technical University
         </p>
     </div>
     """, unsafe_allow_html=True)
+
 # =========================
 # AUTH
 # =========================
