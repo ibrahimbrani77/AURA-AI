@@ -316,12 +316,7 @@ if st.session_state.nav == "Home":
                 font-weight:900;font-size:14px;color:#050508;'>A</div>
             <span style='font-size:15px;font-weight:800;letter-spacing:0.1em;color:{active_color};'>AURA</span>
         </div>
-        <div style='display:flex;gap:32px;'>
-            <span style='font-size:13px;color:#9090a8;font-weight:500;cursor:pointer;'>Features</span>
-            <span style='font-size:13px;color:#9090a8;font-weight:500;cursor:pointer;'>How It Works</span>
-            <span style='font-size:13px;color:#9090a8;font-weight:500;cursor:pointer;'>Personalities</span>
-            <span style='font-size:13px;color:#9090a8;font-weight:500;cursor:pointer;'>About</span>
-        </div>
+        <div style='display:flex;gap:32px;'></div>
         <div style='display:flex;gap:12px;align-items:center;'>
             <span id='nav-login-placeholder'></span>
             <span id='nav-signup-placeholder'></span>
