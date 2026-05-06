@@ -303,70 +303,168 @@ if st.session_state.nav == "Dashboard" and uid:
 # =========================
 if st.session_state.nav == "Home":
 
-    n1, n2, n3 = st.columns([1, 4, 1])
-    with n1:
-        st.markdown(f"""
-        <div style='display:flex;align-items:center;gap:10px;padding:16px 0;'>
+    # ── NAVBAR ──
+    st.markdown(f"""
+    <div style='display:flex;align-items:center;justify-content:space-between;
+        padding:18px 48px;border-bottom:1px solid rgba(255,255,255,0.06);
+        position:sticky;top:0;background:rgba(5,5,8,0.95);
+        backdrop-filter:blur(12px);z-index:100;'>
+        <div style='display:flex;align-items:center;gap:10px;'>
             <div style='width:32px;height:32px;border-radius:8px;
-                background:linear-gradient(135deg,{active_color},#9b59ff);
+                background:linear-gradient(135deg,{active_color},#7c3aed);
                 display:flex;align-items:center;justify-content:center;
                 font-weight:900;font-size:14px;color:#050508;'>A</div>
             <span style='font-size:15px;font-weight:800;letter-spacing:0.1em;color:{active_color};'>AURA</span>
         </div>
-        """, unsafe_allow_html=True)
-    with n3:
-        st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
-        nb1, nb2 = st.columns(2)
-        if nb1.button("Login", key="nav_login"):
-            redirect("Login")
-        if nb2.button("Sign Up", key="nav_register"):
-            redirect("Register")
-
-    st.markdown(f"<hr style='border-color:rgba(255,255,255,0.06);margin:0;'>", unsafe_allow_html=True)
-
-    st.markdown(f"""
-    <div style='text-align:center;padding:80px 20px 50px;position:relative;overflow:hidden;'>
-        <div style='position:absolute;top:0;left:50%;transform:translateX(-50%);
-            width:800px;height:500px;border-radius:50%;
-            background:radial-gradient(circle, {glow_color} 0%, transparent 70%);
-            pointer-events:none;'></div>
-        <div style='display:inline-flex;align-items:center;gap:8px;
-            background:{glow_color};border:1px solid {active_color}44;
-            border-radius:20px;padding:6px 16px;margin-bottom:24px;'>
-            <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
-            <span style='font-size:11px;font-weight:600;color:{active_color};
-                letter-spacing:0.12em;font-family:JetBrains Mono,monospace;'>
-                AI-POWERED · PERSONAL · ADAPTIVE
-            </span>
+        <div style='display:flex;gap:32px;'>
+            <span style='font-size:13px;color:#9090a8;font-weight:500;cursor:pointer;'>Features</span>
+            <span style='font-size:13px;color:#9090a8;font-weight:500;cursor:pointer;'>How It Works</span>
+            <span style='font-size:13px;color:#9090a8;font-weight:500;cursor:pointer;'>Personalities</span>
+            <span style='font-size:13px;color:#9090a8;font-weight:500;cursor:pointer;'>About</span>
         </div>
-        <h1 style='font-size:clamp(36px,6vw,76px);font-weight:800;letter-spacing:-0.03em;
-            line-height:1.05;margin:0 0 24px;color:#f0f0f8;'>
-            Hi, I'm <span style='color:{active_color};'>Aura.</span><br>
-            Your personal AI,<br>built around <span style='color:{active_color};'>you.</span>
-        </h1>
-        <p style='font-size:18px;color:#9090a8;max-width:600px;line-height:1.7;margin:0 auto 16px;'>
-            I manage your tasks, take notes, set reminders, and chat with you —
-            all while adapting my personality to match how <em>you</em> like to work.
-        </p>
-        <p style='font-size:15px;color:#6b6b80;max-width:500px;line-height:1.6;margin:0 auto 48px;'>
-            Whether you want me professional, friendly, sarcastic, or your own custom vibe —
-            I'm always here, always learning, always yours.
-        </p>
+        <div style='display:flex;gap:12px;align-items:center;'>
+            <span id='nav-login-placeholder'></span>
+            <span id='nav-signup-placeholder'></span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    c1, c2, c3, c4, c5 = st.columns([2, 1, 0.3, 1, 2])
-    with c2:
-        if st.button("✦ Get Started Free", key="hero_cta"):
-            redirect("Register")
-    with c4:
-        if st.button("Sign In →", key="hero_login"):
+    nav_col1, nav_col2, nav_col3 = st.columns([6, 1, 1])
+    with nav_col2:
+        if st.button("Log in", key="nav_login"):
             redirect("Login")
+    with nav_col3:
+        if st.button("Get Started", key="nav_register"):
+            redirect("Register")
 
-    st.markdown("<div style='height:60px;'></div>", unsafe_allow_html=True)
+    # ── HERO ──
+    hero_left, hero_right = st.columns([1, 1], gap="large")
 
+    with hero_left:
+        st.markdown(f"""
+        <div style='padding:60px 0 40px 48px;'>
+            <div style='display:inline-flex;align-items:center;gap:8px;
+                background:{glow_color};border:1px solid {active_color}44;
+                border-radius:20px;padding:6px 14px;margin-bottom:24px;'>
+                <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
+                <span style='font-size:11px;font-weight:600;color:{active_color};
+                    letter-spacing:0.12em;font-family:JetBrains Mono,monospace;'>
+                    AI-POWERED · PERSONAL · ADAPTIVE
+                </span>
+            </div>
+            <h1 style='font-size:clamp(40px,5vw,64px);font-weight:800;letter-spacing:-0.03em;
+                line-height:1.05;margin:0 0 20px;color:#f0f0f8;'>
+                Hi, I'm <span style='color:{active_color};'>Aura.</span><br>
+                Your AI, built<br>around <span style='color:{active_color};'>you.</span>
+            </h1>
+            <p style='font-size:16px;color:#9090a8;line-height:1.7;margin:0 0 40px;max-width:460px;'>
+                I manage your tasks, take notes, set reminders, and chat with you —
+                all while adapting my personality to match how <em>you</em> like to work.
+            </p>
+            <div style='display:flex;gap:32px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);'>
+                <div>
+                    <div style='font-size:28px;font-weight:800;color:#f0f0f8;'>6</div>
+                    <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;letter-spacing:0.1em;'>AI PERSONALITIES</div>
+                </div>
+                <div style='width:1px;background:rgba(255,255,255,0.08);'></div>
+                <div>
+                    <div style='font-size:28px;font-weight:800;color:#f0f0f8;'>∞</div>
+                    <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;letter-spacing:0.1em;'>TASKS & NOTES</div>
+                </div>
+                <div style='width:1px;background:rgba(255,255,255,0.08);'></div>
+                <div>
+                    <div style='font-size:28px;font-weight:800;color:#f0f0f8;'>1</div>
+                    <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;letter-spacing:0.1em;'>CLICK EXPORT</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        btn1, btn2, btn3 = st.columns([1, 1, 2])
+        with btn1:
+            if st.button("✦ Get Started Free", key="hero_cta"):
+                redirect("Register")
+        with btn2:
+            if st.button("Sign In →", key="hero_login"):
+                redirect("Login")
+
+    with hero_right:
+        st.markdown(f"""
+        <div style='display:flex;align-items:center;justify-content:center;
+            padding:40px 48px 40px 0;position:relative;height:420px;'>
+            <div style='position:absolute;width:340px;height:340px;border-radius:50%;
+                border:1px solid {active_color}22;top:50%;left:50%;
+                transform:translate(-50%,-50%);'></div>
+            <div style='position:absolute;width:420px;height:420px;border-radius:50%;
+                border:1px solid {active_color}11;top:50%;left:50%;
+                transform:translate(-50%,-50%);'></div>
+            <div style='width:220px;height:220px;border-radius:50%;
+                background:radial-gradient(circle at 35% 35%, #c4b5fd, #7c3aed 50%, #4c1d95);
+                display:flex;align-items:center;justify-content:center;
+                box-shadow:0 0 60px {active_color}33;position:relative;z-index:2;'>
+                <span style='font-size:72px;color:rgba(255,255,255,0.9);'>✦</span>
+            </div>
+            <div style='position:absolute;top:60px;right:40px;
+                background:#0c0c12;border:1px solid rgba(255,255,255,0.08);
+                border-radius:14px;padding:14px 18px;z-index:3;'>
+                <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                    letter-spacing:0.1em;margin-bottom:4px;'>TASKS PENDING</div>
+                <div style='font-size:22px;font-weight:800;color:{active_color};'>8</div>
+            </div>
+            <div style='position:absolute;bottom:80px;left:30px;
+                background:#0c0c12;border:1px solid rgba(255,255,255,0.08);
+                border-radius:14px;padding:14px 18px;z-index:3;'>
+                <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                    letter-spacing:0.1em;margin-bottom:4px;'>AI STATUS</div>
+                <div style='font-size:16px;font-weight:800;color:#00d68f;'>ONLINE</div>
+            </div>
+            <div style='position:absolute;top:140px;left:20px;
+                background:#0c0c12;border:1px solid rgba(255,255,255,0.08);
+                border-radius:14px;padding:14px 18px;z-index:3;'>
+                <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                    letter-spacing:0.1em;margin-bottom:4px;'>OVERDUE</div>
+                <div style='font-size:22px;font-weight:800;color:#ffb020;'>2</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # ── FEATURES STRIP ──
     st.markdown(f"""
-    <div style='text-align:center;margin-bottom:40px;'>
+    <div style='display:flex;justify-content:center;gap:48px;padding:24px 48px;
+        border-top:1px solid rgba(255,255,255,0.06);
+        border-bottom:1px solid rgba(255,255,255,0.06);
+        background:rgba(12,12,18,0.5);flex-wrap:wrap;'>
+        <div style='display:flex;align-items:center;gap:10px;'>
+            <span style='font-size:18px;'>📌</span>
+            <span style='font-size:13px;font-weight:600;color:#9090a8;'>Task Engine</span>
+        </div>
+        <div style='display:flex;align-items:center;gap:10px;'>
+            <span style='font-size:18px;'>🧠</span>
+            <span style='font-size:13px;font-weight:600;color:#9090a8;'>Neural Chat</span>
+        </div>
+        <div style='display:flex;align-items:center;gap:10px;'>
+            <span style='font-size:18px;'>🎭</span>
+            <span style='font-size:13px;font-weight:600;color:#9090a8;'>6 Personalities</span>
+        </div>
+        <div style='display:flex;align-items:center;gap:10px;'>
+            <span style='font-size:18px;'>⏰</span>
+            <span style='font-size:13px;font-weight:600;color:#9090a8;'>Smart Reminders</span>
+        </div>
+        <div style='display:flex;align-items:center;gap:10px;'>
+            <span style='font-size:18px;'>🔊</span>
+            <span style='font-size:13px;font-weight:600;color:#9090a8;'>Voice Output</span>
+        </div>
+        <div style='display:flex;align-items:center;gap:10px;'>
+            <span style='font-size:18px;'>🔒</span>
+            <span style='font-size:13px;font-weight:600;color:#9090a8;'>Secure & Private</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── FEATURE CARDS ──
+    st.markdown("<div style='height:60px;'></div>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style='text-align:center;margin-bottom:40px;padding:0 48px;'>
         <div style='font-size:10px;font-weight:600;letter-spacing:0.2em;color:#6b6b80;
             font-family:JetBrains Mono,monospace;margin-bottom:12px;'>WHAT I CAN DO FOR YOU</div>
         <h2 style='font-size:36px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0;'>
@@ -411,8 +509,8 @@ if st.session_state.nav == "Home":
             </div>
             """, unsafe_allow_html=True)
 
-    f7, f8, f9 = st.columns(3)
-    with f7:
+    f7c, f8c, f9c = st.columns(3)
+    with f7c:
         st.markdown(f"""
         <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
             border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
@@ -421,11 +519,11 @@ if st.session_state.nav == "Home":
             <div style='font-size:36px;margin-bottom:16px;'>🔊</div>
             <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Voice Output</h3>
             <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>
-                Toggle voice mode and Aura will read her responses back to you out loud using natural text-to-speech.
+                Toggle voice mode and Aura reads her responses back to you using natural text-to-speech.
             </p>
         </div>
         """, unsafe_allow_html=True)
-    with f8:
+    with f8c:
         st.markdown(f"""
         <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
             border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
@@ -438,11 +536,11 @@ if st.session_state.nav == "Home":
             <div style='font-size:36px;margin-bottom:16px;'>🎤</div>
             <h3 style='font-size:18px;font-weight:700;color:#f0f0f8;margin:0 0 10px;'>Voice Input</h3>
             <p style='font-size:13px;color:#9090a8;line-height:1.7;margin:0;'>
-                Speak to Aura instead of typing. Full speech-to-text pipeline built and ready — coming to cloud soon.
+                Speak to Aura instead of typing. Full Whisper speech-to-text pipeline built and ready.
             </p>
         </div>
         """, unsafe_allow_html=True)
-    with f9:
+    with f9c:
         st.markdown(f"""
         <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
             border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
@@ -456,13 +554,197 @@ if st.session_state.nav == "Home":
         </div>
         """, unsafe_allow_html=True)
 
+    # ── DASHBOARD MOCKUP ──
+    st.markdown("<div style='height:40px;'></div>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style='text-align:center;margin-bottom:32px;'>
+        <div style='font-size:10px;font-weight:600;letter-spacing:0.2em;color:#6b6b80;
+            font-family:JetBrains Mono,monospace;margin-bottom:12px;'>SEE IT IN ACTION</div>
+        <h2 style='font-size:36px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0;'>
+            Your workspace, your way.
+        </h2>
+    </div>
+    <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);
+        border-radius:20px;overflow:hidden;margin-bottom:60px;'>
+        <div style='background:#080810;border-bottom:1px solid rgba(255,255,255,0.06);
+            padding:14px 24px;display:flex;align-items:center;gap:8px;'>
+            <div style='width:10px;height:10px;border-radius:50%;background:#ff4560;'></div>
+            <div style='width:10px;height:10px;border-radius:50%;background:#ffb020;'></div>
+            <div style='width:10px;height:10px;border-radius:50%;background:#00d68f;'></div>
+            <span style='font-size:11px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                margin-left:12px;'>AURA · PERSONAL AI · aura-ai-1.streamlit.app</span>
+        </div>
+        <div style='display:grid;grid-template-columns:180px 1fr 260px;min-height:300px;'>
+            <div style='border-right:1px solid rgba(255,255,255,0.06);padding:20px;'>
+                <div style='display:flex;align-items:center;gap:8px;margin-bottom:20px;'>
+                    <div style='width:24px;height:24px;border-radius:6px;
+                        background:linear-gradient(135deg,{active_color},#7c3aed);
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:11px;font-weight:900;color:#050508;'>A</div>
+                    <span style='font-size:11px;font-weight:800;color:{active_color};
+                        letter-spacing:0.08em;'>AURA</span>
+                </div>
+                <div style='display:flex;align-items:center;gap:8px;padding:8px 10px;
+                    border-radius:8px;background:{glow_color};margin-bottom:4px;'>
+                    <span style='font-size:13px;'>⚡</span>
+                    <span style='font-size:11px;color:{active_color};font-weight:600;'>Dashboard</span>
+                </div>
+                <div style='display:flex;align-items:center;gap:8px;padding:8px 10px;
+                    border-radius:8px;margin-bottom:4px;'>
+                    <span style='font-size:13px;'>📌</span>
+                    <span style='font-size:11px;color:#6b6b80;'>Tasks</span>
+                </div>
+                <div style='display:flex;align-items:center;gap:8px;padding:8px 10px;
+                    border-radius:8px;margin-bottom:4px;'>
+                    <span style='font-size:13px;'>📝</span>
+                    <span style='font-size:11px;color:#6b6b80;'>Notes</span>
+                </div>
+                <div style='display:flex;align-items:center;gap:8px;padding:8px 10px;
+                    border-radius:8px;margin-bottom:4px;'>
+                    <span style='font-size:13px;'>⏰</span>
+                    <span style='font-size:11px;color:#6b6b80;'>Reminders</span>
+                </div>
+                <div style='display:flex;align-items:center;gap:8px;padding:8px 10px;
+                    border-radius:8px;'>
+                    <span style='font-size:13px;'>🧠</span>
+                    <span style='font-size:11px;color:#6b6b80;'>AI Chat</span>
+                </div>
+                <div style='margin-top:16px;padding-top:16px;
+                    border-top:1px solid rgba(255,255,255,0.06);'>
+                    <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                        letter-spacing:0.12em;margin-bottom:8px;'>PERSONALITY</div>
+                    <div style='font-size:11px;color:{active_color};
+                        background:{glow_color};padding:6px 10px;border-radius:6px;'>
+                        🎩 Professional
+                    </div>
+                </div>
+            </div>
+            <div style='padding:20px;'>
+                <div style='font-size:18px;font-weight:700;color:#f0f0f8;margin-bottom:4px;'>
+                    Good morning, <span style='color:{active_color};'>Ibrahim.</span>
+                </div>
+                <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                    margin-bottom:16px;'>AURA · PERSONAL AI · TUESDAY, MAY 06 · 09:15</div>
+                <div style='display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;'>
+                    <div style='background:#080810;border:1px solid rgba(255,255,255,0.06);
+                        border-radius:10px;padding:12px;'>
+                        <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                            margin-bottom:6px;'>ACTIVE TASKS</div>
+                        <div style='font-size:22px;font-weight:800;color:{active_color};'>8</div>
+                    </div>
+                    <div style='background:#080810;border:1px solid rgba(255,255,255,0.06);
+                        border-radius:10px;padding:12px;'>
+                        <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                            margin-bottom:6px;'>NOTES SAVED</div>
+                        <div style='font-size:22px;font-weight:800;color:#9b59ff;'>12</div>
+                    </div>
+                    <div style='background:#080810;border:1px solid rgba(255,255,255,0.06);
+                        border-radius:10px;padding:12px;'>
+                        <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                            margin-bottom:6px;'>AI STATUS</div>
+                        <div style='font-size:14px;font-weight:800;color:#00d68f;margin-top:4px;'>ONLINE</div>
+                    </div>
+                    <div style='background:#080810;border:1px solid rgba(255,255,255,0.06);
+                        border-radius:10px;padding:12px;'>
+                        <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                            margin-bottom:6px;'>REMINDERS</div>
+                        <div style='font-size:22px;font-weight:800;color:#ffb020;'>3</div>
+                    </div>
+                </div>
+                <div style='background:#080810;border:1px solid rgba(255,255,255,0.06);
+                    border-radius:10px;padding:14px;'>
+                    <div style='display:flex;justify-content:space-between;align-items:center;
+                        margin-bottom:12px;'>
+                        <span style='font-size:12px;font-weight:600;color:#f0f0f8;'>Task Engine</span>
+                        <span style='font-size:10px;color:{active_color};
+                            background:{glow_color};padding:3px 8px;border-radius:6px;'>+ New Task</span>
+                    </div>
+                    <div style='display:flex;align-items:center;gap:8px;padding:6px 0;
+                        border-bottom:1px solid rgba(255,255,255,0.04);'>
+                        <div style='width:14px;height:14px;border-radius:3px;
+                            background:#00d68f;flex-shrink:0;'></div>
+                        <span style='font-size:11px;color:#6b6b80;flex:1;
+                            text-decoration:line-through;'>Setup database schema</span>
+                        <span style='font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;
+                            background:rgba(255,69,96,0.15);color:#ff4560;'>HIGH</span>
+                    </div>
+                    <div style='display:flex;align-items:center;gap:8px;padding:6px 0;
+                        border-bottom:1px solid rgba(255,255,255,0.04);'>
+                        <div style='width:14px;height:14px;border-radius:3px;
+                            border:1px solid rgba(255,255,255,0.2);flex-shrink:0;'></div>
+                        <span style='font-size:11px;color:#9090a8;flex:1;'>Build homepage redesign</span>
+                        <span style='font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;
+                            background:rgba(255,69,96,0.15);color:#ff4560;'>HIGH</span>
+                    </div>
+                    <div style='display:flex;align-items:center;gap:8px;padding:6px 0;'>
+                        <div style='width:14px;height:14px;border-radius:3px;
+                            border:1px solid rgba(255,255,255,0.2);flex-shrink:0;'></div>
+                        <span style='font-size:11px;color:#9090a8;flex:1;'>Prepare poster presentation</span>
+                        <span style='font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;
+                            background:rgba(0,214,143,0.15);color:#00d68f;'>LOW</span>
+                    </div>
+                </div>
+            </div>
+            <div style='border-left:1px solid rgba(255,255,255,0.06);padding:20px;'>
+                <div style='display:flex;align-items:center;gap:6px;margin-bottom:14px;'>
+                    <span style='font-size:12px;font-weight:600;color:#f0f0f8;'>Neural Chat</span>
+                    <span style='font-size:9px;background:{glow_color};color:{active_color};
+                        padding:2px 6px;border-radius:4px;font-family:JetBrains Mono,monospace;'>AI ONLINE</span>
+                </div>
+                <div style='width:32px;height:32px;border-radius:50%;
+                    background:linear-gradient(135deg,{active_color},#7c3aed);
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:14px;margin-bottom:10px;'>A</div>
+                <div style='background:#080810;border:1px solid rgba(255,255,255,0.06);
+                    border-radius:10px;border-top-left-radius:3px;
+                    padding:10px 12px;font-size:11px;color:#9090a8;line-height:1.6;margin-bottom:12px;'>
+                    Aura online. You have 2 high priority tasks today. Want me to help you plan your morning?
+                </div>
+                <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                    letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;'>Quick Commands</div>
+                <div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;'>
+                    <div style='font-size:10px;color:{active_color};
+                        background:{glow_color};border:1px solid {active_color}33;
+                        padding:6px;border-radius:6px;text-align:center;'>My Tasks</div>
+                    <div style='font-size:10px;color:{active_color};
+                        background:{glow_color};border:1px solid {active_color}33;
+                        padding:6px;border-radius:6px;text-align:center;'>Overdue?</div>
+                    <div style='font-size:10px;color:{active_color};
+                        background:{glow_color};border:1px solid {active_color}33;
+                        padding:6px;border-radius:6px;text-align:center;'>My Notes</div>
+                    <div style='font-size:10px;color:{active_color};
+                        background:{glow_color};border:1px solid {active_color}33;
+                        padding:6px;border-radius:6px;text-align:center;'>Prioritize</div>
+                </div>
+                <div style='background:#080810;border:1px solid rgba(255,255,255,0.06);
+                    border-radius:8px;padding:8px 12px;font-size:10px;color:#6b6b80;'>
+                    Message Aura...
+                </div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── CTA ──
+    st.markdown(f"""
+    <div style='text-align:center;padding:60px 20px;
+        border-top:1px solid rgba(255,255,255,0.06);'>
+        <h2 style='font-size:44px;font-weight:800;letter-spacing:-0.02em;color:#f0f0f8;margin:0 0 16px;'>
+            Ready to meet your Aura?
+        </h2>
+        <p style='font-size:16px;color:#9090a8;margin:0 0 40px;'>
+            Free to use. Takes 30 seconds to set up.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
     c1, c2, c3 = st.columns([2, 1, 2])
     with c2:
         if st.button("Create My Aura →", key="bottom_cta"):
             redirect("Register")
 
     st.markdown(f"""
-    <div style='text-align:center;padding:32px;'>
+    <div style='text-align:center;padding:32px;border-top:1px solid rgba(255,255,255,0.06);'>
         <p style='font-size:11px;color:#6b6b80;margin:0;font-family:JetBrains Mono,monospace;'>
             AURA v1.0 · Personal AI Assistant · OSTİM Technical University
         </p>
