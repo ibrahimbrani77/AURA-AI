@@ -1461,21 +1461,24 @@ elif st.session_state.nav == "Dashboard":
             </audio>
             """, unsafe_allow_html=True)
 
-        # CHAT HISTORY as pure HTML
-        # Reset if corrupted (raw HTML stored as content from previous bad render)
-        _chat_corrupted = (
-            "chat" in st.session_state and
+        # CHAT HISTORY — reset if corrupted or missing
+        if "chat" not in st.session_state or (
             st.session_state["chat"] and
             "<div" in st.session_state["chat"][0].get("content", "")
-        )
-        if "chat" not in st.session_state or _chat_corrupted:
+        ):
             init_msg = f"Aura online. You have {_pending_count} pending tasks and {len(overdue)} overdue reminders. What should we focus on?"
             st.session_state["chat"] = [{"role": "assistant", "content": init_msg}]
 
-        chat_bubbles = ""
+        # Chat window container
+        st.markdown("""
+        <div style='background:#080812;border:1px solid rgba(255,255,255,0.08);
+            border-radius:12px;padding:14px;margin:8px 0 4px;min-height:120px;'>
+        """, unsafe_allow_html=True)
+
+        # Render each message individually with its own st.markdown + unsafe_allow_html
         for msg in st.session_state["chat"]:
             if msg["role"] == "assistant":
-                chat_bubbles += f"""
+                st.markdown(f"""
                 <div style='display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;'>
                     <div style='width:24px;height:24px;border-radius:50%;flex-shrink:0;
                         background:linear-gradient(135deg,{active_color},#7c3aed);
@@ -1483,11 +1486,12 @@ elif st.session_state.nav == "Dashboard":
                         font-size:9px;font-weight:900;color:#050508;'>A</div>
                     <div style='background:#12121a;border:1px solid rgba(255,255,255,0.06);
                         border-radius:10px;border-top-left-radius:3px;
-                        padding:8px 12px;font-size:clamp(11px,1.5vw,12px);line-height:1.6;
+                        padding:8px 12px;font-size:11px;line-height:1.6;
                         color:#f0f0f8;max-width:88%;word-break:break-word;'>{msg["content"]}</div>
-                </div>"""
+                </div>
+                """, unsafe_allow_html=True)
             else:
-                chat_bubbles += f"""
+                st.markdown(f"""
                 <div style='display:flex;flex-direction:row-reverse;align-items:flex-start;gap:8px;margin-bottom:10px;'>
                     <div style='width:24px;height:24px;border-radius:50%;flex-shrink:0;
                         background:linear-gradient(135deg,#9b59ff,{active_color});
@@ -1495,17 +1499,12 @@ elif st.session_state.nav == "Dashboard":
                         font-size:9px;font-weight:900;color:#050508;'>U</div>
                     <div style='background:{glow_color};border:1px solid {active_color}33;
                         border-radius:10px;border-top-right-radius:3px;
-                        padding:8px 12px;font-size:clamp(11px,1.5vw,12px);line-height:1.6;
+                        padding:8px 12px;font-size:11px;line-height:1.6;
                         color:#f0f0f8;max-width:88%;word-break:break-word;'>{msg["content"]}</div>
-                </div>"""
+                </div>
+                """, unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div style='background:#080812;border:1px solid rgba(255,255,255,0.08);
-            border-radius:12px;padding:14px;margin:8px 0 4px;
-            max-height:300px;overflow-y:auto;min-height:120px;'>
-            {chat_bubbles}
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
         # VOICE INPUT — coming soon badge
         st.markdown(f"""
