@@ -68,7 +68,7 @@ html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, label
     font-family: 'Syne', sans-serif !important;
 }}
 .stApp {{ background: #050508 !important; color: #f0f0f8 !important; }}
-#MainMenu, footer, header {{ visibility: hidden; }}
+#MainMenu, footer {{ visibility: hidden; }}
 .block-container {{ padding-top: 1.5rem !important; padding-bottom: 4rem !important; }}
 section[data-testid="stSidebar"] {{
     background: #0c0c12 !important;
