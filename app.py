@@ -280,12 +280,6 @@ if st.session_state.nav == "Dashboard" and uid:
             _prefs_sidebar = {}
 
         personality_options = ["🎩 Professional", "😊 Friendly", "🧙 Mentor", "😏 Sarcastic", "⚡ Minimalist", "🔥 Hype Coach", "✨ Custom"]
-        saved_personality = _prefs_sidebar.get("personality", "🎩 Professional")
-        selected_personality = st.selectbox(
-            "Personality", personality_options,
-            index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
-            key="personality_select", label_visibility="collapsed"
-        )
         personality_defaults = {
             "🎩 Professional": "Formal, precise, and concise. No casual language.",
             "😊 Friendly":     "Warm, encouraging, and conversational.",
@@ -295,11 +289,34 @@ if st.session_state.nav == "Dashboard" and uid:
             "🔥 Hype Coach":   "Energetic, motivating, and enthusiastic about everything!",
             "✨ Custom":       ""
         }
+
+        def on_personality_change():
+            new = st.session_state.personality_select
+            st.session_state.custom_personality_input = personality_defaults.get(new, "")
+
+        saved_personality = _prefs_sidebar.get("personality", "🎩 Professional")
+
+        # Initialise text area state only once (don't overwrite if user is mid-edit)
+        if "custom_personality_input" not in st.session_state:
+            st.session_state.custom_personality_input = _prefs_sidebar.get(
+                "custom_personality",
+                personality_defaults.get(saved_personality, "")
+            )
+
+        selected_personality = st.selectbox(
+            "Personality", personality_options,
+            index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
+            key="personality_select",
+            on_change=on_personality_change,
+            label_visibility="collapsed"
+        )
+
         custom_desc = st.text_area(
             "Personality Description",
-            value=_prefs_sidebar.get("custom_personality", personality_defaults.get(selected_personality, "")),
             placeholder="Describe how Aura should behave...",
-            height=80, key="custom_personality_input", label_visibility="collapsed"
+            height=80,
+            key="custom_personality_input",
+            label_visibility="collapsed"
         )
         if st.button("Save Personality", key="save_personality"):
             save_preference(uid, "personality", selected_personality)
