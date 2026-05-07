@@ -213,6 +213,31 @@ label[data-testid="stWidgetLabel"] p {{
     font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
     font-family: 'JetBrains Mono', monospace; display: inline-block;
 }}
+/* --- SIDEBAR TOGGLE BUTTON FIX --- */
+    /* 1. Restore the icon font so it doesn't spell out text */
+    [data-testid="collapsedControl"] span, 
+    [data-testid="stSidebarCollapsedControl"] span,
+    .material-icons, .stIcon {{
+        font-family: "Material Symbols Rounded", "Material Icons", sans-serif !important;
+    }}
+    
+    /* 2. Style the button to match the Bento-Box Dark Theme */
+    [data-testid="collapsedControl"] {{
+        background: #0c0c12 !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 10px !important;
+        color: #a78bfa !important;
+        top: 20px !important;
+        left: 20px !important;
+        transition: all 0.3s ease !important;
+        z-index: 99999 !important;
+    }}
+    
+    [data-testid="collapsedControl"]:hover {{
+        background: #12121a !important;
+        border-color: #a78bfa !important;
+        box-shadow: 0 0 12px rgba(167, 139, 250, 0.2) !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
