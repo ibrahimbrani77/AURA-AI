@@ -1461,8 +1461,14 @@ elif st.session_state.nav == "Dashboard":
             </audio>
             """, unsafe_allow_html=True)
 
-        # CHAT HISTORY as pure HTML — no st.container needed
-        if "chat" not in st.session_state:
+        # CHAT HISTORY as pure HTML
+        # Reset if corrupted (raw HTML stored as content from previous bad render)
+        _chat_corrupted = (
+            "chat" in st.session_state and
+            st.session_state["chat"] and
+            "<div" in st.session_state["chat"][0].get("content", "")
+        )
+        if "chat" not in st.session_state or _chat_corrupted:
             init_msg = f"Aura online. You have {_pending_count} pending tasks and {len(overdue)} overdue reminders. What should we focus on?"
             st.session_state["chat"] = [{"role": "assistant", "content": init_msg}]
 
