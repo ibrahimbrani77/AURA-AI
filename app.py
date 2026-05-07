@@ -770,6 +770,49 @@ if st.session_state.nav == "Home":
 # =========================
 elif st.session_state.nav in ["Login", "Register"]:
 
+    # Auth-scoped CSS
+    st.markdown(f"""
+    <style>
+    .auth-card {{
+        background: #0c0c12;
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+    }}
+    .auth-tab-header {{
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        color: #6b6b80;
+        font-family: JetBrains Mono, monospace;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }}
+    .face-hint {{
+        background: {glow_color};
+        border: 1px solid {active_color}33;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 11px;
+        color: #9090a8;
+        margin-bottom: 12px;
+        line-height: 1.6;
+    }}
+    .face-hint strong {{ color: {active_color}; }}
+    /* Camera widget styling */
+    [data-testid="stCameraInput"] {{
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 14px !important;
+        overflow: hidden !important;
+        background: #080810 !important;
+    }}
+    [data-testid="stCameraInput"] > div {{
+        border-radius: 12px !important;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Navbar
     n1, n2, n3 = st.columns([1, 4, 1])
     with n1:
         st.markdown(f"""
@@ -790,92 +833,165 @@ elif st.session_state.nav in ["Login", "Register"]:
 
     _, col2, _ = st.columns([1, 1.5, 1])
     with col2:
-        st.markdown("<div class='aura-auth-card'>", unsafe_allow_html=True)
+        st.markdown("<div class='auth-card'>", unsafe_allow_html=True)
 
+        # ── REGISTER ──
         if st.session_state.nav == "Register":
-            st.markdown(f"<h2 style='color:{active_color};margin-bottom:8px;font-family:Syne,sans-serif;'>Create Your Aura</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='color:#9090a8;font-size:13px;margin-bottom:24px;'>Set up your account in seconds.</p>", unsafe_allow_html=True)
-            reg_name  = st.text_input("Your Name", placeholder="John Doe")
-            reg_email = st.text_input("Email",     placeholder="name@email.com")
-            reg_pass  = st.text_input("Password",  type="password", placeholder="••••••••")
+            st.markdown(f"""
+            <h2 style='color:{active_color};margin-bottom:6px;font-family:Syne,sans-serif;font-size:22px;'>
+                Create Your Aura
+            </h2>
+            <p style='color:#9090a8;font-size:13px;margin-bottom:24px;'>
+                Set up your account in seconds.
+            </p>
+            """, unsafe_allow_html=True)
 
-            import os
-            if os.getenv("IS_CLOUD", "false").lower() == "true":
+            reg_name  = st.text_input("Your Name", placeholder="John Doe",       key="reg_name")
+            reg_email = st.text_input("Email",     placeholder="name@email.com", key="reg_email")
+            reg_pass  = st.text_input("Password",  type="password",
+                                       placeholder="Min. 8 characters",           key="reg_pass")
+
+            st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
+
+            # Face ID section
+            st.markdown(f"""
+            <div style='display:flex;align-items:center;gap:8px;margin-bottom:10px;'>
+                <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
+                <span style='font-size:12px;font-weight:700;color:#f0f0f8;font-family:Syne,sans-serif;'>
+                    Face ID Registration
+                </span>
+                <span style='font-size:9px;background:{glow_color};color:{active_color};
+                    padding:2px 7px;border-radius:4px;font-family:JetBrains Mono,monospace;
+                    font-weight:700;margin-left:auto;'>OPTIONAL</span>
+            </div>
+            <div class='face-hint'>
+                📷 Position your face in the frame, ensure <strong>good lighting</strong>,
+                and look <strong>directly at the camera</strong>. Take a photo to enable Face ID login.
+            </div>
+            """, unsafe_allow_html=True)
+
+            face_photo = st.camera_input("Capture Face for ID", key="reg_face_cam",
+                                          label_visibility="collapsed")
+
+            if face_photo:
                 st.markdown(f"""
-                <div style='background:#ffb02012;border:1px solid #ffb02044;
-                    border-radius:10px;padding:12px;margin-bottom:12px;'>
-                    <div style='font-size:11px;color:#ffb020;'>
-                        Face ID unavailable on web — account will be created without biometrics.
-                    </div>
+                <div style='background:#00d68f12;border:1px solid #00d68f44;border-radius:10px;
+                    padding:10px 14px;margin:10px 0;font-size:12px;color:#00d68f;'>
+                    ✓ Face captured — will be saved with your account
                 </div>
                 """, unsafe_allow_html=True)
-                if st.button("Create Account"):
-                    if reg_name and reg_email and reg_pass:
-                        register_user(reg_name, reg_email, reg_pass, None)
-                        st.success("Account created! Redirecting...")
-                        time.sleep(1.5)
-                        redirect("Login")
-                    else:
-                        st.warning("All fields are required.")
-            else:
-                if st.button("Initialize Face Scan & Create"):
-                    if reg_name and reg_email and reg_pass:
-                        with st.spinner("Scanning face..."):
-                            face_data = capture_face_embedding()
-                            if face_data:
-                                register_user(reg_name, reg_email, reg_pass, face_data)
-                                st.success("Account created!")
-                                time.sleep(1.5)
-                                redirect("Login")
-                            else:
-                                st.error("Face capture failed.")
-                    else:
-                        st.warning("All fields are required.")
+
+            st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
+
+            if st.button("Create My Aura", key="reg_submit"):
+                if reg_name and reg_email and reg_pass:
+                    with st.spinner("Creating your account..."):
+                        face_data = None
+                        if face_photo:
+                            try:
+                                face_data = capture_face_embedding(face_photo.getvalue())
+                            except Exception:
+                                face_data = None
+                        register_user(reg_name, reg_email, reg_pass, face_data)
+                    st.success("Account created! Redirecting...")
+                    time.sleep(1.2)
+                    redirect("Login")
+                else:
+                    st.warning("Name, email, and password are required.")
 
             st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
             if st.button("Already have an account? Sign in", key="go_login"):
                 redirect("Login")
 
+        # ── LOGIN ──
         else:
-            st.markdown(f"<h2 style='color:{active_color};margin-bottom:8px;font-family:Syne,sans-serif;'>Welcome back.</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='color:#9090a8;font-size:13px;margin-bottom:24px;'>Sign in to your Aura workspace.</p>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <h2 style='color:{active_color};margin-bottom:6px;font-family:Syne,sans-serif;font-size:22px;'>
+                Welcome back.
+            </h2>
+            <p style='color:#9090a8;font-size:13px;margin-bottom:24px;'>
+                Sign in to your Aura workspace.
+            </p>
+            """, unsafe_allow_html=True)
 
-            login_tab, face_tab = st.tabs(["Password Login", "Face Login"])
+            login_tab, face_tab = st.tabs(["🔑  Password", "🪪  Face ID"])
+
+            # Password tab
             with login_tab:
-                l_email = st.text_input("Email",    key="l_email")
-                l_pass  = st.text_input("Password", type="password", key="l_pass")
-                if st.button("Sign In"):
-                    token = login_user(l_email, l_pass)
-                    if token:
-                        st.session_state.token = token
-                        redirect("Dashboard")
+                st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+                l_email = st.text_input("Email",    placeholder="name@email.com", key="l_email")
+                l_pass  = st.text_input("Password", type="password",
+                                         placeholder="••••••••",                  key="l_pass")
+                st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+                if st.button("Sign In →", key="login_submit"):
+                    if l_email and l_pass:
+                        token = login_user(l_email, l_pass)
+                        if token:
+                            st.session_state.token = token
+                            redirect("Dashboard")
+                        else:
+                            st.error("Invalid email or password.")
                     else:
-                        st.error("Invalid credentials.")
+                        st.warning("Please enter your email and password.")
 
+            # Face ID tab
             with face_tab:
-                import os
-                if os.getenv("IS_CLOUD", "false").lower() == "true":
+                st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+
+                f_email = st.text_input("Your Email", placeholder="name@email.com", key="f_email")
+
+                if f_email:
                     st.markdown(f"""
-                    <div style='background:#ffb02012;border:1px solid #ffb02044;
-                        border-radius:10px;padding:16px;text-align:center;'>
-                        <div style='font-size:13px;font-weight:700;color:#ffb020;margin-bottom:6px;'>
-                            Face ID — Local Only</div>
-                        <div style='font-size:11px;color:#9090a8;'>Use password login on the web.</div>
+                    <div style='height:10px;'></div>
+                    <div style='display:flex;align-items:center;gap:8px;margin-bottom:10px;'>
+                        <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
+                        <span style='font-size:12px;font-weight:700;color:#f0f0f8;font-family:Syne,sans-serif;'>
+                            Face Verification
+                        </span>
+                    </div>
+                    <div class='face-hint'>
+                        📷 Look <strong>directly at the camera</strong> in good lighting —
+                        the same conditions as when you registered.
                     </div>
                     """, unsafe_allow_html=True)
-                else:
-                    f_email = st.text_input("Email", key="f_email")
-                    if st.button("Scan Face"):
-                        user = get_user_by_email(f_email)
-                        if user:
-                            with st.spinner("Verifying face..."):
-                                if verify_face(user.face_embedding):
+
+                    face_verify = st.camera_input("Verify Face", key="login_face_cam",
+                                                   label_visibility="collapsed")
+
+                    if face_verify:
+                        st.markdown(f"""
+                        <div style='background:#00d68f12;border:1px solid #00d68f44;border-radius:10px;
+                            padding:10px 14px;margin:10px 0;font-size:12px;color:#00d68f;'>
+                            ✓ Photo captured — verifying identity...
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        if st.button("Verify & Sign In", key="face_verify_btn"):
+                            user = get_user_by_email(f_email)
+                            if user:
+                                with st.spinner("Verifying face..."):
+                                    try:
+                                        matched = verify_face(user.face_embedding,
+                                                              face_verify.getvalue())
+                                    except Exception:
+                                        matched = False
+                                if matched:
                                     st.session_state.token = login_user_biometric(f_email)
                                     redirect("Dashboard")
                                 else:
-                                    st.error("Face not recognized.")
-                        else:
-                            st.error("User not found.")
+                                    st.error("Face not recognized. Please try again or use password login.")
+                            else:
+                                st.error("No account found with that email.")
+                else:
+                    st.markdown(f"""
+                    <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                        border-radius:12px;padding:20px;text-align:center;margin-top:8px;'>
+                        <div style='font-size:32px;margin-bottom:10px;'>🪪</div>
+                        <div style='font-size:13px;color:#9090a8;'>
+                            Enter your email above to activate the Face ID camera.
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
             st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
             if st.button("Don't have an account? Sign up", key="go_register"):
