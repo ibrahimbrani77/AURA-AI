@@ -895,100 +895,126 @@ elif st.session_state.nav == "Dashboard":
     reminders = get_reminders(uid)
     overdue   = get_overdue_reminders(uid)
 
-    _hour = datetime.now().hour
-    _greeting = "Good morning" if _hour < 12 else "Good afternoon" if _hour < 17 else "Good evening"
-    _prefs        = get_preferences(uid)
-    _name         = _prefs.get("name", "Commander")
+    _hour          = datetime.now().hour
+    _greeting      = "Good morning" if _hour < 12 else "Good afternoon" if _hour < 17 else "Good evening"
+    _prefs         = get_preferences(uid)
+    _name          = _prefs.get("name", "Commander")
     _pending_count = len([t for t in tasks if t.status != "completed"])
     _done_count    = len([t for t in tasks if t.status == "completed"])
 
-    # ── Dashboard-scoped CSS ──
-    st.markdown(f"""
+    # ── DASHBOARD CSS ──
+    st.markdown("""
     <style>
-    .task-actions div[data-testid="stButton"] button {{
+    /* Constrain max width */
+    .block-container {
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+    /* All buttons: compact inline */
+    .stButton > button {
+        width: auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 7px 14px !important;
+        font-size: 11px !important;
+        border-radius: 8px !important;
+        margin: 0 !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.06em !important;
+        text-transform: uppercase !important;
+        font-family: 'Syne', sans-serif !important;
+        transition: opacity 0.2s !important;
+        cursor: pointer !important;
+    }
+    [data-testid="stButton"] {
+        margin-bottom: 0 !important;
+        display: inline-block !important;
+    }
+    /* Task action buttons: tiny ghost */
+    .task-actions [data-testid="stButton"] button {
         background: transparent !important;
         color: #6b6b80 !important;
-        border: 1px solid rgba(255,255,255,0.12) !important;
-        padding: 1px 9px !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        padding: 2px 8px !important;
         font-size: 11px !important;
         border-radius: 5px !important;
-        width: auto !important;
-        min-width: unset !important;
         height: 24px !important;
         font-weight: 500 !important;
         letter-spacing: 0 !important;
         text-transform: none !important;
-    }}
-    .task-actions div[data-testid="stButton"] button:hover {{
+    }
+    .task-actions [data-testid="stButton"] button:hover {
         background: rgba(255,255,255,0.08) !important;
         color: #f0f0f8 !important;
         opacity: 1 !important;
-    }}
-    .add-btn div[data-testid="stButton"] button {{
-        background: {glow_color} !important;
-        color: {active_color} !important;
-        border: 1px solid {active_color}44 !important;
-        padding: 6px 14px !important;
-        font-size: 11px !important;
-        border-radius: 8px !important;
-        width: auto !important;
-        min-width: unset !important;
+    }
+    /* Add / primary buttons */
+    .add-btn [data-testid="stButton"] button {
+        background: rgba(167,139,250,0.12) !important;
+        color: #a78bfa !important;
+        border: 1px solid rgba(167,139,250,0.25) !important;
         font-weight: 700 !important;
-        text-transform: uppercase !important;
-    }}
-    .add-btn div[data-testid="stButton"] button:hover {{
-        background: {active_color}22 !important;
+    }
+    .add-btn [data-testid="stButton"] button:hover {
+        background: rgba(167,139,250,0.2) !important;
         opacity: 1 !important;
-    }}
-    .qc-btn div[data-testid="stButton"] button {{
-        background: {glow_color} !important;
-        color: {active_color} !important;
-        border: 1px solid {active_color}33 !important;
-        padding: 6px 8px !important;
-        font-size: 10px !important;
-        border-radius: 7px !important;
+    }
+    /* Quick command buttons */
+    .qc-btn [data-testid="stButton"] button {
+        background: rgba(167,139,250,0.1) !important;
+        color: #a78bfa !important;
+        border: 1px solid rgba(167,139,250,0.2) !important;
         width: 100% !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.05em !important;
-        text-transform: uppercase !important;
-    }}
-    .export-btn div[data-testid="stButton"] button {{
+        justify-content: center !important;
+        font-size: 10px !important;
+        padding: 6px 8px !important;
+    }
+    /* Export button */
+    .export-btn [data-testid="stButton"] button {
         background: transparent !important;
         color: #6b6b80 !important;
         border: 1px solid rgba(255,255,255,0.1) !important;
-        padding: 6px 14px !important;
-        font-size: 11px !important;
-        border-radius: 8px !important;
-        width: auto !important;
-        text-transform: uppercase !important;
-    }}
-    .export-btn div[data-testid="stButton"] button:hover {{
+    }
+    .export-btn [data-testid="stButton"] button:hover {
         color: #f0f0f8 !important;
         opacity: 1 !important;
-    }}
-    .dash-search div[data-testid="stTextInput"] input {{
+    }
+    /* Strip Streamlit column gaps */
+    [data-testid="stHorizontalBlock"] {
+        gap: 12px !important;
+        align-items: flex-start !important;
+    }
+    /* Chat container */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        border: 1px solid rgba(255,255,255,0.07) !important;
+        border-radius: 12px !important;
+        background: #080812 !important;
+    }
+    /* Search input */
+    .dash-search [data-testid="stTextInput"] {
+        margin-top: 12px !important;
+    }
+    .dash-search [data-testid="stTextInput"] input {
         background: #0c0c12 !important;
         border: 1px solid rgba(255,255,255,0.08) !important;
         border-radius: 10px !important;
         color: #f0f0f8 !important;
         font-size: 13px !important;
-        padding: 10px 14px !important;
-        margin-top: 20px !important;
-    }}
-    div[data-testid="stVerticalBlockBorderWrapper"] {{
-        border: 1px solid rgba(255,255,255,0.07) !important;
-        border-radius: 12px !important;
-        background: #080812 !important;
-        padding: 4px !important;
-    }}
+    }
+    /* Remove bottom margin from form elements inside panels */
+    .dash-panel [data-testid="stVerticalBlock"] > div {
+        margin-bottom: 0 !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-    # ── HEADER + SEARCH (side by side) ──
+    # ── HEADER + SEARCH ──
     hdr_col, srch_col = st.columns([3, 1])
     with hdr_col:
         st.markdown(f"""
-        <div style='padding:8px 0 4px;'>
+        <div style='padding:4px 0 8px;'>
             <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;
                 letter-spacing:0.12em;margin-bottom:6px;'>
                 AURA · PERSONAL AI · {datetime.now().strftime("%A, %b %d · %H:%M")}
@@ -997,216 +1023,203 @@ elif st.session_state.nav == "Dashboard":
                 line-height:1.2;margin:0 0 4px;color:#f0f0f8;font-family:Syne,sans-serif;'>
                 {_greeting}, <span style='color:{active_color};font-style:italic;'>{_name}.</span>
             </h1>
-            <p style='color:#9090a8;font-size:13px;margin:0;'>
-                Here's your overview for today.
-            </p>
+            <p style='color:#9090a8;font-size:13px;margin:0;'>Here\'s your overview for today.</p>
         </div>
         """, unsafe_allow_html=True)
     with srch_col:
-        with st.container():
-            st.markdown("<div class='dash-search'>", unsafe_allow_html=True)
-            search_query = st.text_input("Search", placeholder="Search anything...",
-                                          key="global_search", label_visibility="collapsed")
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<div class='dash-search'>", unsafe_allow_html=True)
+        search_query = st.text_input("s", placeholder="Search anything...",
+                                      key="global_search", label_visibility="collapsed")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # Search results
     if search_query:
         q = search_query.lower()
-        matched_tasks     = [t for t in tasks if q in t.title.lower() or q in (t.description or "").lower()]
-        matched_notes     = [n for n in notes if q in (n.title or "").lower() or q in (n.content or "").lower()]
+        matched_tasks     = [t for t in tasks     if q in t.title.lower() or q in (t.description or "").lower()]
+        matched_notes     = [n for n in notes     if q in (n.title or "").lower() or q in (n.content or "").lower()]
         matched_reminders = [r for r in reminders if q in r.title.lower()]
-        kpi_html = f"""<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);
-            border-radius:14px;padding:18px;margin:12px 0;'>
-            <div style='font-size:10px;font-weight:600;letter-spacing:0.14em;color:#6b6b80;
-                font-family:JetBrains Mono,monospace;margin-bottom:12px;'>
-                RESULTS FOR "{search_query.upper()}"</div>"""
+        html = f"<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:18px;margin:10px 0;'><div style='font-size:10px;font-weight:600;letter-spacing:0.14em;color:#6b6b80;font-family:JetBrains Mono,monospace;margin-bottom:10px;'>RESULTS FOR \"{search_query.upper()}\"</div>"
         for t in matched_tasks:
-            tag_c = "#ff4560" if t.status != "completed" else "#00d68f"
-            kpi_html += f"<div style='background:#12121a;border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:12px;font-weight:600;color:#f0f0f8;'>{t.title} <span style='color:{tag_c};font-size:10px;'>{t.status.upper()}</span></div>"
+            c = "#ff4560" if t.status != "completed" else "#00d68f"
+            html += f"<div style='background:#12121a;border-radius:8px;padding:8px 12px;margin-bottom:5px;font-size:12px;font-weight:600;color:#f0f0f8;'>{t.title} <span style='color:{c};font-size:10px;'>{t.status.upper()}</span></div>"
         for n in matched_notes:
-            kpi_html += f"<div style='background:#12121a;border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:12px;color:#9090a8;'>{n.title or 'Untitled'}</div>"
+            html += f"<div style='background:#12121a;border-radius:8px;padding:8px 12px;margin-bottom:5px;font-size:12px;color:#9090a8;'>{n.title or 'Untitled'}</div>"
         for r in matched_reminders:
-            kpi_html += f"<div style='background:#12121a;border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:12px;color:#ffb020;'>{r.title}</div>"
+            html += f"<div style='background:#12121a;border-radius:8px;padding:8px 12px;margin-bottom:5px;font-size:12px;color:#ffb020;'>{r.title}</div>"
         if not matched_tasks and not matched_notes and not matched_reminders:
-            kpi_html += "<div style='color:#6b6b80;font-size:12px;'>No results found.</div>"
-        kpi_html += "</div>"
-        st.markdown(kpi_html, unsafe_allow_html=True)
+            html += "<div style='color:#6b6b80;font-size:12px;'>No results found.</div>"
+        html += "</div>"
+        st.markdown(html, unsafe_allow_html=True)
 
     # ── OVERDUE BANNER ──
     if overdue:
-        overdue_names = ", ".join([r.title for r in overdue[:3]])
-        extra = f" +{{len(overdue)-3}} more" if len(overdue) > 3 else ""
+        names = ", ".join([r.title for r in overdue[:3]])
+        extra = f" +{len(overdue)-3} more" if len(overdue) > 3 else ""
         st.markdown(f"""
         <div style='background:#ff456010;border:1px solid #ff456040;border-radius:12px;
-            padding:12px 18px;margin:10px 0;display:flex;align-items:center;gap:12px;'>
+            padding:12px 18px;margin:8px 0;display:flex;align-items:center;gap:12px;'>
             <span style='font-size:16px;'>⚠️</span>
             <div>
                 <div style='font-size:12px;font-weight:700;color:#ff4560;'>
-                    {{len(overdue)}} Overdue Reminder{{"s" if len(overdue) > 1 else ""}}</div>
-                <div style='font-size:11px;color:#9090a8;'>{{overdue_names}}{{extra}}</div>
+                    {len(overdue)} Overdue Reminder{"s" if len(overdue) > 1 else ""}</div>
+                <div style='font-size:11px;color:#9090a8;'>{names}{extra}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-    # ── KPI ROW — single HTML grid block ──
-    kpi_cards = [
-        ("Tasks",     str(len(tasks)),      "Total tasks",     active_color),
-        ("Completed", str(_done_count),     "Tasks done",      "#00d68f"),
-        ("AI Status", "ONLINE",             "Neural engine",   "#00d68f"),
-        ("Overdue",   str(len(overdue)),    "Need attention",  "#ff4560" if overdue else "#6b6b80"),
-        ("Notes",     str(len(notes)),      "In memory bank",  "#9b59ff"),
+    # ── KPI ROW — pure HTML grid ──
+
+    kpi_items = [
+        ("Tasks",     str(len(tasks)),      "Total tasks",    active_color),
+        ("Completed", str(_done_count),     "Tasks done",     "#00d68f"),
+        ("AI Status", "ONLINE",             "Neural engine",  "#00d68f"),
+        ("Overdue",   str(len(overdue)),    "Need attention", "#ff4560" if overdue else "#6b6b80"),
+        ("Notes",     str(len(notes)),      "In memory bank", "#9b59ff"),
     ]
     kpi_html = "<div style='display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:14px 0;'>"
-    for label, value, sub, color in kpi_cards:
-        kpi_html += f"""
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:14px;padding:16px 18px;position:relative;overflow:hidden;'>
+    for label, value, sub, color in kpi_items:
+        kpi_html += f"""<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+            border-radius:14px;padding:18px 20px;position:relative;overflow:hidden;min-height:110px;'>
             <div style='position:absolute;top:0;left:0;right:0;height:2px;
                 background:linear-gradient(90deg,{color},transparent);'></div>
             <div style='font-size:9px;font-weight:600;letter-spacing:0.12em;color:#6b6b80;
-                font-family:JetBrains Mono,monospace;margin-bottom:8px;text-transform:uppercase;'>{label}</div>
-            <div style='font-size:26px;font-weight:800;color:{color};
-                letter-spacing:-0.02em;line-height:1;margin-bottom:4px;'>{value}</div>
+                font-family:JetBrains Mono,monospace;margin-bottom:10px;text-transform:uppercase;'>{label}</div>
+            <div style='font-size:32px;font-weight:800;color:{color};
+                letter-spacing:-0.02em;line-height:1;margin-bottom:6px;'>{value}</div>
             <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>{sub}</div>
         </div>"""
     kpi_html += "</div>"
     st.markdown(kpi_html, unsafe_allow_html=True)
 
-    # ── MAIN 2-COLUMN GRID ──
-    col_left, col_right = st.columns([1.45, 1], gap="medium")
+    # ── MAIN 2-COLUMN SPLIT ──
+    col_left, col_right = st.columns([1.5, 1], gap="medium")
 
-    # ════════════ LEFT COLUMN ════════════
+    # ════════════════════════
+    # LEFT COLUMN
+    # ════════════════════════
     with col_left:
 
-        # ── MY TASKS HEADER ──
+        # MY TASKS header card
         st.markdown(f"""
         <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:14px;padding:16px 20px;margin-bottom:2px;
+            border-radius:14px;padding:14px 18px;margin-bottom:10px;
             display:flex;justify-content:space-between;align-items:center;'>
             <div style='display:flex;align-items:center;gap:8px;'>
                 <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
                 <span style='font-size:14px;font-weight:700;color:#f0f0f8;font-family:Syne,sans-serif;'>My Tasks</span>
             </div>
-            <span style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>
-                {_pending_count} PENDING
-            </span>
+            <span style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>{_pending_count} PENDING</span>
         </div>
         """, unsafe_allow_html=True)
 
-        # Add task button
         if "show_add_task" not in st.session_state:
             st.session_state.show_add_task = False
-        st.markdown("<div class='add-btn' style='margin:8px 0 4px;'>", unsafe_allow_html=True)
+        st.markdown("<div class='add-btn'>", unsafe_allow_html=True)
         if st.button("+ Add Task", key="toggle_task"):
             st.session_state.show_add_task = not st.session_state.show_add_task
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state.show_add_task:
-            st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;margin-bottom:8px;'>", unsafe_allow_html=True)
-            t_title    = st.text_input("Task Title", placeholder="e.g. Fix login bug", key="t_title_inp")
-            t_desc     = st.text_area("Description", placeholder="Describe the task...", key="t_desc_inp", height=70)
-            t_priority = st.select_slider("Priority", options=["Low", "Medium", "High"], value="Medium", key="t_pri_inp")
-            st.markdown("<div class='add-btn'>", unsafe_allow_html=True)
-            if st.button("Confirm", key="confirm_task"):
-                if t_title:
-                    create_task(t_title, t_desc, uid, t_priority)
-                    st.session_state.show_add_task = False
-                    st.rerun()
-            st.markdown("</div></div>", unsafe_allow_html=True)
+            with st.container():
+                st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;margin:8px 0;'>", unsafe_allow_html=True)
+                t_title    = st.text_input("Task Title",  placeholder="e.g. Fix login bug",   key="t_title_inp")
+                t_desc     = st.text_area("Description",  placeholder="Describe the task...", key="t_desc_inp", height=60)
+                t_priority = st.select_slider("Priority", options=["Low","Medium","High"],    value="Medium", key="t_pri_inp")
+                st.markdown("<div class='add-btn'>", unsafe_allow_html=True)
+                if st.button("Confirm", key="confirm_task"):
+                    if t_title:
+                        create_task(t_title, t_desc, uid, t_priority)
+                        st.session_state.show_add_task = False
+                        st.rerun()
+                st.markdown("</div></div>", unsafe_allow_html=True)
 
-        # Task list — each task as unified card with inline action buttons
+        # Task items
         for t in tasks:
             is_done  = t.status == "completed"
             priority = getattr(t, "priority", "Medium") or "Medium"
-            p_color  = {"High": "#ff4560", "Medium": "#ffb020", "Low": "#00d68f"}.get(priority, "#ffb020")
-            title_style = "text-decoration:line-through;color:#6b6b80;" if is_done else "color:#f0f0f8;"
-            check_inner = f"<span style='color:#050508;font-size:10px;font-weight:900;line-height:1;'>✓</span>" if is_done else ""
-            check_bg    = f"background:{p_color};" if is_done else f"border:2px solid {p_color}44;"
-
+            p_color  = {"High":"#ff4560","Medium":"#ffb020","Low":"#00d68f"}.get(priority,"#ffb020")
+            title_s  = "text-decoration:line-through;color:#6b6b80;" if is_done else "color:#f0f0f8;"
+            check_s  = f"background:{p_color};" if is_done else f"border:2px solid {p_color}44;"
+            tick     = "<span style='color:#050508;font-size:10px;font-weight:900;'>✓</span>" if is_done else ""
             st.markdown(f"""
             <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-                border-radius:12px;padding:12px 16px;margin-bottom:6px;
+                border-radius:12px;padding:12px 16px;margin-bottom:4px;
                 display:flex;align-items:center;gap:12px;'>
-                <div style='width:18px;height:18px;border-radius:5px;{check_bg}flex-shrink:0;
-                    display:flex;align-items:center;justify-content:center;'>{check_inner}</div>
-                <div style='flex:1;min-width:0;overflow:hidden;'>
-                    <div style='font-size:13px;font-weight:600;{title_style}
+                <div style='width:18px;height:18px;border-radius:5px;{check_s}flex-shrink:0;
+                    display:flex;align-items:center;justify-content:center;'>{tick}</div>
+                <div style='flex:1;min-width:0;'>
+                    <div style='font-size:13px;font-weight:600;{title_s}
                         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>{t.title}</div>
-                    <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;margin-top:2px;
-                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>{t.description or "No description"}</div>
+                    <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;
+                        margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>{t.description or "No description"}</div>
                 </div>
                 <span style='font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;
                     background:{p_color}18;color:{p_color};font-family:JetBrains Mono,monospace;
-                    white-space:nowrap;flex-shrink:0;'>{priority.upper()}</span>
+                    flex-shrink:0;'>{priority.upper()}</span>
             </div>
             """, unsafe_allow_html=True)
-            # Compact inline action buttons
-            ta1, ta2, _ = st.columns([0.08, 0.08, 0.84])
+            ta1, ta2, _ = st.columns([0.07, 0.07, 0.86])
             with ta1:
                 st.markdown("<div class='task-actions'>", unsafe_allow_html=True)
                 if not is_done:
-                    if st.button("✔", key=f"done_{t.id}"):
-                        complete_task(t.id); st.rerun()
+                    if st.button("✔", key=f"done_{t.id}"): complete_task(t.id); st.rerun()
                 st.markdown("</div>", unsafe_allow_html=True)
             with ta2:
                 st.markdown("<div class='task-actions'>", unsafe_allow_html=True)
-                if st.button("✕", key=f"del_{t.id}"):
-                    delete_task(t.id); st.rerun()
+                if st.button("✕", key=f"del_{t.id}"): delete_task(t.id); st.rerun()
                 st.markdown("</div>", unsafe_allow_html=True)
 
-        # ── UPCOMING REMINDERS ──
+        # UPCOMING REMINDERS header
         st.markdown(f"""
         <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:14px;padding:16px 20px;margin:16px 0 2px;
+            border-radius:14px;padding:14px 18px;margin:16px 0 10px;
             display:flex;justify-content:space-between;align-items:center;'>
             <div style='display:flex;align-items:center;gap:8px;'>
                 <div style='width:6px;height:6px;border-radius:50%;background:#ffb020;'></div>
                 <span style='font-size:14px;font-weight:700;color:#f0f0f8;font-family:Syne,sans-serif;'>Upcoming</span>
             </div>
-            <span style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>{len(reminders)} SET</span>
+            <span style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>{len(reminders)} SET</span>
         </div>
         """, unsafe_allow_html=True)
 
         if "show_add_reminder" not in st.session_state:
             st.session_state.show_add_reminder = False
-        st.markdown("<div class='add-btn' style='margin:8px 0 4px;'>", unsafe_allow_html=True)
+        st.markdown("<div class='add-btn'>", unsafe_allow_html=True)
         if st.button("+ Add Reminder", key="toggle_reminder"):
             st.session_state.show_add_reminder = not st.session_state.show_add_reminder
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state.show_add_reminder:
-            st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;margin-bottom:8px;'>", unsafe_allow_html=True)
-            rem_title = st.text_input("Reminder", placeholder="e.g. Team standup", key="rem_title_inp")
-            rem_date  = st.date_input("Due Date", key="rem_date_inp")
-            rem_time  = st.time_input("Due Time", key="rem_time_inp")
-            st.markdown("<div class='add-btn'>", unsafe_allow_html=True)
-            if st.button("Save Reminder", key="save_rem"):
-                if rem_title:
-                    due_dt = datetime.combine(rem_date, rem_time)
-                    create_reminder(rem_title, due_dt, uid)
-                    st.session_state.show_add_reminder = False; st.rerun()
-            st.markdown("</div></div>", unsafe_allow_html=True)
+            with st.container():
+                st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;margin:8px 0;'>", unsafe_allow_html=True)
+                rem_title = st.text_input("Reminder", placeholder="e.g. Team standup", key="rem_title_inp")
+                rem_date  = st.date_input("Due Date", key="rem_date_inp")
+                rem_time  = st.time_input("Due Time", key="rem_time_inp")
+                st.markdown("<div class='add-btn'>", unsafe_allow_html=True)
+                if st.button("Save Reminder", key="save_rem"):
+                    if rem_title:
+                        due_dt = datetime.combine(rem_date, rem_time)
+                        create_reminder(rem_title, due_dt, uid)
+                        st.session_state.show_add_reminder = False
+                        st.rerun()
+                st.markdown("</div></div>", unsafe_allow_html=True)
 
-        if overdue:
-            for r in overdue:
-                st.markdown(f"""
-                <div style='background:#ff456010;border:1px solid #ff456040;
-                    border-radius:10px;padding:10px 14px;margin-bottom:5px;
-                    display:flex;align-items:center;gap:10px;'>
-                    <div style='width:7px;height:7px;border-radius:50%;background:#ff4560;flex-shrink:0;'></div>
-                    <div style='flex:1;'>
-                        <div style='font-size:12px;font-weight:600;color:#ff4560;'>{r.title}</div>
-                        <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>
-                            {r.due_date.strftime("%b %d · %H:%M") if r.due_date else "No date"} · OVERDUE</div>
-                    </div>
+        for r in overdue:
+            st.markdown(f"""
+            <div style='background:#ff456010;border:1px solid #ff456040;border-radius:10px;
+                padding:10px 14px;margin-bottom:5px;display:flex;align-items:center;gap:10px;'>
+                <div style='width:7px;height:7px;border-radius:50%;background:#ff4560;flex-shrink:0;'></div>
+                <div style='flex:1;'>
+                    <div style='font-size:12px;font-weight:600;color:#ff4560;'>{r.title}</div>
+                    <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>
+                        {r.due_date.strftime("%b %d · %H:%M") if r.due_date else "No date"} · OVERDUE</div>
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
 
         for r in reminders:
             st.markdown(f"""
-            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-                border-radius:10px;padding:10px 14px;margin-bottom:5px;
-                display:flex;align-items:center;gap:10px;'>
+            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);border-radius:10px;
+                padding:10px 14px;margin-bottom:5px;display:flex;align-items:center;gap:10px;'>
                 <div style='width:7px;height:7px;border-radius:50%;background:{active_color};flex-shrink:0;'></div>
                 <div style='flex:1;'>
                     <div style='font-size:12px;font-weight:600;color:#f0f0f8;'>{r.title}</div>
@@ -1215,7 +1228,7 @@ elif st.session_state.nav == "Dashboard":
                 </div>
             </div>
             """, unsafe_allow_html=True)
-            rb1, rb2, _ = st.columns([0.08, 0.08, 0.84])
+            rb1, rb2, _ = st.columns([0.07, 0.07, 0.86])
             with rb1:
                 st.markdown("<div class='task-actions'>", unsafe_allow_html=True)
                 if st.button("✔", key=f"rem_done_{r.id}"): complete_reminder(r.id); st.rerun()
@@ -1228,37 +1241,41 @@ elif st.session_state.nav == "Dashboard":
         if not reminders and not overdue:
             st.markdown("<div style='color:#6b6b80;font-size:12px;padding:6px 0;'>No reminders set.</div>", unsafe_allow_html=True)
 
-        # Export
-        st.markdown("<div class='export-btn' style='margin-top:14px;'>", unsafe_allow_html=True)
+        st.markdown("<div class=\'export-btn\' style=\'margin-top:16px;\'>", unsafe_allow_html=True)
         if st.button("Export All Data", key="export_btn"):
-            lines = ["="*50, "AURA — WORKSPACE EXPORT",
-                     f"Exported: {datetime.now().strftime('%Y-%m-%d %H:%M')}", "="*50, "\n📌 TASKS", "-"*30]
+            export_lines = ["="*50, "AURA WORKSPACE EXPORT",
+                f"Exported: {datetime.now().strftime('%Y-%m-%d %H:%M')}", "="*50]
+            export_lines += ["TASKS", "-"*30]
             for t in tasks:
-                priority = getattr(t, "priority", "Medium") or "Medium"
-                status = "✔ Done" if t.status == "completed" else "○ Pending"
-                lines.append(f"[{priority.upper()}] {t.title} — {status}")
-                if t.description: lines.append(f"    {t.description}")
-            lines += ["\n📝 NOTES", "-"*30]
+                pr = getattr(t, "priority", "Medium") or "Medium"
+                st_s = "Done" if t.status == "completed" else "Pending"
+                export_lines.append(f"[{pr.upper()}] {t.title} - {st_s}")
+                if t.description:
+                    export_lines.append(f"    {t.description}")
+            export_lines += ["NOTES", "-"*30]
             for n in notes:
-                lines.append(f"• {n.title or 'Untitled'}")
-                if n.content: lines.append(f"  {n.content}")
-            lines += ["\n⏰ REMINDERS", "-"*30]
+                export_lines.append(f"* {n.title or 'Untitled'}")
+                if n.content:
+                    export_lines.append(f"  {n.content}")
+            export_lines += ["REMINDERS", "-"*30]
             for r in reminders:
-                date_str = r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date"
-                lines.append(f"• {r.title} — {date_str}")
-            lines.append("\n" + "="*50)
-            st.download_button(label="Download .txt", data="\n".join(lines),
+                ds = r.due_date.strftime("%b %d, %Y %H:%M") if r.due_date else "No date"
+                export_lines.append(f"* {r.title} - {ds}")
+            export_lines.append("="*50)
+            st.download_button(label="Download .txt", data="\n".join(export_lines),
                 file_name=f"aura_export_{datetime.now().strftime('%Y%m%d_%H%M')}.txt",
                 mime="text/plain", key="download_export")
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # ════════════ RIGHT COLUMN ════════════
+    # ════════════════════════
+    # RIGHT COLUMN
+    # ════════════════════════
     with col_right:
 
-        # ── AI ASSISTANT PANEL ──
+        # AI ASSISTANT HEADER
         st.markdown(f"""
         <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:14px;padding:16px 20px;margin-bottom:10px;'>
+            border-radius:14px;padding:14px 18px;margin-bottom:10px;'>
             <div style='display:flex;justify-content:space-between;align-items:center;'>
                 <div style='display:flex;align-items:center;gap:8px;'>
                     <span style='font-size:14px;font-weight:700;color:#f0f0f8;font-family:Syne,sans-serif;'>AI Assistant</span>
@@ -1266,50 +1283,40 @@ elif st.session_state.nav == "Dashboard":
                         color:{active_color};padding:2px 7px;border-radius:4px;
                         font-family:JetBrains Mono,monospace;'>NEW</span>
                 </div>
-                <span style='font-size:9px;color:#00d68f;font-family:JetBrains Mono,monospace;
-                    font-weight:600;'>● ONLINE</span>
+                <span style='font-size:9px;color:#00d68f;font-family:JetBrains Mono,monospace;font-weight:600;'>● ONLINE</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Voice toggle row
+        # VOICE TOGGLE
         vc1, vc2 = st.columns([1, 3])
         with vc1:
             voice_on = st.toggle("🔊", value=st.session_state.get("voice_enabled", False), key="voice_toggle")
             st.session_state["voice_enabled"] = voice_on
         with vc2:
             st.markdown(f"""
-            <div style='display:flex;align-items:center;gap:8px;padding-top:6px;'>
-                <span style='font-size:12px;color:#9090a8;'>Voice Output</span>
+            <div style='padding-top:8px;font-size:12px;color:#9090a8;'>
+                Voice Output &nbsp;
                 <span style='font-size:9px;color:{"#00d68f" if voice_on else "#6b6b80"};
                     font-family:JetBrains Mono,monospace;'>{"● ACTIVE" if voice_on else "○ OFF"}</span>
             </div>
             """, unsafe_allow_html=True)
 
-        if "last_audio" in st.session_state and st.session_state["voice_enabled"]:
-            audio_b64 = st.session_state["last_audio"]
+        if "last_audio" in st.session_state and voice_on:
             st.markdown(f"""
-            <audio autoplay style='width:100%;margin:4px 0;height:28px;'>
-                <source src='data:audio/mp3;base64,{audio_b64}' type='audio/mp3'>
+            <audio autoplay style='width:100%;height:28px;margin:4px 0;'>
+                <source src='data:audio/mp3;base64,{st.session_state["last_audio"]}' type='audio/mp3'>
             </audio>
             """, unsafe_allow_html=True)
 
-        # Chat history
+        # CHAT HISTORY as pure HTML
         if "chat" not in st.session_state:
-            st.session_state.chat = [{{
-                "role": "assistant",
-                "content": f"Aura online. You have {_pending_count} pending tasks and {len(overdue)} overdue reminders. What should we focus on?"
-            }}]
+            init_msg = f"Aura online. You have {_pending_count} pending tasks and {len(overdue)} overdue reminders. What should we focus on?"
+            st.session_state.chat = [{"role": "assistant", "content": init_msg}]
 
-        # Chat container styled as terminal
-        st.markdown(f"""
-        <div style='background:#080812;border:1px solid rgba(255,255,255,0.07);
-            border-radius:12px;padding:2px;margin:8px 0 4px;overflow:hidden;'>
-            <div style='background:#080812;border-radius:10px;
-                padding:10px 12px;max-height:280px;overflow-y:auto;'>
-        """, unsafe_allow_html=True)
-
-        chat_html = ""
+        chat_html = """<div style='background:#080812;border:1px solid rgba(255,255,255,0.07);
+            border-radius:12px;padding:14px;margin:8px 0;
+            max-height:300px;overflow-y:auto;min-height:140px;'>"""
         for msg in st.session_state.chat:
             if msg["role"] == "assistant":
                 chat_html += f"""
@@ -1335,81 +1342,81 @@ elif st.session_state.nav == "Dashboard":
                         padding:8px 12px;font-size:12px;line-height:1.6;
                         color:#f0f0f8;max-width:88%;'>{msg["content"]}</div>
                 </div>"""
-        st.markdown(chat_html + "</div></div>", unsafe_allow_html=True)
+        chat_html += "</div>"
+        st.markdown(chat_html, unsafe_allow_html=True)
 
-        # Voice input coming soon
+        # VOICE INPUT coming soon
         st.markdown(f"""
         <div style='display:flex;align-items:center;gap:8px;margin:6px 0;'>
-            <button disabled style='flex:1;padding:7px;border-radius:8px;
-                background:#0c0c12;border:1px solid #2a2a3a;
-                color:#6b6b80;font-weight:600;font-size:11px;
+            <button disabled style='flex:1;padding:7px;border-radius:8px;background:#0c0c12;
+                border:1px solid #2a2a3a;color:#6b6b80;font-weight:600;font-size:11px;
                 cursor:not-allowed;letter-spacing:0.05em;font-family:Syne,sans-serif;'>
                 🎤 SPEAK TO AURA
             </button>
             <span style='font-size:8px;font-weight:700;letter-spacing:0.08em;
-                background:#ffb02015;border:1px solid #ffb02040;
-                color:#ffb020;border-radius:4px;padding:3px 6px;
-                font-family:JetBrains Mono,monospace;white-space:nowrap;'>SOON</span>
+                background:#ffb02015;border:1px solid #ffb02040;color:#ffb020;
+                border-radius:4px;padding:3px 6px;font-family:JetBrains Mono,monospace;
+                white-space:nowrap;'>SOON</span>
         </div>
         """, unsafe_allow_html=True)
 
-        # Quick commands 2x2
-        st.markdown("""<div style='font-size:9px;font-weight:600;letter-spacing:0.12em;
-            color:#6b6b80;text-transform:uppercase;
-            font-family:JetBrains Mono,monospace;margin:8px 0 5px;'>Quick Commands</div>""",
-            unsafe_allow_html=True)
+        # QUICK COMMANDS 2x2
+        st.markdown("""<div style='font-size:9px;font-weight:600;letter-spacing:0.12em;color:#6b6b80;
+            text-transform:uppercase;font-family:JetBrains Mono,monospace;margin:8px 0 5px;'>
+            Quick Commands</div>""", unsafe_allow_html=True)
 
         quick_prompt = None
-        qr1c1, qr1c2 = st.columns(2)
-        qr2c1, qr2c2 = st.columns(2)
-        with qr1c1:
+        qr1, qr2 = st.columns(2)
+        qr3, qr4 = st.columns(2)
+        with qr1:
             st.markdown("<div class='qc-btn'>", unsafe_allow_html=True)
-            if st.button("My Tasks", key="qc1"): quick_prompt = "Summarize my current tasks and tell me what I should focus on first."
+            if st.button("My Tasks",   key="qc1"): quick_prompt = "Summarize my current tasks and tell me what I should focus on first."
             st.markdown("</div>", unsafe_allow_html=True)
-        with qr1c2:
+        with qr2:
             st.markdown("<div class='qc-btn'>", unsafe_allow_html=True)
-            if st.button("Overdue?", key="qc2"): quick_prompt = "Do I have any overdue reminders? If so, list them and suggest what to do."
+            if st.button("Overdue?",   key="qc2"): quick_prompt = "Do I have any overdue reminders? If so, list them and suggest what to do."
             st.markdown("</div>", unsafe_allow_html=True)
-        with qr2c1:
+        with qr3:
             st.markdown("<div class='qc-btn'>", unsafe_allow_html=True)
-            if st.button("My Notes", key="qc3"): quick_prompt = "Summarize all my notes and highlight the most important points."
+            if st.button("My Notes",   key="qc3"): quick_prompt = "Summarize all my notes and highlight the most important points."
             st.markdown("</div>", unsafe_allow_html=True)
-        with qr2c2:
+        with qr4:
             st.markdown("<div class='qc-btn'>", unsafe_allow_html=True)
             if st.button("Prioritize", key="qc4"): quick_prompt = "Based on my tasks and reminders, help me prioritize what to do today."
             st.markdown("</div>", unsafe_allow_html=True)
 
+        # CHAT INPUT
         prompt = st.chat_input("Message Aura...", key="main_chat")
         final_prompt = prompt or quick_prompt
         if final_prompt:
-            st.session_state.chat.append({{"role": "user", "content": final_prompt}})
+            st.session_state.chat.append({"role": "user", "content": final_prompt})
             user_context = build_user_context(uid)
-            _personality_prefs = get_preferences(uid)
+            _pp = get_preferences(uid)
             response = get_ai_response(
                 final_prompt,
                 chat_history=st.session_state.chat[:-1],
                 user_context=user_context,
                 tasks=tasks, notes=notes, reminders=reminders,
-                personality=_personality_prefs.get("personality", "🎩 Professional"),
-                custom_personality=_personality_prefs.get("custom_personality", "")
+                personality=_pp.get("personality", "🎩 Professional"),
+                custom_personality=_pp.get("custom_personality", "")
             )
-            st.session_state.chat.append({{"role": "assistant", "content": response}})
-            if st.session_state.get("voice_enabled", False):
-                audio_b64 = text_to_speech(response)
-                if audio_b64:
-                    st.session_state["last_audio"] = audio_b64
+            st.session_state.chat.append({"role": "assistant", "content": response})
+            if voice_on:
+                ab = text_to_speech(response)
+                if ab:
+                    st.session_state["last_audio"] = ab
             st.rerun()
 
-        # ── QUICK NOTES ──
+        # QUICK NOTES PANEL
         st.markdown(f"""
         <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:14px;padding:16px 20px;margin-top:14px;
+            border-radius:14px;padding:14px 18px;margin-top:16px;
             display:flex;justify-content:space-between;align-items:center;'>
             <div style='display:flex;align-items:center;gap:8px;'>
                 <div style='width:6px;height:6px;border-radius:50%;background:#9b59ff;'></div>
                 <span style='font-size:14px;font-weight:700;color:#f0f0f8;font-family:Syne,sans-serif;'>Quick Notes</span>
             </div>
-            <span style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>{len(notes)} SAVED</span>
+            <span style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;'>{len(notes)} SAVED</span>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1421,15 +1428,17 @@ elif st.session_state.nav == "Dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.session_state.show_add_note:
-            st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;margin-bottom:8px;'>", unsafe_allow_html=True)
-            n_title = st.text_input("Note Title", placeholder="e.g. Ideas", key="note_title_inp")
-            n_body  = st.text_area("Content", placeholder="Write anything...", height=70, key="note_body_inp")
-            st.markdown("<div class='add-btn'>", unsafe_allow_html=True)
-            if st.button("Save Note", key="save_note"):
-                if n_title:
-                    create_note(n_title, n_body, uid)
-                    st.session_state.show_add_note = False; st.rerun()
-            st.markdown("</div></div>", unsafe_allow_html=True)
+            with st.container():
+                st.markdown("<div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;margin-bottom:8px;'>", unsafe_allow_html=True)
+                n_title = st.text_input("Note Title", placeholder="e.g. Ideas",          key="note_title_inp")
+                n_body  = st.text_area("Content",     placeholder="Write anything...",   key="note_body_inp",  height=60)
+                st.markdown("<div class='add-btn'>", unsafe_allow_html=True)
+                if st.button("Save Note", key="save_note"):
+                    if n_title:
+                        create_note(n_title, n_body, uid)
+                        st.session_state.show_add_note = False
+                        st.rerun()
+                st.markdown("</div></div>", unsafe_allow_html=True)
 
         if notes:
             for n in notes:
@@ -1444,13 +1453,12 @@ elif st.session_state.nav == "Dashboard":
                 nd1, _ = st.columns([0.12, 0.88])
                 with nd1:
                     st.markdown("<div class='task-actions'>", unsafe_allow_html=True)
-                    if st.button("✕", key=f"del_note_{n.id}"):
-                        delete_note(n.id); st.rerun()
+                    if st.button("✕", key=f"del_note_{n.id}"): delete_note(n.id); st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)
         else:
             st.markdown("<div style='color:#6b6b80;font-size:12px;padding:6px 0;'>No notes yet.</div>", unsafe_allow_html=True)
 
-    # ── STATUS BAR ──
+    # STATUS BAR
     st.markdown(f"""
     <div class='aura-status-bar'>
         <span><span style='color:{active_color};'>●</span>&nbsp; AI ONLINE</span>
