@@ -332,7 +332,7 @@ if st.session_state.nav == "Dashboard" and uid:
             "Personality", personality_options,
             index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
             key="personality_select", label_visibility="collapsed"
-)
+        )
 
 personality_defaults = {
     "🎩 Professional": "Formal, precise, and concise. No casual language.",
