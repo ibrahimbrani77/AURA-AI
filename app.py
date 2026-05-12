@@ -327,37 +327,51 @@ if st.session_state.nav == "Dashboard" and uid:
             _prefs_sidebar = {}
 
         personality_options = ["🎩 Professional", "😊 Friendly", "🧙 Mentor", "😏 Sarcastic", "⚡ Minimalist", "🔥 Hype Coach", "✨ Custom"]
-        saved_personality = _prefs_sidebar.get("personality", "🎩 Professional")
-        selected_personality = st.selectbox(
-            "Personality", personality_options,
-            index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
-            key="personality_select", label_visibility="collapsed"
-        )
-        personality_defaults = {
-            "🎩 Professional": "Formal, precise, and concise. No casual language.",
-            "😊 Friendly":     "Warm, encouraging, and conversational.",
-            "🧙 Mentor":       "Wise, patient, and guiding with thoughtful advice.",
-            "😏 Sarcastic":    "Witty and sarcastic with dry humor, but still helpful.",
-            "⚡ Minimalist":   "Ultra-concise. Short answers, bullet points, no fluff.",
-            "🔥 Hype Coach":   "Energetic, motivating, and enthusiastic about everything!",
-            "✨ Custom":       ""
-        }
-        custom_desc = st.text_area(
-            "Personality Description",
-            value=_prefs_sidebar.get("custom_personality", personality_defaults.get(selected_personality, "")),
-            placeholder="Describe how Aura should behave...",
-            height=80, key="custom_personality_input", label_visibility="collapsed"
-        )
-        if st.button("Save Personality", key="save_personality"):
-            save_preference(uid, "personality", selected_personality)
-            save_preference(uid, "custom_personality", custom_desc)
-            st.success("Personality saved!")
-            st.rerun()
+saved_personality = _prefs_sidebar.get("personality", "🎩 Professional")
+selected_personality = st.selectbox(
+    "Personality", personality_options,
+    index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
+    key="personality_select", label_visibility="collapsed"
+)
 
-        st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:16px 0;'>", unsafe_allow_html=True)
-        if st.button("Secure Logout"):
-            st.session_state.clear()
-            redirect("Home")
+personality_defaults = {
+    "🎩 Professional": "Formal, precise, and concise. No casual language.",
+    "😊 Friendly":     "Warm, encouraging, and conversational.",
+    "🧙 Mentor":       "Wise, patient, and guiding with thoughtful advice.",
+    "😏 Sarcastic":    "Witty and sarcastic with dry humor, but still helpful.",
+    "⚡ Minimalist":   "Ultra-concise. Short answers, bullet points, no fluff.",
+    "🔥 Hype Coach":   "Energetic, motivating, and enthusiastic about everything!",
+    "✨ Custom":       ""
+}
+
+# FIX: Determine what to show in the text area based on the selected personality
+if selected_personality == "✨ Custom":
+    # For Custom, show the saved custom text (if any)
+    initial_value = _prefs_sidebar.get("custom_personality", "")
+else:
+    # For preset personalities, show their default description
+    initial_value = personality_defaults[selected_personality]
+
+custom_desc = st.text_area(
+    "Personality Description",
+    value=initial_value,
+    placeholder="Describe how Aura should behave...",
+    height=80, 
+    key="custom_personality_input", 
+    label_visibility="collapsed",
+    disabled=(selected_personality != "✨ Custom")  # Make read-only for presets
+)
+
+if st.button("Save Personality", key="save_personality"):
+    save_preference(uid, "personality", selected_personality)
+    save_preference(uid, "custom_personality", custom_desc)
+    st.success("Personality saved!")
+    st.rerun()
+
+st.markdown("<hr style='border-color:rgba(255,255,255,0.06);margin:16px 0;'>", unsafe_allow_html=True)
+if st.button("Secure Logout"):
+    st.session_state.clear()
+    redirect("Home")
 
 # =========================
 # HOME PAGE
