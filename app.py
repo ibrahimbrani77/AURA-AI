@@ -346,6 +346,10 @@ if st.session_state.nav == "Dashboard" and uid:
             initial_value = _prefs_sidebar.get("custom_personality", "")
         else:
             initial_value = personality_defaults[selected_personality]
+
+        # Force update the text area when personality changes
+        st.session_state["custom_personality_input"] = initial_value
+
         custom_desc = st.text_area(
             "Personality Description",
             value=initial_value,
