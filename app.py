@@ -327,7 +327,7 @@ if st.session_state.nav == "Dashboard" and uid:
             _prefs_sidebar = {}
 
         personality_options = ["🎩 Professional", "😊 Friendly", "🧙 Mentor", "😏 Sarcastic", "⚡ Minimalist", "🔥 Hype Coach", "✨ Custom"]
-saved_personality = _prefs_sidebar.get("personality", "🎩 Professional")
+        saved_personality = _prefs_sidebar.get("personality", "🎩 Professional")
 selected_personality = st.selectbox(
     "Personality", personality_options,
     index=personality_options.index(saved_personality) if saved_personality in personality_options else 0,
