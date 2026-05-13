@@ -8,7 +8,11 @@ from modules.database import SessionLocal
 from modules.models import User
 
 # --- 1. Security Configurations ---
-SECRET_KEY = os.getenv("JWT_SECRET", "super-secure-graduation-key-2026")
+try:
+    import streamlit as st
+    SECRET_KEY = st.secrets.get("JWT_SECRET") or os.getenv("JWT_SECRET", "super-secure-graduation-key-2026")
+except Exception:
+    SECRET_KEY = os.getenv("JWT_SECRET", "super-secure-graduation-key-2026")
 ALGORITHM = "HS256"
 
 # EXPERT FIX: Using pbkdf2_sha256 instead of bcrypt to avoid the 72-character limit
