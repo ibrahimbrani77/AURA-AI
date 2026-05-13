@@ -64,6 +64,7 @@ if "token" in st.session_state:
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+*, *::before, *::after {{ box-sizing: border-box; }}
 html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, label {{
     font-family: 'Syne', sans-serif !important;
 }}
@@ -71,7 +72,7 @@ html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, label
 #MainMenu, footer {{ visibility: hidden; }}
 .block-container {{ padding-top: 1.5rem !important; padding-bottom: 4rem !important; }}
 section[data-testid="stSidebar"] {{
-    background: #0c0c12 !important;
+    background: #0a0a10 !important;
     border-right: 1px solid rgba(255,255,255,0.06) !important;
 }}
 section[data-testid="stSidebar"] * {{ font-family: 'Syne', sans-serif !important; }}
@@ -88,10 +89,12 @@ input, textarea, input[type="text"], input[type="password"] {{
     border-radius: 10px !important;
     font-family: 'Syne', sans-serif !important;
     font-size: 13px !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
 }}
 input:focus, textarea:focus {{
     border-color: {active_color} !important;
-    box-shadow: 0 0 0 2px {glow_color} !important;
+    box-shadow: 0 0 0 3px {glow_color} !important;
+    outline: none !important;
 }}
 label[data-testid="stWidgetLabel"] p {{
     color: #9090a8 !important; font-size: 12px !important;
@@ -101,16 +104,21 @@ label[data-testid="stWidgetLabel"] p {{
     background: {active_color} !important;
     color: #050508 !important;
     border: none !important;
-    padding: 8px 16px !important;
+    padding: 8px 18px !important;
     font-weight: 700 !important;
     font-size: 11px !important;
     letter-spacing: 0.08em !important;
     border-radius: 8px !important;
     font-family: 'Syne', sans-serif !important;
     text-transform: uppercase !important;
-    transition: opacity 0.2s !important;
+    transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s !important;
     width: auto !important;
     min-width: unset !important;
+}}
+.stButton > button:hover {{
+    opacity: 0.88 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 18px {glow_color} !important;
 }}
 .stButton > button:hover {{ opacity: 0.85 !important; color: #050508 !important; }}
 .btn-sm .stButton > button {{
@@ -414,11 +422,23 @@ if st.session_state.nav == "Home":
 
     with hero_left:
         st.markdown(f"""
-        <div style='padding:60px 0 40px 48px;'>
+        <style>
+        @keyframes dot-blink {{
+            0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.35; }}
+        }}
+        @keyframes hero-fade-up {{
+            from {{ opacity: 0; transform: translateY(24px); }}
+            to   {{ opacity: 1; transform: translateY(0); }}
+        }}
+        .hero-left-inner {{ animation: hero-fade-up 0.7s ease both; }}
+        </style>
+        <div class='hero-left-inner' style='padding:60px 0 40px 48px;'>
             <div style='display:inline-flex;align-items:center;gap:8px;
                 background:{glow_color};border:1px solid {active_color}44;
-                border-radius:20px;padding:6px 14px;margin-bottom:24px;'>
-                <div style='width:6px;height:6px;border-radius:50%;background:{active_color};'></div>
+                border-radius:24px;padding:7px 16px;margin-bottom:28px;
+                box-shadow:0 0 20px {glow_color};'>
+                <div style='width:7px;height:7px;border-radius:50%;background:{active_color};
+                    animation:dot-blink 2s ease-in-out infinite;'></div>
                 <span style='font-size:11px;font-weight:600;color:{active_color};
                     letter-spacing:0.12em;font-family:JetBrains Mono,monospace;'>
                     AI-POWERED · PERSONAL · ADAPTIVE
@@ -450,7 +470,7 @@ if st.session_state.nav == "Home":
                 </div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)  # closes hero-left-inner
 
         btn1, btn2, btn3 = st.columns([1, 1, 2])
         with btn1:
@@ -502,31 +522,43 @@ if st.session_state.nav == "Home":
 
     # ── FEATURES STRIP ──
     st.markdown(f"""
-    <div style='display:flex;justify-content:center;gap:48px;padding:24px 48px;
+    <style>
+    .feat-strip-item {{
+        display: flex; align-items: center; gap: 10px;
+        padding: 6px 12px; border-radius: 10px;
+        transition: background 0.2s;
+        cursor: default;
+    }}
+    .feat-strip-item:hover {{
+        background: rgba(255,255,255,0.04);
+    }}
+    </style>
+    <div style='display:flex;justify-content:center;gap:12px;padding:22px 48px;
         border-top:1px solid rgba(255,255,255,0.06);
         border-bottom:1px solid rgba(255,255,255,0.06);
-        background:rgba(12,12,18,0.5);flex-wrap:wrap;'>
-        <div style='display:flex;align-items:center;gap:10px;'>
+        background:rgba(12,12,18,0.6);flex-wrap:wrap;
+        backdrop-filter:blur(8px);'>
+        <div class='feat-strip-item'>
             <span style='font-size:18px;'>📌</span>
             <span style='font-size:13px;font-weight:600;color:#9090a8;'>Task Engine</span>
         </div>
-        <div style='display:flex;align-items:center;gap:10px;'>
+        <div class='feat-strip-item'>
             <span style='font-size:18px;'>🧠</span>
             <span style='font-size:13px;font-weight:600;color:#9090a8;'>Neural Chat</span>
         </div>
-        <div style='display:flex;align-items:center;gap:10px;'>
+        <div class='feat-strip-item'>
             <span style='font-size:18px;'>🎭</span>
             <span style='font-size:13px;font-weight:600;color:#9090a8;'>6 Personalities</span>
         </div>
-        <div style='display:flex;align-items:center;gap:10px;'>
+        <div class='feat-strip-item'>
             <span style='font-size:18px;'>⏰</span>
             <span style='font-size:13px;font-weight:600;color:#9090a8;'>Smart Reminders</span>
         </div>
-        <div style='display:flex;align-items:center;gap:10px;'>
+        <div class='feat-strip-item'>
             <span style='font-size:18px;'>🔊</span>
             <span style='font-size:13px;font-weight:600;color:#9090a8;'>Voice Output</span>
         </div>
-        <div style='display:flex;align-items:center;gap:10px;'>
+        <div class='feat-strip-item'>
             <span style='font-size:18px;'>🔒</span>
             <span style='font-size:13px;font-weight:600;color:#9090a8;'>Secure & Private</span>
         </div>
@@ -545,6 +577,28 @@ if st.session_state.nav == "Home":
     </div>
     """, unsafe_allow_html=True)
 
+    # Feature card CSS with hover effects
+    st.markdown("""
+    <style>
+    .feat-card-home {
+        background: #0c0c12;
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 32px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 20px;
+        transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        cursor: default;
+    }
+    .feat-card-home:hover {
+        border-color: var(--fc);
+        transform: translateY(-5px);
+        box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     f1, f2, f3 = st.columns(3)
     for col, icon, title, color, desc in [
         (f1, "📌", "Task Engine", active_color, "Deploy tasks with High, Medium, or Low priority. I'll help you figure out what to tackle first."),
@@ -553,8 +607,7 @@ if st.session_state.nav == "Home":
     ]:
         with col:
             st.markdown(f"""
-            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-                border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+            <div class='feat-card-home' style='--fc:{color}44;'>
                 <div style='position:absolute;top:0;left:0;right:0;height:2px;
                     background:linear-gradient(90deg,{color},transparent);'></div>
                 <div style='font-size:36px;margin-bottom:16px;'>{icon}</div>
@@ -571,8 +624,7 @@ if st.session_state.nav == "Home":
     ]:
         with col:
             st.markdown(f"""
-            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-                border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+            <div class='feat-card-home' style='--fc:{color}44;'>
                 <div style='position:absolute;top:0;left:0;right:0;height:2px;
                     background:linear-gradient(90deg,{color},transparent);'></div>
                 <div style='font-size:36px;margin-bottom:16px;'>{icon}</div>
@@ -584,8 +636,7 @@ if st.session_state.nav == "Home":
     f7c, f8c, f9c = st.columns(3)
     with f7c:
         st.markdown(f"""
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+        <div class='feat-card-home' style='--fc:#a78bfa44;'>
             <div style='position:absolute;top:0;left:0;right:0;height:2px;
                 background:linear-gradient(90deg,#a78bfa,transparent);'></div>
             <div style='font-size:36px;margin-bottom:16px;'>🔊</div>
@@ -597,8 +648,7 @@ if st.session_state.nav == "Home":
         """, unsafe_allow_html=True)
     with f8c:
         st.markdown(f"""
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+        <div class='feat-card-home' style='--fc:#ffb02044;'>
             <div style='position:absolute;top:0;left:0;right:0;height:2px;
                 background:linear-gradient(90deg,#ffb020,transparent);'></div>
             <div style='position:absolute;top:16px;right:16px;font-size:9px;font-weight:700;
@@ -614,8 +664,7 @@ if st.session_state.nav == "Home":
         """, unsafe_allow_html=True)
     with f9c:
         st.markdown(f"""
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:20px;padding:32px;position:relative;overflow:hidden;margin-bottom:20px;'>
+        <div class='feat-card-home' style='--fc:#00d68f44;'>
             <div style='position:absolute;top:0;left:0;right:0;height:2px;
                 background:linear-gradient(90deg,#00d68f,transparent);'></div>
             <div style='font-size:36px;margin-bottom:16px;'>📊</div>
@@ -832,10 +881,19 @@ elif st.session_state.nav in ["Login", "Register"]:
     st.markdown(f"""
     <style>
     .auth-card {{
-        background: #0c0c12;
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 20px;
-        padding: 2.5rem 2rem;
+        background: linear-gradient(160deg, #0e0e16 0%, #0c0c12 100%);
+        border: 1px solid rgba(255,255,255,0.09);
+        border-radius: 22px;
+        padding: 2.5rem 2.2rem;
+        box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+        position: relative;
+        overflow: hidden;
+    }}
+    .auth-card::before {{
+        content: '';
+        position: absolute;
+        top: 0; left: 20%; right: 20%; height: 1px;
+        background: linear-gradient(90deg, transparent, {active_color}44, transparent);
     }}
     .auth-tab-header {{
         font-size: 10px;
@@ -1257,13 +1315,20 @@ elif st.session_state.nav == "Dashboard":
         extra = f" +{len(overdue)-3} more" if len(overdue) > 3 else ""
         s = "s" if len(overdue) > 1 else ""
         st.markdown(f"""
-        <div style='background:#ff456010;border:1px solid #ff456040;border-radius:12px;
+        <style>
+        @keyframes overdue-pulse {{
+            0%, 100% {{ opacity: 1; }} 60% {{ opacity: 0.5; }}
+        }}
+        </style>
+        <div style='background:rgba(255,69,96,0.07);border:1px solid rgba(255,69,96,0.3);
+            border-left:3px solid #ff4560;border-radius:12px;
             padding:12px 18px;margin:8px 0;display:flex;align-items:center;gap:12px;'>
-            <span style='font-size:16px;flex-shrink:0;'>&#9888;&#65039;</span>
+            <span style='font-size:18px;flex-shrink:0;
+                animation:overdue-pulse 1.8s ease-in-out infinite;'>&#9888;&#65039;</span>
             <div>
                 <div style='font-size:12px;font-weight:700;color:#ff4560;'>
                     {len(overdue)} Overdue Reminder{s}</div>
-                <div style='font-size:11px;color:#9090a8;'>{names}{extra}</div>
+                <div style='font-size:11px;color:#9090a8;margin-top:2px;'>{names}{extra}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1276,6 +1341,20 @@ elif st.session_state.nav == "Dashboard":
         ("Overdue",   str(len(overdue)),    "Need attention", "#ff4560" if overdue else "#6b6b80"),
         ("Notes",     str(len(notes)),      "In memory bank", "#9b59ff"),
     ]
+    # KPI card hover style
+    st.markdown("""
+    <style>
+    .kpi-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+        cursor: default;
+    }
+    .kpi-card:hover {
+        transform: translateY(-3px) !important;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.3) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     kpi_html = "<div class='kpi-grid' style='display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:14px 0;'>"
     for label, value, sub, color in kpi_items:
         kpi_html += f"""
@@ -1333,6 +1412,20 @@ elif st.session_state.nav == "Dashboard":
                     st.rerun()
             st.markdown("</div></div>", unsafe_allow_html=True)
 
+        # Task card hover style
+        st.markdown("""
+        <style>
+        .task-card-row {
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            cursor: default;
+        }
+        .task-card-row:hover {
+            background: #101018 !important;
+            transform: translateX(3px);
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
         # Task cards
         for t in tasks:
             is_done  = t.status == "completed"
@@ -1341,8 +1434,9 @@ elif st.session_state.nav == "Dashboard":
             title_s  = "text-decoration:line-through;color:#6b6b80;" if is_done else "color:#f0f0f8;"
             check_s  = f"background:{p_color};" if is_done else f"border:2px solid {p_color}44;"
             tick     = "<span style='color:#050508;font-size:10px;font-weight:900;line-height:1;'>&#10003;</span>" if is_done else ""
+            border_c = "rgba(255,255,255,0.04)" if is_done else "rgba(255,255,255,0.07)"
             st.markdown(f"""
-            <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+            <div class='task-card-row' style='background:#0c0c12;border:1px solid {border_c};
                 border-radius:12px;padding:12px 16px;margin-bottom:4px;
                 display:flex;align-items:center;gap:12px;'>
                 <div style='width:18px;height:18px;border-radius:5px;{check_s}flex-shrink:0;
@@ -1481,16 +1575,33 @@ elif st.session_state.nav == "Dashboard":
 
         # AI ASSISTANT HEADER
         st.markdown(f"""
-        <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-            border-radius:14px;padding:14px 18px;margin-bottom:10px;'>
+        <style>
+        @keyframes online-pulse {{
+            0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.45; }}
+        }}
+        </style>
+        <div style='background:linear-gradient(135deg,#0e0e16,#0c0c12);
+            border:1px solid rgba(255,255,255,0.07);
+            border-radius:14px;padding:14px 18px;margin-bottom:10px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.25);'>
             <div style='display:flex;justify-content:space-between;align-items:center;'>
-                <div style='display:flex;align-items:center;gap:8px;'>
-                    <span style='font-size:14px;font-weight:700;color:#f0f0f8;font-family:Syne,sans-serif;'>AI Assistant</span>
-                    <span style='font-size:9px;font-weight:700;background:{glow_color};
-                        color:{active_color};padding:2px 7px;border-radius:4px;
-                        font-family:JetBrains Mono,monospace;'>NEW</span>
+                <div style='display:flex;align-items:center;gap:10px;'>
+                    <div style='width:32px;height:32px;border-radius:50%;
+                        background:linear-gradient(135deg,{active_color},#7c3aed);
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:12px;font-weight:900;color:#050508;flex-shrink:0;'>A</div>
+                    <div>
+                        <div style='font-size:13px;font-weight:700;color:#f0f0f8;font-family:Syne,sans-serif;line-height:1.2;'>AI Assistant</div>
+                        <div style='font-size:9px;color:#6b6b80;font-family:JetBrains Mono,monospace;letter-spacing:0.08em;'>POWERED BY GEMINI</div>
+                    </div>
                 </div>
-                <span style='font-size:9px;color:#00d68f;font-family:JetBrains Mono,monospace;font-weight:600;'>&#9679; ONLINE</span>
+                <div style='display:flex;align-items:center;gap:6px;
+                    background:rgba(0,214,143,0.08);border:1px solid rgba(0,214,143,0.2);
+                    border-radius:20px;padding:4px 10px;'>
+                    <div style='width:6px;height:6px;border-radius:50%;background:#00d68f;
+                        animation:online-pulse 2s ease-in-out infinite;'></div>
+                    <span style='font-size:9px;color:#00d68f;font-family:JetBrains Mono,monospace;font-weight:600;'>ONLINE</span>
+                </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1659,11 +1770,24 @@ elif st.session_state.nav == "Dashboard":
             st.markdown("</div></div>", unsafe_allow_html=True)
 
         if notes:
+            st.markdown("""
+            <style>
+            .note-card-row {
+                transition: background 0.2s, border-color 0.2s;
+                cursor: default;
+            }
+            .note-card-row:hover {
+                background: #101018 !important;
+                border-color: rgba(155,89,255,0.2) !important;
+            }
+            </style>
+            """, unsafe_allow_html=True)
             for n in notes:
                 st.markdown(f"""
-                <div style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
-                    border-radius:10px;padding:10px 14px;margin-bottom:5px;'>
-                    <div style='font-size:12px;font-weight:700;color:#f0f0f8;margin-bottom:2px;
+                <div class='note-card-row' style='background:#0c0c12;border:1px solid rgba(255,255,255,0.06);
+                    border-radius:10px;padding:10px 14px;margin-bottom:5px;
+                    border-left:2px solid rgba(155,89,255,0.3);'>
+                    <div style='font-size:12px;font-weight:700;color:#f0f0f8;margin-bottom:3px;
                         white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>{n.title}</div>
                     <div style='font-size:11px;color:#9090a8;line-height:1.5;overflow:hidden;
                         display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;'>{n.content or ""}</div>
@@ -1679,10 +1803,22 @@ elif st.session_state.nav == "Dashboard":
 
     # STATUS BAR
     st.markdown(f"""
-    <div class='aura-status-bar'>
-        <span><span style='color:{active_color};'>&#9679;</span>&nbsp; AI ONLINE</span>
-        <span><span style='color:#00d68f;'>&#9679;</span>&nbsp; AUTH</span>
-        <span><span style='color:#9b59ff;'>&#9679;</span>&nbsp; SECURE</span>
-        <span style='margin-left:auto;'>AURA v1.0 &nbsp;&middot;&nbsp; aura-ai-1.streamlit.app</span>
+    <div class='aura-status-bar' style='backdrop-filter:blur(12px);'>
+        <span style='display:flex;align-items:center;gap:5px;'>
+            <span style='width:6px;height:6px;border-radius:50%;background:{active_color};
+                display:inline-block;animation:online-pulse 2s ease-in-out infinite;'></span>
+            AI ONLINE
+        </span>
+        <span style='display:flex;align-items:center;gap:5px;'>
+            <span style='width:6px;height:6px;border-radius:50%;background:#00d68f;
+                display:inline-block;'></span>
+            AUTH
+        </span>
+        <span style='display:flex;align-items:center;gap:5px;'>
+            <span style='width:6px;height:6px;border-radius:50%;background:#9b59ff;
+                display:inline-block;'></span>
+            SECURE
+        </span>
+        <span style='margin-left:auto;color:#6b6b80;'>AURA v1.0 &nbsp;&middot;&nbsp; aura-ai-1.streamlit.app</span>
     </div>
     """, unsafe_allow_html=True)
