@@ -37,14 +37,18 @@ with engine.connect() as conn:
 st.set_page_config(page_title="Aura — Your Personal AI", page_icon="✦", layout="wide")
 
 themes = {
-    "Violet": {"accent": "#a78bfa", "glow": "rgba(167, 139, 250, 0.15)"},
-    "Rose":   {"accent": "#f472b6", "glow": "rgba(244, 114, 182, 0.15)"},
-    "Cyan":   {"accent": "#22d3ee", "glow": "rgba(34, 211, 238, 0.15)"},
+    "Violet": {"accent": "#d6baff", "glow": "rgba(214,186,255,0.15)", "glow2": "rgba(214,186,255,0.06)", "btn_from": "#7830db", "btn_to": "#aa74ff", "ambient": "rgba(66,0,138,0.15)"},
+    "Rose":   {"accent": "#f472b6", "glow": "rgba(244,114,182,0.15)",  "glow2": "rgba(244,114,182,0.06)",  "btn_from": "#be185d", "btn_to": "#f472b6", "ambient": "rgba(190,24,93,0.15)"},
+    "Cyan":   {"accent": "#22d3ee", "glow": "rgba(34,211,238,0.15)",   "glow2": "rgba(34,211,238,0.06)",   "btn_from": "#0891b2", "btn_to": "#22d3ee", "ambient": "rgba(8,145,178,0.15)"},
 }
 if "theme" not in st.session_state:
     st.session_state.theme = "Violet"
 active_color = themes[st.session_state.theme]["accent"]
 glow_color   = themes[st.session_state.theme]["glow"]
+glow2_color  = themes[st.session_state.theme]["glow2"]
+btn_from     = themes[st.session_state.theme]["btn_from"]
+btn_to       = themes[st.session_state.theme]["btn_to"]
+ambient      = themes[st.session_state.theme]["ambient"]
 
 if "nav" not in st.session_state:
     st.session_state.nav = "Home"
@@ -93,8 +97,8 @@ input, textarea, input[type="text"], input[type="password"] {{
     transition: border-color 0.3s, box-shadow 0.3s !important;
 }}
 input:focus, textarea:focus {{
-    border-color: #d6baff !important;
-    box-shadow: 0 0 10px rgba(214,186,255,0.3) !important;
+    border-color: {active_color} !important;
+    box-shadow: 0 0 10px {glow_color} !important;
     outline: none !important;
 }}
 label[data-testid="stWidgetLabel"] p {{
@@ -104,7 +108,7 @@ label[data-testid="stWidgetLabel"] p {{
     text-transform: uppercase !important;
 }}
 .stButton > button {{
-    background: linear-gradient(to right, #7830db, #aa74ff) !important;
+    background: linear-gradient(to right, {btn_from}, {btn_to}) !important;
     color: #ffffff !important;
     border: none !important;
     padding: 10px 20px !important;
@@ -115,12 +119,12 @@ label[data-testid="stWidgetLabel"] p {{
     transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s !important;
     width: auto !important;
     min-width: unset !important;
-    box-shadow: 0 0 15px rgba(214,186,255,0.3) !important;
+    box-shadow: 0 0 15px {glow_color} !important;
 }}
 .stButton > button:hover {{
     opacity: 0.9 !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 0 20px rgba(214,186,255,0.5) !important;
+    box-shadow: 0 0 20px {glow2_color} !important;
     color: #ffffff !important;
 }}
 .btn-sm .stButton > button {{
@@ -148,9 +152,9 @@ label[data-testid="stWidgetLabel"] p {{
     font-weight: 600 !important; font-family: 'Inter', sans-serif !important;
     padding: 8px 18px !important;
 }}
-.stTabs [aria-selected="true"] {{ background: rgba(214,186,255,0.1) !important; color: #d6baff !important; }}
+.stTabs [aria-selected="true"] {{ background: {glow_color} !important; color: {active_color} !important; }}
 .stChatInput textarea {{
-    background: #221e28 !important; border: 1px solid rgba(214,186,255,0.4) !important;
+    background: #221e28 !important; border: 1px solid {active_color}66 !important;
     border-radius: 9999px !important; color: #e8dfed !important; font-family: 'Inter', sans-serif !important;
 }}
 ::-webkit-scrollbar {{ width: 4px; height: 4px; }}
@@ -172,7 +176,7 @@ label[data-testid="stWidgetLabel"] p {{
     position: absolute; top: 0; left: 0; right: 0; height: 1px;
     background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
 }}
-.aura-metric:hover {{ border-color: rgba(214,186,255,0.3); transform: translateY(-3px); }}
+.aura-metric:hover {{ border-color: {active_color}55; transform: translateY(-3px); }}
 .aura-metric-bar {{ position: absolute; top: 0; left: 0; right: 0; height: 2px; }}
 .aura-metric-label {{
     font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
@@ -199,18 +203,18 @@ label[data-testid="stWidgetLabel"] p {{
     border-radius: 12px; padding: 16px; margin-bottom: 8px;
     transition: border-color 0.2s, transform 0.2s;
 }}
-.aura-task:hover {{ border-color: rgba(214,186,255,0.3); transform: translateX(3px); }}
+.aura-task:hover {{ border-color: {active_color}55; transform: translateX(3px); }}
 .aura-task-title {{ font-size: 14px; font-weight: 600; color: #e8dfed; }}
 .aura-task-desc {{ font-size: 12px; color: #968da0; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }}
 
 /* ── CHAT BUBBLES (Stitch design) ── */
 .aura-bubble-ai {{
-    background: linear-gradient(135deg, rgba(170,116,255,0.2), #221e28);
-    border: 1px solid rgba(214,186,255,0.3);
+    background: linear-gradient(135deg, {glow_color}, #221e28);
+    border: 1px solid {active_color}44;
     border-radius: 16px; border-top-left-radius: 4px;
     padding: 12px 16px; font-size: 14px; line-height: 1.6;
     color: #e8dfed; max-width: 85%; margin-bottom: 10px; display: inline-block;
-    box-shadow: 0 0 15px rgba(214,186,255,0.1);
+    box-shadow: 0 0 15px {glow2_color};
 }}
 .aura-bubble-user {{
     background: #2d2832;
@@ -232,7 +236,7 @@ label[data-testid="stWidgetLabel"] p {{
 .aura-note {{
     background: #121216;
     border: 1px solid rgba(255,255,255,0.05);
-    border-left: 2px solid rgba(214,186,255,0.3);
+    border-left: 2px solid {active_color}44;
     border-radius: 12px; padding: 20px; margin-bottom: 10px;
     transition: border-color 0.2s, background 0.2s;
     position: relative; overflow: hidden;
@@ -241,7 +245,7 @@ label[data-testid="stWidgetLabel"] p {{
     border-color: rgba(214,186,255,0.2);
     background: #1a1620;
 }}
-.aura-note-title {{ font-size: 12px; font-weight: 500; color: #d6baff; margin-bottom: 8px;
+.aura-note-title {{ font-size: 12px; font-weight: 500; color: {active_color}; margin-bottom: 8px;
     font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }}
 .aura-note-body {{ font-size: 14px; color: #e8dfed; line-height: 1.6; }}
 .aura-auth-card {{
@@ -956,10 +960,10 @@ elif st.session_state.nav in ["Login", "Register"]:
     }}
     .auth-title {{
         font-size: 36px; font-weight: 700;
-        background: linear-gradient(to right, #d6baff, #c9811a);
+        background: linear-gradient(to right, {active_color}, {btn_to});
         -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         background-clip: text;
-        filter: drop-shadow(0 0 15px rgba(214,186,255,0.5));
+        filter: drop-shadow(0 0 15px {glow_color});
         text-align: center; margin-bottom: 4px;
     }}
     .auth-subtitle {{
@@ -978,8 +982,8 @@ elif st.session_state.nav in ["Login", "Register"]:
         margin-bottom: 6px;
     }}
     .face-hint {{
-        background: rgba(214,186,255,0.05);
-        border: 1px solid rgba(214,186,255,0.2);
+        background: {glow2_color};
+        border: 1px solid {active_color}33;
         border-radius: 12px;
         padding: 12px 16px;
         font-size: 13px;
@@ -987,7 +991,7 @@ elif st.session_state.nav in ["Login", "Register"]:
         margin-bottom: 12px;
         line-height: 1.6;
     }}
-    .face-hint strong {{ color: #d6baff; }}
+    .face-hint strong {{ color: {active_color}; }}
     [data-testid="stCameraInput"] {{
         border: 1px solid rgba(255,255,255,0.1) !important;
         border-radius: 14px !important;
@@ -1252,41 +1256,41 @@ elif st.session_state.nav == "Dashboard":
     }
 
     /* ── ADD / PRIMARY BUTTONS ── */
-    .add-btn [data-testid="stButton"] button {
-        background: rgba(214,186,255,0.1) !important;
-        color: #d6baff !important;
-        border: 1px solid rgba(214,186,255,0.25) !important;
+    .add-btn [data-testid="stButton"] button {{
+        background: {glow_color} !important;
+        color: {active_color} !important;
+        border: 1px solid {active_color}44 !important;
         box-shadow: none !important;
-    }
-    .add-btn [data-testid="stButton"] button:hover {
-        background: rgba(214,186,255,0.18) !important;
+    }}
+    .add-btn [data-testid="stButton"] button:hover {{
+        background: {glow2_color} !important;
         opacity: 1 !important;
-    }
+    }}
 
     /* ── QUICK COMMAND BUTTONS ── */
-    .qc-btn [data-testid="stButton"] button {
-        background: rgba(214,186,255,0.08) !important;
-        color: #d6baff !important;
-        border: 1px solid rgba(214,186,255,0.2) !important;
+    .qc-btn [data-testid="stButton"] button {{
+        background: {glow2_color} !important;
+        color: {active_color} !important;
+        border: 1px solid {active_color}33 !important;
         width: 100% !important;
         justify-content: center !important;
         font-size: 12px !important;
         padding: 6px 8px !important;
         box-shadow: none !important;
-    }
+    }}
 
     /* ── EXPORT BUTTON ── */
-    .export-btn [data-testid="stButton"] button {
+    .export-btn [data-testid="stButton"] button {{
         background: transparent !important;
         color: #cdc2d7 !important;
         border: 1px solid rgba(255,255,255,0.15) !important;
         box-shadow: none !important;
-    }
-    .export-btn [data-testid="stButton"] button:hover {
-        color: #d6baff !important;
-        border-color: #d6baff !important;
+    }}
+    .export-btn [data-testid="stButton"] button:hover {{
+        color: {active_color} !important;
+        border-color: {active_color} !important;
         opacity: 1 !important;
-    }
+    }}
 
     /* ── STRIP COLUMN GAPS ── */
     [data-testid="stHorizontalBlock"] {
@@ -1339,13 +1343,13 @@ elif st.session_state.nav == "Dashboard":
     with hdr_col:
         st.markdown(f"""
         <div style='padding:4px 0 16px;'>
-            <div style='font-size:12px;color:#d6baff;font-family:JetBrains Mono,monospace;
+            <div style='font-size:12px;color:{active_color};font-family:JetBrains Mono,monospace;
                 letter-spacing:0.1em;margin-bottom:8px;text-transform:uppercase;'>
                 Digital Sanctuary Status
             </div>
             <h1 style='font-size:clamp(24px,3vw,40px);font-weight:700;letter-spacing:-0.02em;
                 line-height:1.1;margin:0 0 4px;color:#e8dfed;font-family:Inter,sans-serif;'>
-                Welcome back, <span style='color:#d6baff;'>{_name}.</span>
+                Welcome back, <span style='color:{active_color};'>{_name}.</span>
             </h1>
             <p style='color:#cdc2d7;font-size:14px;margin:0;'>
                 {datetime.now().strftime("%A, %B %d · %H:%M")}
