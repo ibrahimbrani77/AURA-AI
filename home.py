@@ -1,483 +1,422 @@
 import streamlit as st
 
-st.set_page_config(page_title="Aura — Your Personal AI", page_icon="✦", layout="wide")
+st.set_page_config(page_title="AURA — Your Personal AI Sanctuary", page_icon="✦", layout="wide")
 
-if "theme" not in st.session_state:
-    st.session_state.theme = "Violet"
-
-themes = {
-    "Violet": {"accent": "#a78bfa", "glow": "rgba(167, 139, 250, 0.15)", "glow2": "rgba(167,139,250,0.06)"},
-    "Rose":   {"accent": "#f472b6", "glow": "rgba(244, 114, 182, 0.15)", "glow2": "rgba(244,114,182,0.06)"},
-    "Cyan":   {"accent": "#22d3ee", "glow": "rgba(34, 211, 238, 0.15)",  "glow2": "rgba(34,211,238,0.06)"},
-}
-active_color = themes[st.session_state.theme]["accent"]
-glow_color   = themes[st.session_state.theme]["glow"]
-glow2_color  = themes[st.session_state.theme]["glow2"]
-
-st.markdown(f"""
+st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
-*, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
-html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, label {{
-    font-family: 'Syne', sans-serif !important;
-}}
-.stApp {{ background: #050508 !important; color: #f0f0f8 !important; }}
-#MainMenu, footer, header {{ visibility: hidden; }}
-.block-container {{
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, label {
+    font-family: 'Inter', sans-serif !important;
+}
+.stApp { background: #15121b !important; color: #e8dfed !important; }
+#MainMenu, footer, header { visibility: hidden; }
+.block-container {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
     max-width: 100% !important;
-}}
-.stButton > button {{
-    background: {active_color} !important;
-    color: #050508 !important;
+}
+.stButton > button {
+    background: linear-gradient(to right, #7830db, #aa74ff) !important;
+    color: #ffffff !important;
     border: none !important;
-    padding: 14px 36px !important;
-    font-weight: 700 !important;
-    font-size: 13px !important;
-    letter-spacing: 0.08em !important;
-    border-radius: 12px !important;
-    font-family: 'Syne', sans-serif !important;
-    text-transform: uppercase !important;
-    transition: all 0.25s ease !important;
+    padding: 14px 32px !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    border-radius: 9999px !important;
+    font-family: 'Inter', sans-serif !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 20px rgba(214,186,255,0.4) !important;
     width: auto !important;
-    box-shadow: 0 0 24px {glow_color} !important;
-}}
-.stButton > button:hover {{
-    opacity: 0.88 !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 32px {glow_color} !important;
-    color: #050508 !important;
-}}
+}
+.stButton > button:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 0 30px rgba(214,186,255,0.6) !important;
+    color: #ffffff !important;
+}
 
-/* ── HERO ── */
-.hero-wrap {{
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+/* ambient background */
+.bg-ambient {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background:
+        radial-gradient(circle at 15% 50%, rgba(66,0,138,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 85% 30%, rgba(201,129,26,0.1) 0%, transparent 50%);
+}
+.ambient-orb-tl {
+    position: fixed; top: -10%; left: -10%;
+    width: 40%; height: 40%; border-radius: 50%;
+    background: rgba(214,186,255,0.1); filter: blur(120px);
+    pointer-events: none; z-index: 0;
+}
+.ambient-orb-br {
+    position: fixed; bottom: -10%; right: -10%;
+    width: 30%; height: 30%; border-radius: 50%;
+    background: rgba(255,184,101,0.1); filter: blur(100px);
+    pointer-events: none; z-index: 0;
+}
+
+/* navbar */
+.aura-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(21,18,27,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    position: sticky; top: 0; z-index: 100;
+}
+.aura-nav-logo {
+    font-size: 24px; font-weight: 700;
+    background: linear-gradient(to right, #d6baff, #c9811a);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 15px rgba(214,186,255,0.5));
+}
+.aura-nav-links { display: flex; gap: 32px; }
+.aura-nav-link {
+    font-size: 14px; color: #cdc2d7;
+    text-decoration: none; transition: color 0.2s;
+}
+.aura-nav-link:hover { color: #d6baff; }
+
+/* hero */
+.hero-section {
+    min-height: 870px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
     text-align: center;
-    padding: 80px 24px 60px;
+    padding: 96px 40px 64px;
+    position: relative; z-index: 1;
+}
+.hero-title {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1.1; color: #e8dfed;
+    max-width: 900px; margin: 0 auto 24px;
+}
+.hero-title-gradient {
+    background: linear-gradient(to right, #d6baff, #aa74ff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.hero-sub {
+    font-size: 18px; color: #cdc2d7;
+    max-width: 640px; margin: 0 auto 48px;
+    line-height: 1.6;
+}
+.hero-mockup-wrap {
+    margin-top: 96px; width: 100%; max-width: 900px;
+    margin-left: auto; margin-right: auto;
     position: relative;
-    overflow: hidden;
-}}
-.hero-orb {{
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    filter: blur(80px);
-    animation: orb-float 8s ease-in-out infinite;
-}}
-@keyframes orb-float {{
-    0%, 100% {{ transform: translateY(0px) scale(1); opacity: 0.6; }}
-    50%       {{ transform: translateY(-20px) scale(1.05); opacity: 0.9; }}
-}}
-.hero-logo {{
-    width: 80px; height: 80px; border-radius: 22px;
-    background: linear-gradient(135deg, {active_color}, #7c3aed);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 36px; color: #050508;
-    margin: 0 auto 36px;
-    box-shadow: 0 0 60px {glow_color}, 0 0 120px {glow2_color};
-    animation: logo-pulse 3s ease-in-out infinite;
-}}
-@keyframes logo-pulse {{
-    0%, 100% {{ box-shadow: 0 0 40px {glow_color}, 0 0 80px {glow2_color}; }}
-    50%       {{ box-shadow: 0 0 80px {glow_color}, 0 0 160px {glow2_color}; }}
-}}
-.hero-badge {{
-    display: inline-flex; align-items: center; gap: 8px;
-    background: {glow_color}; border: 1px solid {active_color}44;
-    border-radius: 24px; padding: 7px 18px; margin-bottom: 28px;
-}}
-.hero-badge-dot {{
-    width: 7px; height: 7px; border-radius: 50%;
-    background: {active_color};
-    animation: badge-blink 2s ease-in-out infinite;
-}}
-@keyframes badge-blink {{
-    0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.4; }}
-}}
-.hero-h1 {{
-    font-size: clamp(48px, 8vw, 96px);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.0;
-    color: #f0f0f8;
-    max-width: 960px;
-    margin: 0 auto 28px;
-}}
-.hero-sub {{
-    font-size: clamp(15px, 2vw, 19px);
-    color: #9090a8;
-    max-width: 580px;
-    line-height: 1.7;
-    margin: 0 auto 56px;
-    font-weight: 400;
-}}
-
-/* ── STATS BAR ── */
-.stats-bar {{
-    display: flex;
-    justify-content: center;
-    gap: 48px;
-    flex-wrap: wrap;
-    padding: 28px 40px;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    background: rgba(12,12,18,0.6);
-    backdrop-filter: blur(12px);
-    margin-top: 16px;
-}}
-.stat-item {{ text-align: center; }}
-.stat-value {{
-    font-size: 32px; font-weight: 800;
-    color: {active_color}; letter-spacing: -0.03em; line-height: 1;
-}}
-.stat-label {{
-    font-size: 10px; color: #6b6b80;
-    font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    margin-top: 4px;
-}}
-
-/* ── HOW IT WORKS ── */
-.steps-section {{
-    padding: 100px 40px;
-    max-width: 1100px;
-    margin: 0 auto;
-}}
-.section-eyebrow {{
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 0.22em; color: #6b6b80;
-    font-family: 'JetBrains Mono', monospace;
-    text-transform: uppercase; margin-bottom: 14px;
-    text-align: center;
-}}
-.section-headline {{
-    font-size: clamp(30px, 4vw, 44px);
-    font-weight: 800; letter-spacing: -0.025em;
-    color: #f0f0f8; text-align: center;
-    margin-bottom: 64px;
-}}
-.steps-grid {{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+}
+.hero-mockup-wrap::before {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(214,186,255,0.2); filter: blur(100px);
+    border-radius: 24px; transition: all 0.7s ease;
+}
+.hero-mockup-wrap:hover::before {
+    background: rgba(214,186,255,0.3);
+}
+.hero-mockup-inner {
     position: relative;
-}}
-.step-card {{
-    background: #0c0c12;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 20px;
-    padding: 36px 28px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s, transform 0.3s;
-}}
-.step-card:hover {{
-    border-color: {active_color}55;
-    transform: translateY(-4px);
-}}
-.step-number {{
-    font-size: 11px; font-weight: 700;
-    color: {active_color}; letter-spacing: 0.14em;
+    background: rgba(18,18,22,0.7);
+    backdrop-filter: blur(32px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px; padding: 8px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.hero-mockup-screen {
+    width: 100%; border-radius: 10px;
+    background: linear-gradient(135deg, #1e1a23 0%, #15121b 50%, #221e28 100%);
+    height: 420px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative; overflow: hidden;
+}
+.mockup-kpi {
+    position: absolute; background: #100c16;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 16px 20px;
+}
+.mockup-label {
+    font-size: 9px; color: #968da0;
     font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 20px; display: block;
-}}
-.step-icon {{ font-size: 40px; margin-bottom: 18px; display: block; }}
-.step-title {{
-    font-size: 18px; font-weight: 700;
-    color: #f0f0f8; margin-bottom: 10px;
-}}
-.step-desc {{
-    font-size: 13px; color: #9090a8; line-height: 1.75;
-}}
+    letter-spacing: 0.1em; margin-bottom: 6px;
+}
+.mockup-value { font-size: 22px; font-weight: 700; }
 
-/* ── FEATURE CARDS ── */
-.features-section {{
-    padding: 80px 40px;
-    max-width: 1100px;
-    margin: 0 auto;
+/* features section */
+.features-section {
+    padding: 96px 40px;
+    background: rgba(16,12,22,0.5);
     border-top: 1px solid rgba(255,255,255,0.05);
-}}
-.feat-grid {{
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}}
-.feat-card {{
-    background: #0c0c12;
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 20px;
-    padding: 30px 28px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
-    cursor: default;
-}}
-.feat-card:hover {{
-    transform: translateY(-5px);
-    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
-}}
-.feat-card-bar {{
-    position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--card-color), transparent);
-}}
-.feat-icon {{ font-size: 34px; margin-bottom: 16px; display: block; }}
-.feat-title {{
-    font-size: 17px; font-weight: 700;
-    color: #f0f0f8; margin-bottom: 10px;
-}}
-.feat-desc {{
-    font-size: 13px; color: #9090a8; line-height: 1.7;
-}}
-
-/* ── BOTTOM CTA ── */
-.cta-section {{
-    padding: 100px 40px;
-    text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    position: relative;
-    overflow: hidden;
-}}
-.cta-glow {{
-    position: absolute;
-    width: 500px; height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, {glow_color} 0%, transparent 70%);
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-}}
-.cta-h2 {{
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 800; letter-spacing: -0.025em;
-    color: #f0f0f8; margin-bottom: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
     position: relative; z-index: 1;
-}}
-.cta-sub {{
-    font-size: 16px; color: #9090a8;
-    margin-bottom: 48px;
-    position: relative; z-index: 1;
-}}
-
-/* ── FOOTER ── */
-.footer {{
-    padding: 40px;
-    text-align: center;
-    border-top: 1px solid rgba(255,255,255,0.06);
-}}
-.footer-logo {{
-    display: flex; align-items: center; justify-content: center;
-    gap: 10px; margin-bottom: 14px;
-}}
-.footer-logo-icon {{
-    width: 26px; height: 26px; border-radius: 7px;
-    background: linear-gradient(135deg, {active_color}, #9b59ff);
-    display: flex; align-items: center; justify-content: center;
-    font-weight: 900; font-size: 12px; color: #050508;
-}}
-.footer-wordmark {{
-    font-size: 13px; font-weight: 800;
-    letter-spacing: 0.1em; color: {active_color};
-}}
-.footer-copy {{
-    font-size: 11px; color: #6b6b80;
+}
+.features-inner { max-width: 1200px; margin: 0 auto; }
+.section-eyebrow {
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.1em; color: #968da0;
     font-family: 'JetBrains Mono', monospace;
-}}
+    text-transform: uppercase; margin-bottom: 12px;
+    text-align: center;
+}
+.section-headline {
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 600; color: #e8dfed;
+    text-align: center; margin-bottom: 16px;
+}
+.section-sub {
+    font-size: 16px; color: #cdc2d7;
+    text-align: center; margin-bottom: 64px;
+}
+.feat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+.feat-card {
+    background: rgba(18,18,22,0.7);
+    backdrop-filter: blur(32px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px; padding: 32px;
+    transition: background 0.3s ease;
+    cursor: default;
+    display: flex; flex-direction: column;
+    align-items: flex-start; gap: 16px;
+}
+.feat-card:hover {
+    background: rgba(30,26,35,0.7);
+}
+.feat-icon-wrap {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(214,186,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+}
+.feat-icon-wrap .material-symbols-outlined {
+    font-size: 28px; color: #d6baff;
+}
+.feat-title { font-size: 20px; font-weight: 600; color: #e8dfed; }
+.feat-desc { font-size: 14px; color: #cdc2d7; line-height: 1.6; }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 900px) {{
-    .steps-grid, .feat-grid {{ grid-template-columns: 1fr 1fr !important; }}
-}}
-@media (max-width: 600px) {{
-    .steps-grid, .feat-grid {{ grid-template-columns: 1fr !important; }}
-    .stats-bar {{ gap: 28px; }}
-    .hero-wrap {{ padding: 80px 16px 40px; }}
-}}
+/* social proof */
+.proof-section {
+    padding: 80px 40px;
+    text-align: center;
+    position: relative; z-index: 1;
+}
+.proof-badge {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: rgba(18,18,22,0.7);
+    backdrop-filter: blur(32px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px 24px; border-radius: 9999px;
+    margin-bottom: 32px;
+}
+.proof-badge .material-symbols-outlined { color: #d6baff; font-size: 20px; }
+.proof-badge-text {
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.1em; color: #e8dfed;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+}
+.proof-stars { display: flex; justify-content: center; gap: 4px; margin-bottom: 16px; }
+.proof-stars .material-symbols-outlined { color: #ffb865; font-size: 22px; }
+.proof-quote {
+    font-size: 16px; color: #cdc2d7;
+    max-width: 480px; margin: 0 auto;
+    font-style: italic; line-height: 1.6;
+}
+
+/* footer */
+.aura-footer {
+    background: #100c16;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding: 48px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 24px;
+    position: relative; z-index: 1;
+}
+.footer-logo {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.1em; color: #d6baff;
+    font-family: 'JetBrains Mono', monospace;
+}
+.footer-copy { font-size: 14px; color: #cdc2d7; }
+.footer-links { display: flex; gap: 24px; }
+.footer-link {
+    font-size: 14px; color: #cdc2d7;
+    text-decoration: none; opacity: 0.8;
+    transition: color 0.2s, opacity 0.2s;
+}
+.footer-link:hover { color: #d6baff; opacity: 1; }
+
+@media (max-width: 900px) {
+    .feat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .aura-nav-links { display: none !important; }
+}
+@media (max-width: 600px) {
+    .feat-grid { grid-template-columns: 1fr !important; }
+    .hero-section { padding: 80px 20px 40px; }
+    .aura-footer { flex-direction: column; align-items: flex-start; }
+}
 </style>
 """, unsafe_allow_html=True)
 
-# ── HERO ──────────────────────────────────────────────────────────────────────
-st.markdown(f"""
-<div class="hero-wrap">
-    <!-- Animated background orbs -->
-    <div class="hero-orb" style="width:500px;height:500px;top:10%;left:50%;
-        transform:translateX(-50%);
-        background:radial-gradient(circle,{glow_color} 0%,transparent 70%);"></div>
-    <div class="hero-orb" style="width:300px;height:300px;top:20%;left:15%;
-        background:radial-gradient(circle,rgba(124,58,237,0.12) 0%,transparent 70%);
-        animation-delay:2s;animation-duration:10s;"></div>
-    <div class="hero-orb" style="width:240px;height:240px;bottom:15%;right:12%;
-        background:radial-gradient(circle,rgba(244,114,182,0.08) 0%,transparent 70%);
-        animation-delay:4s;animation-duration:12s;"></div>
+# ── AMBIENT ──
+st.markdown("""
+<div class="ambient-orb-tl"></div>
+<div class="ambient-orb-br"></div>
+""", unsafe_allow_html=True)
 
-    <!-- Logo -->
-    <div class="hero-logo">✦</div>
-
-    <!-- Badge -->
-    <div class="hero-badge">
-        <div class="hero-badge-dot"></div>
-        <span style="font-size:11px;font-weight:600;color:{active_color};
-            letter-spacing:0.12em;font-family:'JetBrains Mono',monospace;">
-            AI-POWERED PERSONAL ASSISTANT
-        </span>
+# ── NAVBAR ──
+st.markdown("""
+<div class="aura-nav">
+    <div class="aura-nav-logo">AURA</div>
+    <div class="aura-nav-links">
+        <a class="aura-nav-link" href="#">Features</a>
+        <a class="aura-nav-link" href="#">How It Works</a>
+        <a class="aura-nav-link" href="#">Personalities</a>
+        <a class="aura-nav-link" href="#">About</a>
     </div>
+</div>
+""", unsafe_allow_html=True)
 
-    <!-- Headline -->
-    <h1 class="hero-h1">
-        Your AI,<br>
-        <span style="color:{active_color};">perfectly tuned</span><br>
-        to you.
+# ── HERO ──
+st.markdown("""
+<div class="hero-section">
+    <h1 class="hero-title">
+        Your Personal<br>
+        <span class="hero-title-gradient">AI Sanctuary</span>
     </h1>
-
-    <!-- Subheadline -->
     <p class="hero-sub">
-        Aura manages your tasks, notes, and reminders — and adapts its personality
-        to match how <em>you</em> think and work.
+        A high-performance digital environment designed for ultimate focus and silent efficiency.
+        Experience the future of personal intelligence.
     </p>
 </div>
 """, unsafe_allow_html=True)
 
-# CTA button
-c1, c2, c3 = st.columns([2.5, 1, 2.5])
+c1, c2, c3 = st.columns([3, 1.2, 3])
 with c2:
     if st.button("Get Started →", key="cta_main"):
         st.switch_page("app.py")
 
-# Stats bar
-st.markdown(f"""
-<div class="stats-bar">
-    <div class="stat-item">
-        <div class="stat-value">6</div>
-        <div class="stat-label">AI Personalities</div>
-    </div>
-    <div class="stat-item" style="border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);padding:0 48px;">
-        <div class="stat-value">∞</div>
-        <div class="stat-label">Tasks & Notes</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-value">1-Click</div>
-        <div class="stat-label">Data Export</div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ── HOW IT WORKS ──────────────────────────────────────────────────────────────
-st.markdown(f"""
-<div class="steps-section">
-    <div class="section-eyebrow">How It Works</div>
-    <h2 class="section-headline">Up and running in seconds.</h2>
-
-    <div class="steps-grid">
-        <div class="step-card">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,{active_color},transparent);"></div>
-            <span class="step-number">STEP 01</span>
-            <span class="step-icon">👤</span>
-            <div class="step-title">Create your account</div>
-            <p class="step-desc">Sign up in seconds with your name, email, and password.
-                Optionally register your face for biometric login.</p>
-        </div>
-        <div class="step-card">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,#9b59ff,transparent);"></div>
-            <span class="step-number">STEP 02</span>
-            <span class="step-icon">🎭</span>
-            <div class="step-title">Pick a personality</div>
-            <p class="step-desc">Choose how Aura talks to you — Professional, Friendly,
-                Mentor, Sarcastic, Minimalist, Hype Coach, or write your own.</p>
-        </div>
-        <div class="step-card">
-            <div style="position:absolute;top:0;left:0;right:0;height:2px;
-                background:linear-gradient(90deg,#00d68f,transparent);"></div>
-            <span class="step-number">STEP 03</span>
-            <span class="step-icon">⚡</span>
-            <div class="step-title">Start working</div>
-            <p class="step-desc">Add tasks, set reminders, jot notes, and chat with an AI
-                that knows your full context and adapts to your workflow.</p>
+# Hero mockup
+st.markdown("""
+<div style="padding: 0 40px 40px; position: relative; z-index: 1;">
+<div class="hero-mockup-wrap">
+    <div class="hero-mockup-inner">
+        <div class="hero-mockup-screen">
+            <!-- Glow orb -->
+            <div style="position:absolute;width:300px;height:300px;border-radius:50%;
+                background:rgba(120,48,219,0.2);filter:blur(80px);top:50%;left:50%;
+                transform:translate(-50%,-50%);pointer-events:none;"></div>
+            <!-- AURA orb -->
+            <div style="width:160px;height:160px;border-radius:50%;
+                background:radial-gradient(circle at 35% 35%, #c4b5fd, #7c3aed 50%, #4c1d95);
+                display:flex;align-items:center;justify-content:center;
+                box-shadow:0 0 60px rgba(214,186,255,0.3);position:relative;z-index:2;">
+                <span style="font-size:56px;color:rgba(255,255,255,0.9);">✦</span>
+            </div>
+            <!-- KPI cards -->
+            <div class="mockup-kpi" style="top:40px;right:40px;">
+                <div class="mockup-label">TASKS PENDING</div>
+                <div class="mockup-value" style="color:#d6baff;">8</div>
+            </div>
+            <div class="mockup-kpi" style="bottom:60px;left:40px;">
+                <div class="mockup-label">AI STATUS</div>
+                <div class="mockup-value" style="color:#00d68f;font-size:16px;">ONLINE</div>
+            </div>
+            <div class="mockup-kpi" style="top:120px;left:40px;">
+                <div class="mockup-label">OVERDUE</div>
+                <div class="mockup-value" style="color:#ffb865;">2</div>
+            </div>
         </div>
     </div>
 </div>
+</div>
 """, unsafe_allow_html=True)
 
-# ── FEATURE CARDS ─────────────────────────────────────────────────────────────
-st.markdown(f"""
+# ── FEATURES SECTION ──
+st.markdown("""
 <div class="features-section">
-    <div class="section-eyebrow">What Aura Does</div>
-    <h2 class="section-headline">Everything you need,<br>nothing you don't.</h2>
-
+<div class="features-inner">
+    <div class="section-eyebrow">Engineered for Excellence</div>
+    <h2 class="section-headline">Everything you need, nothing you don't</h2>
+    <p class="section-sub">Intelligent features wrapped in a seamless, distraction-free interface.</p>
     <div class="feat-grid">
-        <div class="feat-card" style="--card-color:{active_color};">
-            <div class="feat-card-bar"></div>
-            <span class="feat-icon">📌</span>
-            <div class="feat-title">Task Engine</div>
-            <p class="feat-desc">Deploy tasks with High, Medium, or Low priority.
-                I'll help you figure out what to tackle first.</p>
+        <div class="feat-card">
+            <div class="feat-icon-wrap">
+                <span class="material-symbols-outlined">face</span>
+            </div>
+            <div class="feat-title">Face ID Login</div>
+            <p class="feat-desc">Frictionless, secure access powered by advanced biometric recognition. Your sanctuary opens only for you.</p>
         </div>
-        <div class="feat-card" style="--card-color:#9b59ff;">
-            <div class="feat-card-bar"></div>
-            <span class="feat-icon">🧠</span>
-            <div class="feat-title">Neural Chat</div>
-            <p class="feat-desc">Talk to an AI that knows your tasks, notes, and goals.
-                My answers are actually useful — not generic.</p>
+        <div class="feat-card">
+            <div class="feat-icon-wrap">
+                <span class="material-symbols-outlined">task_alt</span>
+            </div>
+            <div class="feat-title">Smart Task Management</div>
+            <p class="feat-desc">AI-driven prioritization organizes your workload silently, ensuring you focus on what truly matters.</p>
         </div>
-        <div class="feat-card" style="--card-color:#f472b6;">
-            <div class="feat-card-bar"></div>
-            <span class="feat-icon">🎭</span>
-            <div class="feat-title">AI Personalities</div>
-            <p class="feat-desc">Professional, Friendly, Mentor, Sarcastic,
-                Minimalist, or Hype Coach — or define your own.</p>
+        <div class="feat-card">
+            <div class="feat-icon-wrap">
+                <span class="material-symbols-outlined">psychology</span>
+            </div>
+            <div class="feat-title">Dynamic AI Personalities</div>
+            <p class="feat-desc">Adapt your assistant's tone and analytical depth to match your current workflow and cognitive needs.</p>
         </div>
-        <div class="feat-card" style="--card-color:#ffb020;">
-            <div class="feat-card-bar"></div>
-            <span class="feat-icon">⏰</span>
-            <div class="feat-title">Smart Reminders</div>
-            <p class="feat-desc">Set reminders and get alerted when they're overdue.
-                Never miss what matters.</p>
-        </div>
-        <div class="feat-card" style="--card-color:#00d68f;">
-            <div class="feat-card-bar"></div>
-            <span class="feat-icon">📝</span>
-            <div class="feat-title">Quick Notes</div>
-            <p class="feat-desc">Capture ideas instantly. Your notes are always
-                searchable and available to your AI.</p>
-        </div>
-        <div class="feat-card" style="--card-color:#22d3ee;">
-            <div class="feat-card-bar"></div>
-            <span class="feat-icon">🔒</span>
-            <div class="feat-title">Secure by Default</div>
-            <p class="feat-desc">PBKDF2 password hashing and JWT tokens keep your
-                data private and yours.</p>
+        <div class="feat-card">
+            <div class="feat-icon-wrap">
+                <span class="material-symbols-outlined">picture_as_pdf</span>
+            </div>
+            <div class="feat-title">Instant Export (PDF/CSV)</div>
+            <p class="feat-desc">Transform complex insights into presentation-ready documents with a single click. Seamless integration.</p>
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)
-
-# ── BOTTOM CTA ────────────────────────────────────────────────────────────────
-st.markdown(f"""
-<div class="cta-section">
-    <div class="cta-glow"></div>
-    <h2 class="cta-h2">Ready to meet your Aura?</h2>
-    <p class="cta-sub">Free to use. No credit card. Takes 30 seconds to set up.</p>
 </div>
 """, unsafe_allow_html=True)
 
-c1, c2, c3 = st.columns([2.5, 1, 2.5])
+# ── SOCIAL PROOF ──
+st.markdown("""
+<div class="proof-section">
+    <div class="proof-badge">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">verified</span>
+        <span class="proof-badge-text">Trusted by 50,000+ power users</span>
+    </div>
+    <div class="proof-stars">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">star</span>
+    </div>
+    <p class="proof-quote">
+        "AURA hasn't just improved my productivity; it has fundamentally elevated the aesthetic of my digital life."
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+# Bottom CTA
+c1, c2, c3 = st.columns([3, 1.2, 3])
 with c2:
-    if st.button("Launch Aura →", key="cta_bottom"):
+    if st.button("Launch AURA →", key="cta_bottom"):
         st.switch_page("app.py")
 
-# ── FOOTER ────────────────────────────────────────────────────────────────────
-st.markdown(f"""
-<div class="footer">
-    <div class="footer-logo">
-        <div class="footer-logo-icon">A</div>
-        <span class="footer-wordmark">AURA</span>
+# ── FOOTER ──
+st.markdown("""
+<div class="aura-footer">
+    <div class="footer-logo">AURA</div>
+    <div class="footer-copy">© 2024 AURA AI Digital Sanctuary.</div>
+    <div class="footer-links">
+        <a class="footer-link" href="#">Privacy Policy</a>
+        <a class="footer-link" href="#">Terms of Service</a>
+        <a class="footer-link" href="#">API Documentation</a>
+        <a class="footer-link" href="#">Contact</a>
     </div>
-    <p class="footer-copy">AURA v1.0 · Personal AI Assistant · Built with ❤️</p>
 </div>
 """, unsafe_allow_html=True)

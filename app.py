@@ -63,163 +63,215 @@ if "token" in st.session_state:
 
 st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 *, *::before, *::after {{ box-sizing: border-box; }}
 html, body, [class*="css"], .stApp, .stMarkdown, p, div, span, h1, h2, h3, label {{
-    font-family: 'Syne', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
 }}
-.stApp {{ background: #050508 !important; color: #f0f0f8 !important; }}
+.stApp {{ background: #15121b !important; color: #e8dfed !important; }}
 #MainMenu, footer {{ visibility: hidden; }}
 .block-container {{ padding-top: 1.5rem !important; padding-bottom: 4rem !important; }}
 section[data-testid="stSidebar"] {{
-    background: #0a0a10 !important;
-    border-right: 1px solid rgba(255,255,255,0.06) !important;
+    background: #1e1a23 !important;
+    border-right: 1px solid rgba(255,255,255,0.05) !important;
 }}
-section[data-testid="stSidebar"] * {{ font-family: 'Syne', sans-serif !important; }}
+section[data-testid="stSidebar"] * {{ font-family: 'Inter', sans-serif !important; }}
 .stSelectbox > div > div {{
-    background: #12121a !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    color: #f0f0f8 !important;
-    border-radius: 8px !important;
+    background: #221e28 !important;
+    border: 1px solid rgba(75,68,84,0.8) !important;
+    color: #e8dfed !important;
+    border-radius: 12px !important;
 }}
 input, textarea, input[type="text"], input[type="password"] {{
-    background: #12121a !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    color: #f0f0f8 !important;
-    border-radius: 10px !important;
-    font-family: 'Syne', sans-serif !important;
-    font-size: 13px !important;
-    transition: border-color 0.2s, box-shadow 0.2s !important;
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid #4b4454 !important;
+    color: #e8dfed !important;
+    border-radius: 12px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+    transition: border-color 0.3s, box-shadow 0.3s !important;
 }}
 input:focus, textarea:focus {{
-    border-color: {active_color} !important;
-    box-shadow: 0 0 0 3px {glow_color} !important;
+    border-color: #d6baff !important;
+    box-shadow: 0 0 10px rgba(214,186,255,0.3) !important;
     outline: none !important;
 }}
 label[data-testid="stWidgetLabel"] p {{
-    color: #9090a8 !important; font-size: 12px !important;
-    font-weight: 600 !important; letter-spacing: 0.04em !important;
+    color: #968da0 !important; font-size: 12px !important;
+    font-weight: 500 !important; letter-spacing: 0.1em !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    text-transform: uppercase !important;
 }}
 .stButton > button {{
-    background: {active_color} !important;
-    color: #050508 !important;
+    background: linear-gradient(to right, #7830db, #aa74ff) !important;
+    color: #ffffff !important;
     border: none !important;
-    padding: 8px 18px !important;
-    font-weight: 700 !important;
-    font-size: 11px !important;
-    letter-spacing: 0.08em !important;
-    border-radius: 8px !important;
-    font-family: 'Syne', sans-serif !important;
-    text-transform: uppercase !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border-radius: 12px !important;
+    font-family: 'Inter', sans-serif !important;
     transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s !important;
     width: auto !important;
     min-width: unset !important;
+    box-shadow: 0 0 15px rgba(214,186,255,0.3) !important;
 }}
 .stButton > button:hover {{
-    opacity: 0.88 !important;
+    opacity: 0.9 !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 18px {glow_color} !important;
+    box-shadow: 0 0 20px rgba(214,186,255,0.5) !important;
+    color: #ffffff !important;
 }}
-.stButton > button:hover {{ opacity: 0.85 !important; color: #050508 !important; }}
 .btn-sm .stButton > button {{
     background: transparent !important;
-    color: #9090a8 !important;
+    color: #cdc2d7 !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
-    padding: 3px 8px !important;
-    font-size: 10px !important;
-    border-radius: 5px !important;
+    padding: 4px 10px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
 }}
 .btn-sm .stButton > button:hover {{
-    background: rgba(255,255,255,0.06) !important;
-    color: #f0f0f8 !important;
+    background: rgba(255,255,255,0.05) !important;
+    color: #e8dfed !important;
     opacity: 1 !important;
 }}
 .stTabs [data-baseweb="tab-list"] {{
-    background: #0c0c12 !important; border-radius: 10px !important;
+    background: #221e28 !important; border-radius: 12px !important;
     padding: 4px !important; gap: 4px !important;
-    border: 1px solid rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
 }}
 .stTabs [data-baseweb="tab"] {{
-    background: transparent !important; color: #6b6b80 !important;
-    border-radius: 8px !important; font-size: 12px !important;
-    font-weight: 600 !important; font-family: 'Syne', sans-serif !important;
-    padding: 6px 16px !important;
+    background: transparent !important; color: #968da0 !important;
+    border-radius: 8px !important; font-size: 14px !important;
+    font-weight: 600 !important; font-family: 'Inter', sans-serif !important;
+    padding: 8px 18px !important;
 }}
-.stTabs [aria-selected="true"] {{ background: {active_color}22 !important; color: {active_color} !important; }}
+.stTabs [aria-selected="true"] {{ background: rgba(214,186,255,0.1) !important; color: #d6baff !important; }}
 .stChatInput textarea {{
-    background: #0c0c12 !important; border: 1px solid rgba(255,255,255,0.08) !important;
-    border-radius: 10px !important; color: #f0f0f8 !important; font-family: 'Syne', sans-serif !important;
+    background: #221e28 !important; border: 1px solid rgba(214,186,255,0.4) !important;
+    border-radius: 9999px !important; color: #e8dfed !important; font-family: 'Inter', sans-serif !important;
 }}
 ::-webkit-scrollbar {{ width: 4px; height: 4px; }}
 ::-webkit-scrollbar-track {{ background: transparent; }}
-::-webkit-scrollbar-thumb {{ background: rgba(255,255,255,0.1); border-radius: 4px; }}
+::-webkit-scrollbar-thumb {{ background: #38333d; border-radius: 4px; }}
+::-webkit-scrollbar-thumb:hover {{ background: #aa74ff; }}
+
+/* ── KPI CARDS (Stitch design) ── */
 .aura-metric {{
-    background: #0c0c12; border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px; padding: 20px; position: relative; overflow: hidden; margin-bottom: 8px;
+    background: #121216;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px; padding: 24px;
+    position: relative; overflow: hidden; margin-bottom: 8px;
+    transition: border-color 0.2s, transform 0.2s;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
 }}
+.aura-metric::before {{
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.2), transparent);
+}}
+.aura-metric:hover {{ border-color: rgba(214,186,255,0.3); transform: translateY(-3px); }}
 .aura-metric-bar {{ position: absolute; top: 0; left: 0; right: 0; height: 2px; }}
 .aura-metric-label {{
-    font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
-    color: #6b6b80; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #968da0; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace;
+    display: flex; justify-content: space-between; align-items: center;
 }}
 .aura-metric-value {{
-    font-size: 30px; font-weight: 800; letter-spacing: -0.02em; line-height: 1;
-    margin-bottom: 8px; font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3;
+    margin-bottom: 4px; color: #e8dfed;
 }}
-.aura-metric-sub {{ font-size: 11px; color: #6b6b80; font-family: 'JetBrains Mono', monospace; }}
+.aura-metric-sub {{ font-size: 11px; color: #968da0; font-family: 'JetBrains Mono', monospace; }}
+
+/* ── PANEL HEADER ── */
 .aura-panel-header {{
-    padding: 12px 0; font-size: 13px; font-weight: 600;
+    padding: 12px 0; font-size: 16px; font-weight: 600;
     display: flex; align-items: center; gap: 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 14px; color: #f0f0f8;
+    border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 16px; color: #e8dfed;
 }}
+
+/* ── TASK CARDS (Stitch design) ── */
 .aura-task {{
-    background: #0c0c12; border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px; padding: 12px 16px; margin-bottom: 8px;
+    background: #121216;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px; padding: 16px; margin-bottom: 8px;
+    transition: border-color 0.2s, transform 0.2s;
 }}
-.aura-task-title {{ font-size: 13px; font-weight: 600; color: #f0f0f8; }}
-.aura-task-desc {{ font-size: 11px; color: #6b6b80; font-family: 'JetBrains Mono', monospace; margin-top: 3px; }}
+.aura-task:hover {{ border-color: rgba(214,186,255,0.3); transform: translateX(3px); }}
+.aura-task-title {{ font-size: 14px; font-weight: 600; color: #e8dfed; }}
+.aura-task-desc {{ font-size: 12px; color: #968da0; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }}
+
+/* ── CHAT BUBBLES (Stitch design) ── */
 .aura-bubble-ai {{
-    background: #12121a; border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px; border-top-left-radius: 3px;
-    padding: 10px 14px; font-size: 13px; line-height: 1.6;
-    color: #f0f0f8; max-width: 85%; margin-bottom: 10px; display: inline-block;
+    background: linear-gradient(135deg, rgba(170,116,255,0.2), #221e28);
+    border: 1px solid rgba(214,186,255,0.3);
+    border-radius: 16px; border-top-left-radius: 4px;
+    padding: 12px 16px; font-size: 14px; line-height: 1.6;
+    color: #e8dfed; max-width: 85%; margin-bottom: 10px; display: inline-block;
+    box-shadow: 0 0 15px rgba(214,186,255,0.1);
 }}
 .aura-bubble-user {{
-    background: {glow_color}; border: 1px solid {active_color}44;
-    border-radius: 12px; border-top-right-radius: 3px;
-    padding: 10px 14px; font-size: 13px; line-height: 1.6;
-    color: #f0f0f8; max-width: 85%; margin-bottom: 10px; display: inline-block;
+    background: #2d2832;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px; border-top-right-radius: 4px;
+    padding: 12px 16px; font-size: 14px; line-height: 1.6;
+    color: #e8dfed; max-width: 85%; margin-bottom: 10px; display: inline-block;
 }}
-.aura-chat-ai {{ display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }}
-.aura-chat-user {{ display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 10px; margin-bottom: 6px; }}
+.aura-chat-ai {{ display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }}
+.aura-chat-user {{ display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 12px; margin-bottom: 8px; }}
 .aura-av {{
-    width: 28px; height: 28px; border-radius: 50%;
+    width: 32px; height: 32px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 800; flex-shrink: 0;
-    background: linear-gradient(135deg, {active_color}, #9b59ff);
-    color: #050508; font-family: 'Syne', sans-serif;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+    background: rgba(214,186,255,0.1);
+    border: 1px solid rgba(214,186,255,0.2);
+    color: #d6baff; font-family: 'Inter', sans-serif;
 }}
 .aura-note {{
-    background: #0c0c12; border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;
+    background: #121216;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-left: 2px solid rgba(214,186,255,0.3);
+    border-radius: 12px; padding: 20px; margin-bottom: 10px;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative; overflow: hidden;
 }}
-.aura-note-title {{ font-size: 12px; font-weight: 700; color: #f0f0f8; margin-bottom: 4px; }}
-.aura-note-body {{ font-size: 11px; color: #9090a8; line-height: 1.6; }}
+.aura-note:hover {{
+    border-color: rgba(214,186,255,0.2);
+    background: #1a1620;
+}}
+.aura-note-title {{ font-size: 12px; font-weight: 500; color: #d6baff; margin-bottom: 8px;
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }}
+.aura-note-body {{ font-size: 14px; color: #e8dfed; line-height: 1.6; }}
 .aura-auth-card {{
-    background: #0c0c12; border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(18,18,22,0.7);
+    backdrop-filter: blur(32px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.2);
     border-radius: 20px; padding: 2.5rem 2rem;
+    box-shadow: inset 1px 1px 0 rgba(255,255,255,0.05), 0 20px 40px rgba(0,0,0,0.5);
 }}
 .aura-status-bar {{
     position: fixed; bottom: 0; left: 0; right: 0;
-    height: 28px; background: #0c0c12;
-    border-top: 1px solid rgba(255,255,255,0.06);
+    height: 28px; background: #100c16;
+    border-top: 1px solid rgba(255,255,255,0.05);
     display: flex; align-items: center;
     padding: 0 28px; gap: 24px; z-index: 9999;
-    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6b80;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #968da0;
+}}
+.aura-status-dot {{
+    width: 6px; height: 6px; border-radius: 50%;
+    display: inline-block; margin-right: 6px;
+    animation: status-pulse 2s ease-in-out infinite;
+}}
+@keyframes status-pulse {{
+    0%, 100% {{ opacity: 1; }} 50% {{ opacity: 0.4; }}
 }}
 .aura-tag {{
-    font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 6px;
     font-family: 'JetBrains Mono', monospace; display: inline-block;
+    letter-spacing: 0.06em;
 }}
 /* --- SIDEBAR TOGGLE BUTTON FIX (BULLETPROOF) --- */
     
@@ -881,46 +933,66 @@ elif st.session_state.nav in ["Login", "Register"]:
     st.markdown(f"""
     <style>
     .auth-card {{
-        background: linear-gradient(160deg, #0e0e16 0%, #0c0c12 100%);
-        border: 1px solid rgba(255,255,255,0.09);
+        background: rgba(18,18,22,0.7);
+        backdrop-filter: blur(32px);
+        -webkit-backdrop-filter: blur(32px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-top: 1px solid rgba(255,255,255,0.2);
         border-radius: 22px;
         padding: 2.5rem 2.2rem;
-        box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+        box-shadow: inset 1px 1px 0 rgba(255,255,255,0.05), 0 20px 40px rgba(0,0,0,0.5);
         position: relative;
         overflow: hidden;
     }}
     .auth-card::before {{
         content: '';
         position: absolute;
-        top: 0; left: 20%; right: 20%; height: 1px;
-        background: linear-gradient(90deg, transparent, {active_color}44, transparent);
+        top: -80px; left: -80px;
+        width: 160px; height: 160px;
+        background: rgba(214,186,255,0.2);
+        filter: blur(40px);
+        border-radius: 50%;
+        pointer-events: none;
+    }}
+    .auth-title {{
+        font-size: 36px; font-weight: 700;
+        background: linear-gradient(to right, #d6baff, #c9811a);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        background-clip: text;
+        filter: drop-shadow(0 0 15px rgba(214,186,255,0.5));
+        text-align: center; margin-bottom: 4px;
+    }}
+    .auth-subtitle {{
+        font-size: 12px; letter-spacing: 0.1em;
+        color: #968da0; text-align: center;
+        font-family: 'JetBrains Mono', monospace;
+        text-transform: uppercase; margin-bottom: 24px;
     }}
     .auth-tab-header {{
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 0.14em;
-        color: #6b6b80;
-        font-family: JetBrains Mono, monospace;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        color: #968da0;
+        font-family: 'JetBrains Mono', monospace;
         text-transform: uppercase;
         margin-bottom: 6px;
     }}
     .face-hint {{
-        background: {glow_color};
-        border: 1px solid {active_color}33;
-        border-radius: 10px;
-        padding: 10px 14px;
-        font-size: 11px;
-        color: #9090a8;
+        background: rgba(214,186,255,0.05);
+        border: 1px solid rgba(214,186,255,0.2);
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 13px;
+        color: #cdc2d7;
         margin-bottom: 12px;
         line-height: 1.6;
     }}
-    .face-hint strong {{ color: {active_color}; }}
-    /* Camera widget styling */
+    .face-hint strong {{ color: #d6baff; }}
     [data-testid="stCameraInput"] {{
-        border: 1px solid rgba(255,255,255,0.08) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
         border-radius: 14px !important;
         overflow: hidden !important;
-        background: #080810 !important;
+        background: #100c16 !important;
     }}
     [data-testid="stCameraInput"] > div {{
         border-radius: 12px !important;
@@ -953,13 +1025,9 @@ elif st.session_state.nav in ["Login", "Register"]:
 
         # ── REGISTER ──
         if st.session_state.nav == "Register":
-            st.markdown(f"""
-            <h2 style='color:{active_color};margin-bottom:6px;font-family:Syne,sans-serif;font-size:22px;'>
-                Create Your Aura
-            </h2>
-            <p style='color:#9090a8;font-size:13px;margin-bottom:24px;'>
-                Set up your account in seconds.
-            </p>
+            st.markdown("""
+            <div class='auth-title'>AURA</div>
+            <div class='auth-subtitle'>Join the Sanctuary</div>
             """, unsafe_allow_html=True)
 
             reg_name  = st.text_input("Your Name", placeholder="John Doe",       key="reg_name")
@@ -1021,15 +1089,10 @@ elif st.session_state.nav in ["Login", "Register"]:
 
         # ── LOGIN ──
         else:
-            st.markdown(f"""
-            <h2 style='color:{active_color};margin-bottom:6px;font-family:Syne,sans-serif;font-size:22px;'>
-                Welcome back.
-            </h2>
-            <p style='color:#9090a8;font-size:13px;margin-bottom:24px;'>
-                Sign in to your Aura workspace.
-            </p>
+            st.markdown("""
+            <div class='auth-title'>AURA</div>
+            <div class='auth-subtitle'>Digital Sanctuary</div>
             """, unsafe_allow_html=True)
-
             login_tab, face_tab = st.tabs(["🔑  Password", "🪪  Face ID"])
 
             # Password tab
@@ -1159,7 +1222,7 @@ elif st.session_state.nav == "Dashboard":
         border-radius: 8px !important;
         margin: 0 !important;
         cursor: pointer !important;
-        font-family: 'Syne', sans-serif !important;
+        font-family: 'Inter', sans-serif !important;
         transition: opacity 0.2s, background 0.2s !important;
         white-space: nowrap !important;
     }
@@ -1171,52 +1234,57 @@ elif st.session_state.nav == "Dashboard":
     /* ── TASK ACTION BUTTONS (✔ ✕) ── */
     .task-actions [data-testid="stButton"] button {
         background: transparent !important;
-        color: #6b6b80 !important;
+        color: #968da0 !important;
         border: 1px solid rgba(255,255,255,0.1) !important;
-        padding: 2px 7px !important;
-        font-size: 11px !important;
-        border-radius: 5px !important;
-        height: 22px !important;
+        padding: 3px 8px !important;
+        font-size: 12px !important;
+        border-radius: 6px !important;
+        height: 24px !important;
         font-weight: 500 !important;
         letter-spacing: 0 !important;
         text-transform: none !important;
+        box-shadow: none !important;
     }
     .task-actions [data-testid="stButton"] button:hover {
-        background: rgba(255,255,255,0.08) !important;
-        color: #f0f0f8 !important;
+        background: rgba(255,255,255,0.06) !important;
+        color: #e8dfed !important;
         opacity: 1 !important;
     }
 
     /* ── ADD / PRIMARY BUTTONS ── */
     .add-btn [data-testid="stButton"] button {
-        background: rgba(167,139,250,0.12) !important;
-        color: #a78bfa !important;
-        border: 1px solid rgba(167,139,250,0.25) !important;
+        background: rgba(214,186,255,0.1) !important;
+        color: #d6baff !important;
+        border: 1px solid rgba(214,186,255,0.25) !important;
+        box-shadow: none !important;
     }
     .add-btn [data-testid="stButton"] button:hover {
-        background: rgba(167,139,250,0.22) !important;
+        background: rgba(214,186,255,0.18) !important;
         opacity: 1 !important;
     }
 
     /* ── QUICK COMMAND BUTTONS ── */
     .qc-btn [data-testid="stButton"] button {
-        background: rgba(167,139,250,0.1) !important;
-        color: #a78bfa !important;
-        border: 1px solid rgba(167,139,250,0.2) !important;
+        background: rgba(214,186,255,0.08) !important;
+        color: #d6baff !important;
+        border: 1px solid rgba(214,186,255,0.2) !important;
         width: 100% !important;
         justify-content: center !important;
-        font-size: 10px !important;
-        padding: 6px 6px !important;
+        font-size: 12px !important;
+        padding: 6px 8px !important;
+        box-shadow: none !important;
     }
 
     /* ── EXPORT BUTTON ── */
     .export-btn [data-testid="stButton"] button {
         background: transparent !important;
-        color: #6b6b80 !important;
-        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: #cdc2d7 !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        box-shadow: none !important;
     }
     .export-btn [data-testid="stButton"] button:hover {
-        color: #f0f0f8 !important;
+        color: #d6baff !important;
+        border-color: #d6baff !important;
         opacity: 1 !important;
     }
 
@@ -1228,19 +1296,19 @@ elif st.session_state.nav == "Dashboard":
 
     /* ── SEARCH INPUT ── */
     .dash-search [data-testid="stTextInput"] input {
-        background: #0c0c12 !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
-        border-radius: 10px !important;
-        color: #f0f0f8 !important;
-        font-size: 13px !important;
+        background: #221e28 !important;
+        border: 1px solid rgba(75,68,84,0.8) !important;
+        border-radius: 12px !important;
+        color: #e8dfed !important;
+        font-size: 14px !important;
         margin-top: 10px !important;
     }
 
     /* ── CHAT CONTAINER ── */
     [data-testid="stVerticalBlockBorderWrapper"] {
         border: 1px solid rgba(255,255,255,0.07) !important;
-        border-radius: 12px !important;
-        background: #080812 !important;
+        border-radius: 16px !important;
+        background: rgba(34,30,40,0.5) !important;
     }
 
     /* ── MOBILE RESPONSIVE ── */
@@ -1270,17 +1338,17 @@ elif st.session_state.nav == "Dashboard":
     hdr_col, srch_col = st.columns([3, 1])
     with hdr_col:
         st.markdown(f"""
-        <div style='padding:4px 0 8px;'>
-            <div style='font-size:10px;color:#6b6b80;font-family:JetBrains Mono,monospace;
-                letter-spacing:0.12em;margin-bottom:6px;'>
-                AURA · PERSONAL AI · {datetime.now().strftime("%A, %b %d · %H:%M")}
+        <div style='padding:4px 0 16px;'>
+            <div style='font-size:12px;color:#d6baff;font-family:JetBrains Mono,monospace;
+                letter-spacing:0.1em;margin-bottom:8px;text-transform:uppercase;'>
+                Digital Sanctuary Status
             </div>
-            <h1 style='font-size:clamp(18px,3vw,26px);font-weight:800;letter-spacing:-0.02em;
-                line-height:1.2;margin:0 0 4px;color:#f0f0f8;font-family:Syne,sans-serif;'>
-                {_greeting}, <span style='color:{active_color};font-style:italic;'>{_name}.</span>
+            <h1 style='font-size:clamp(24px,3vw,40px);font-weight:700;letter-spacing:-0.02em;
+                line-height:1.1;margin:0 0 4px;color:#e8dfed;font-family:Inter,sans-serif;'>
+                Welcome back, <span style='color:#d6baff;'>{_name}.</span>
             </h1>
-            <p style='color:#9090a8;font-size:clamp(11px,1.5vw,13px);margin:0;'>
-                Here&apos;s your overview for today.
+            <p style='color:#cdc2d7;font-size:14px;margin:0;'>
+                {datetime.now().strftime("%A, %B %d · %H:%M")}
             </p>
         </div>
         """, unsafe_allow_html=True)
